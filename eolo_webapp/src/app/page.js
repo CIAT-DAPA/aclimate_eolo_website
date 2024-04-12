@@ -88,7 +88,6 @@ export default function Home() {
 
   useEffect(()=>{
     if(selectedYearHc == years[years.length - 1]){
-      console.log("ay")
       const filteredMonths = months.slice(0, lastMonth);
       setMonths(filteredMonths)
     }else{
