@@ -20,8 +20,7 @@ const MenuProps = {
   },
 };
 
-export default function MultipleSelectCheckmarks({arrayData, label}) {
-  const [data, setData] = useState([]);
+export default function MultipleSelectCheckmarks({arrayData, label, data, setData}) {
   
 
   const handleChange = (event) => {

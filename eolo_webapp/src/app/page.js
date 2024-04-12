@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import styles from "./page.module.css";
 import Select from "@mui/material/Select";
+import Button from '@mui/material/Button';
+import SendIcon from '@mui/icons-material/Send'
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -10,14 +12,19 @@ import Configuration from "@/app/config"
 import Map from "@/app/Components/Map"
 import MultiSelect from "@/app/Components/MultiSelect"
 import axios from "axios";
+import {fromArrayBuffer} from 'geotiff';
 
 export default function Home() {
 
-  const [selectedYearHc, setSelectedYearHc] = useState(null);
-  const [selectedMonthHc, setSelectedMonthHc] = useState(null);
-  const [selectedMonthC, setSelectedMonthC] = useState(null);
+  const [selectedYearHc, setSelectedYearHc] = useState("");
+  const [selectedMonthHc, setSelectedMonthHc] = useState("");
+  const [selectedMonthC, setSelectedMonthC] = useState("");
+  const [selectedMonthAn, setSelectedMonthAn] = useState("");
+
+  const [multiSelectData, setMultiSelectData] = useState([])
 
   const [years, setYears] = useState([])
+  const [multYears, setMultYears] = useState([])
   const [lastMonth, setLastMonth] = useState(null)
   const [months, setMonths] = useState([
     "Enero",
@@ -33,6 +40,7 @@ export default function Home() {
     "Noviembre",
     "Diciembre",
   ])
+
   const [monthsC, setMonthsC] = useState([
     "Enero",
     "Febrero",
@@ -52,6 +60,86 @@ export default function Home() {
   const handleSelectChange = (setStateFunction) => (event) => {
     setStateFunction(event.target.value);
   };
+
+  const tiffAverage = async (urlg, analoguesYears, month) =>{
+
+    const responses = await Promise.all(
+      analoguesYears.map(year =>
+        fetch(`${urlg}Time("${year}-${month.toString().padStart(2, '0')}-01T00:00:00.000Z")`, {
+          //headers: {
+          //  Authorization: `Basic ${btoa(`${geoserverUser}:${geoserverPassword}`)}`
+          //}
+        }).then(response => response.arrayBuffer())
+      )
+    );
+    
+    const allRasterArrays = [];
+
+    for (const arrayBuffer of responses) {
+      const tiff = await fromArrayBuffer(arrayBuffer);
+      const image = await tiff.getImage();
+      const data = await image.readRasters();
+      allRasterArrays.push(data);
+    }
+
+    if (!allRasterArrays.length) {
+      console.log("No se encontraron rasters para descargar.");
+      return;
+    }
+
+
+    const sumArray = allRasterArrays.reduce((acc, currRasterObj) => {
+      const curr = currRasterObj[0]; // Accede al Float32Array dentro del objeto
+      for (let i = 0; i < acc.length; i++) {
+        acc[i] += curr[i];
+      }
+      return acc;
+    }, Array.from({ length: allRasterArrays[0][0].length }).fill(0)); // Asegúrate de utilizar la longitud del Float32Array
+    
+    // Calcular la cantidad total de años
+    const totalYears = allRasterArrays.length;
+    
+    // Calcular el promedio de los valores en cada posición
+    const averageArray = sumArray.map(val => val / totalYears);
+    
+    // Crear un nuevo array que mantenga la misma estructura de allRasterArrays pero con valores promediados
+    const rasterObj = allRasterArrays[0];
+
+    // Acceder al Float32Array dentro del objeto raster
+    const raster = rasterObj[0];
+
+    // Actualizar el Float32Array con los valores promediados
+    raster.set(averageArray);
+
+    return raster
+  }
+
+  const createAnomaly = async (e) => {
+
+    const urlg = `${Configuration.get_geoserver_url()}${Configuration.get_climatology_worspace()}/ows?service=WCS&request=GetCoverage&version=2.0.1&coverageId=${Configuration.get_prec_store()}&format=image/geotiff&subset=`
+    const average = await tiffAverage(urlg, multiSelectData, selectedMonthAn)
+
+    const response = await fetch(`${urlg}Time("2000-${selectedMonthAn.toString().padStart(2, '0')}-01T00:00:00.000Z")`);
+    const data = await response.arrayBuffer();
+
+    // Convertir los datos a un Float32Array
+    const arrayBuffer = await fromArrayBuffer(data);
+    const dataImage = await arrayBuffer.getImage();
+    const dataTiff = await dataImage.readRasters();
+
+    if (dataTiff.length !== average.length) {
+      console.log('Los datos a restar no tienen la misma longitud que el promedio calculado.');
+      return;
+    }
+    
+    // Restar los valores en cada posición
+    for (let i = 0; i < average.length; i++) {
+      average[i] -= dataTiff[i];
+    }
+    
+    console.log(average)
+
+  }
 
 
   async function getDatesFromGeoserver(workspace, layer) {
@@ -80,7 +168,10 @@ export default function Home() {
     getDatesFromGeoserver(Configuration.get_historical_worspace(), Configuration.get_prec_store())
       .then((dates) => {
         const uniqueYears = [...new Set(dates.map(date => date.split('-')[0]))];
+        const currentYear = new Date().getFullYear();
         setYears(uniqueYears)
+        setMultYears(uniqueYears)
+        //setMultYears(uniqueYears.filter(year => year != currentYear))
         setLastMonth(parseInt(dates[dates.length - 1].split("-")[1]))
       })
       
@@ -143,7 +234,7 @@ export default function Home() {
               value={selectedMonthHc}
               onChange={handleSelectChange(setSelectedMonthHc)} />}>
                 {months.map((d, i) => (
-                  <MenuItem key={i} value={i}>
+                  <MenuItem key={i+1} value={i+1}>
                     {d}
                   </MenuItem>
                 ))}
@@ -180,7 +271,7 @@ export default function Home() {
               onChange={handleSelectChange(setSelectedMonthC)}
                />}>
                 {monthsC.map((d, i) => (
-                  <MenuItem key={i} value={i}>
+                  <MenuItem key={i+1} value={i+1}>
                     {d}
                   </MenuItem>
                 ))}
@@ -208,7 +299,24 @@ export default function Home() {
               Sed ut hendrerit tortor, non lobortis ex. Suspendisse sagittis
               sollicitudin lorem, quis ornare eros tempor congue
             </p>
-            <MultiSelect arrayData={years} label={"Años analogos"} />
+            <MultiSelect arrayData={multYears} label={"Años analogos"} data={multiSelectData} setData={setMultiSelectData} />
+            <FormControl sx={{ m: 1, minWidth: 60, width: "30%" }} size="small">
+              <InputLabel id="select_month_an">{"Mes"}</InputLabel>
+              <Select
+              labelId="select_month_an"
+              input={<OutlinedInput label={"Mes"}
+              value={selectedMonthAn}
+              onChange={handleSelectChange(setSelectedMonthAn)} />}>
+                {monthsC.map((d, i) => (
+                  <MenuItem key={i+1} value={i+1}>
+                    {d}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button variant="contained" onClick={createAnomaly} endIcon={<SendIcon  />}>
+              Obtener anomalia
+            </Button>
           </div>
           {/* <Map
             className={styles.map}
