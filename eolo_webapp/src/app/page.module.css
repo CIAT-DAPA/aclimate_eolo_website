@@ -19,7 +19,7 @@
   height: 100%;
 }
 
-.map_container > div{
+.historical_map{
   width: 100%;
   display: grid;
   grid-template-rows: 25% 70%;
@@ -36,4 +36,17 @@
 
 .info_container > p {
   margin-bottom: 1%;
+}
+
+
+.anomalies_map{
+  width: 100%;
+  display: grid;
+  grid-template-rows: 25% 70%;
+  min-height: 550px;
+}
+
+.anomalies_but_cont{
+  display: flex;
+  width: 100%;
 }

@@ -34,7 +34,7 @@ export default function MultipleSelectCheckmarks({arrayData, label, data, setDat
   };
   return (
     <div className={styles.select_container}>
-      <FormControl sx={{ m: 1, minWidth: 160, width: "60%" }} size="small">
+      <FormControl sx={{ m: 1, minWidth: 160, width: "95%" }} size="small">
         <InputLabel id="demo-multiple-checkbox-label">{label}</InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
