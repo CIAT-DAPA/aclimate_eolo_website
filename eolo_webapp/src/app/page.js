@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./page.module.css";
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
@@ -9,6 +9,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import Configuration from "@/app/config"
 import Map from "@/app/Components/Map"
 import MultiSelect from "@/app/Components/MultiSelect"
+import axios from "axios";
 
 export default function Home() {
 
@@ -16,21 +17,9 @@ export default function Home() {
   const [selectedMonthHc, setSelectedMonthHc] = useState(null);
   const [selectedMonthC, setSelectedMonthC] = useState(null);
 
-  // Función general para manejar el cambio en cualquier select
-  const handleSelectChange = (setStateFunction) => (event) => {
-    setStateFunction(event.target.value);
-  };
-
-  function generateYears() {
-    let currentYear = new Date().getFullYear();
-    let years = [];
-    for (let year = 1981; year < currentYear; year++) {
-      years.push(year);
-    }
-    return years;
-  }
-
-  const meses = [
+  const [years, setYears] = useState([])
+  const [lastMonth, setLastMonth] = useState(null)
+  const [months, setMonths] = useState([
     "Enero",
     "Febrero",
     "Marzo",
@@ -43,7 +32,73 @@ export default function Home() {
     "Octubre",
     "Noviembre",
     "Diciembre",
-  ];
+  ])
+  const [monthsC, setMonthsC] = useState([
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ])
+
+  // Función general para manejar el cambio en cualquier select
+  const handleSelectChange = (setStateFunction) => (event) => {
+    setStateFunction(event.target.value);
+  };
+
+
+  async function getDatesFromGeoserver(workspace, layer) {
+    const url = `${Configuration.get_geoserver_url()}${workspace}/wms?service=WMS&version=1.3.0&request=GetCapabilities`;
+    const response = await axios.get(url);
+
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(response.data, "text/xml");
+    const layers = xmlDoc.getElementsByTagName("Layer");
+    let dates;
+
+    for (let i = 0; i < layers.length; i++) {
+      const layerName = layers[i].getElementsByTagName("Name")[0].textContent;
+      if (layerName === layer) {
+        const dimension =
+          layers[i].getElementsByTagName("Dimension")[0].textContent;
+        const timeInterval = dimension.split(",");
+        dates = timeInterval.map((date) => date.split("T")[0].slice(0, -3));
+        break;
+      }
+    }
+    return dates;
+  }
+
+  useEffect(() => {
+    getDatesFromGeoserver(Configuration.get_historical_worspace(), Configuration.get_prec_store())
+      .then((dates) => {
+        const uniqueYears = [...new Set(dates.map(date => date.split('-')[0]))];
+        setYears(uniqueYears)
+        setLastMonth(parseInt(dates[dates.length - 1].split("-")[1]))
+      })
+      
+  }, []);
+
+  useEffect(()=>{
+    if(selectedYearHc == years[years.length - 1]){
+      console.log("ay")
+      const filteredMonths = months.slice(0, lastMonth);
+      setMonths(filteredMonths)
+    }else{
+      if(months.length != monthsC.length){
+        setMonths([...monthsC])
+      }
+    }
+
+  }, [selectedYearHc])
+
 
   return (
     <main className={styles.main}>
@@ -74,9 +129,7 @@ export default function Home() {
               input={<OutlinedInput label={"Año"}
               value={selectedYearHc}
               onChange={handleSelectChange(setSelectedYearHc)} />}>
-                {generateYears() &&
-                  generateYears().length > 0 &&
-                  generateYears().map((d) => (
+                {years.map((d) => (
                     <MenuItem key={d} value={d}>
                       {d}
                     </MenuItem>
@@ -90,7 +143,7 @@ export default function Home() {
               input={<OutlinedInput label={"Mes"}
               value={selectedMonthHc}
               onChange={handleSelectChange(setSelectedMonthHc)} />}>
-                {meses.map((d, i) => (
+                {months.map((d, i) => (
                   <MenuItem key={i} value={i}>
                     {d}
                   </MenuItem>
@@ -127,7 +180,7 @@ export default function Home() {
               value={selectedMonthC}
               onChange={handleSelectChange(setSelectedMonthC)}
                />}>
-                {meses.map((d, i) => (
+                {monthsC.map((d, i) => (
                   <MenuItem key={i} value={i}>
                     {d}
                   </MenuItem>
@@ -156,7 +209,7 @@ export default function Home() {
               Sed ut hendrerit tortor, non lobortis ex. Suspendisse sagittis
               sollicitudin lorem, quis ornare eros tempor congue
             </p>
-            <MultiSelect arrayData={generateYears()} label={"Años analogos"} />
+            <MultiSelect arrayData={years} label={"Años analogos"} />
           </div>
           {/* <Map
             className={styles.map}
