@@ -1,0 +1,9 @@
+.footer{
+    background-color: #f9fbfd;
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    justify-content: center;
+    padding-top: 5%;
+    color: #5e6873;
+    font-size: 22px;
+}
