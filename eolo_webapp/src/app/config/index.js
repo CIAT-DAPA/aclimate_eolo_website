@@ -13,6 +13,11 @@ const PREC_STORE = "PREC"
 const TMAX_STORE = "TMAX"
 const TMIN_STORE = "TMIN"
 
+const BELOW_STORE = "below"
+const NORMAL_STORE = "normal"
+const ABOVE_STORE = "above"
+const HIGPR_STORE = "highest_probability"
+
 const API_URL = "http://127.0.0.1:5000/api/subtract_rasters"
 
 
@@ -51,6 +56,19 @@ class Configuration {
     }
     get_api_url(){
         return API_URL
+    }
+
+    get_below_store(){
+        return BELOW_STORE
+    }
+    get_normal_store(){
+        return NORMAL_STORE
+    }
+    get_above_store(){
+        return ABOVE_STORE
+    }
+    get_hgp_store(){
+        return HIGPR_STORE
     }
 
 }

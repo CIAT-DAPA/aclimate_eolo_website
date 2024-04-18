@@ -9,6 +9,7 @@ import {
 import "leaflet/dist/leaflet.css";
 import "leaflet-geotiff";
 import TiffLayer from "./TiffLayer";
+import MapLegend from "../MapLayer";
 
 const Map = ({
   center,
@@ -22,14 +23,14 @@ const Map = ({
   isAnomalies = false,
 }) => {
   const mapRef = useRef(null);
-  
+
   return (
     <MapContainer
       center={center}
       zoom={zoom}
       style={{
         height: "100%",
-        width: "85%",
+        width: "92%",
         justifySelf: "center",
       }}
       ref={mapRef}
@@ -44,15 +45,20 @@ const Map = ({
         ) : (
           <></>
         )
+      ) : year && month && store && workspace ? (
+        <>
+          <WMSTileLayer
+            key={workspace + ":" + store}
+            layers={workspace + ":" + store}
+            url={url + workspace + "/wms"}
+            format={"image/png"}
+            transparent={true}
+            params={{ time: year + "-" + month }}
+          />
+          <MapLegend workspace={workspace} layer={store} />
+        </>
       ) : (
-        <WMSTileLayer
-          key={workspace + ":" + store}
-          layers={workspace + ":" + store}
-          url={url + workspace + "/wms"}
-          format={"image/png"}
-          transparent={true}
-          params={{ time: year + "-" + month }}
-        />
+        <></>
       )}
     </MapContainer>
   );

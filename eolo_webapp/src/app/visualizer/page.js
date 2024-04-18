@@ -24,10 +24,10 @@ const Visualizer = () => {
   const [selectedLayer, setSelectedLayer] = useState("");
 
   const [layers, setLayers] = useState([
-    "Above",
-    "Normal",
-    "Below",
-    "Highest probability",
+    {display: "Above", value: Configuration.get_above_store()},
+    {display: "Normal", value: Configuration.get_normal_store()},
+    {display: "Below", value: Configuration.get_below_store()},
+    {display: "Highest probability", value: Configuration.get_hgp_store()},
   ]);
 
   const [years, setYears] = useState([]);
@@ -173,8 +173,8 @@ const Visualizer = () => {
                 <em>None</em>
               </MenuItem>
               {layers.map((d) => (
-                <MenuItem key={d} value={d}>
-                  {d}
+                <MenuItem key={d.value} value={d.value}>
+                  {d.display}
                 </MenuItem>
               ))}
             </Select>
@@ -233,8 +233,8 @@ const Visualizer = () => {
               url={Configuration.get_geoserver_url()}
               workspace={selectFirstForecast}
               store={selectedLayer}
-              year={selectYear}
-              month={selectHc}
+              year={2024}
+              month={5}
             />
           </Box>
         </Grid>
@@ -284,8 +284,8 @@ const Visualizer = () => {
               url={Configuration.get_geoserver_url()}
               workspace={selectSecondForecast}
               store={selectedLayer}
-              year={selectYear}
-              month={selectHc}
+              year={2024}
+              month={8}
             />
           </Box>
         </Grid>
