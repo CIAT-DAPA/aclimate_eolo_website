@@ -52,7 +52,6 @@ const TiffLayer = ({ anomalies }) => {
           };
           options.georaster = georaster;
           geoTiffLayerRef.current = new GeoRasterLayer(options);
-          console.log(georaster)
           setLayers([...layers, geoTiffLayerRef.current]);
           container.addLayer(geoTiffLayerRef.current);
         });

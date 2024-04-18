@@ -2,9 +2,9 @@ const GEOSERVER_URL = "https://geo.aclimate.org/geoserver/";
 
 //Workspaces
 const NEXTGEN_WORSPACE = "fc_nextgen_hn"
-const ANALOGUES_WORSPACE = "aclimate_et"
+const ANALOGUES_WORSPACE = "fc_analogues_hn"
 const CENAOS_WORSPACE = "fc_cenaos_hn"
-const ACLIMATE_WORSPACE = "aclimate_et"
+const ACLIMATE_WORSPACE = "fc_aclimate_hn"
 
 const CLIMATOLOGY_WORSPACE = "climatology_hn"
 const HISTORICALC_WORSPACE = "historical_climate_hn"
