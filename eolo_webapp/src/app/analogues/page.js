@@ -2,7 +2,8 @@
 import { useState, useEffect } from "react";
 import styles from "./page.module.css";
 import Select from "@mui/material/Select";
-import IconButton from '@mui/material/IconButton';
+import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -12,13 +13,11 @@ import Configuration from "@/app/config";
 import Map from "@/app/Components/Map";
 import MultiSelect from "@/app/Components/MultiSelect";
 import axios from "axios";
-import { fromArrayBuffer } from "geotiff";
 
 export default function Home() {
   const [selectedYearHc, setSelectedYearHc] = useState("");
-  const [selectedMonthHc, setSelectedMonthHc] = useState("");
   const [selectedMonthC, setSelectedMonthC] = useState("");
-  const [selectedMonthAn, setSelectedMonthAn] = useState("");
+  const [anomalies, setAnomalies] = useState(null);
 
   const [multiSelectData, setMultiSelectData] = useState([]);
 
@@ -60,91 +59,10 @@ export default function Home() {
     setStateFunction(event.target.value);
   };
 
-  const tiffAverage = async (urlg, analoguesYears, month) => {
-    const responses = await Promise.all(
-      analoguesYears.map((year) =>
-        fetch(
-          `${urlg}Time("${year}-${month
-            .toString()
-            .padStart(2, "0")}-01T00:00:00.000Z")`,
-          {
-            //headers: {
-            //  Authorization: `Basic ${btoa(`${geoserverUser}:${geoserverPassword}`)}`
-            //}
-          }
-        ).then((response) => response.arrayBuffer())
-      )
-    );
-
-    const allRasterArrays = [];
-
-    for (const arrayBuffer of responses) {
-      const tiff = await fromArrayBuffer(arrayBuffer);
-      const image = await tiff.getImage();
-      const data = await image.readRasters();
-      allRasterArrays.push(data);
-    }
-
-    if (!allRasterArrays.length) {
-      console.log("No se encontraron rasters para descargar.");
-      return;
-    }
-
-    const sumArray = allRasterArrays.reduce((acc, currRasterObj) => {
-      const curr = currRasterObj[0]; // Accede al Float32Array dentro del objeto
-      for (let i = 0; i < acc.length; i++) {
-        acc[i] += curr[i];
-      }
-      return acc;
-    }, Array.from({ length: allRasterArrays[0][0].length }).fill(0)); // Asegúrate de utilizar la longitud del Float32Array
-
-    // Calcular la cantidad total de años
-    const totalYears = allRasterArrays.length;
-
-    // Calcular el promedio de los valores en cada posición
-    const averageArray = sumArray.map((val) => val / totalYears);
-
-    // Crear un nuevo array que mantenga la misma estructura de allRasterArrays pero con valores promediados
-    const rasterObj = allRasterArrays[0];
-
-    // Acceder al Float32Array dentro del objeto raster
-    const raster = rasterObj[0];
-
-    // Actualizar el Float32Array con los valores promediados
-    raster.set(averageArray);
-
-    return raster;
-  };
+  
 
   const createAnomaly = async (e) => {
-    const urlg = `${Configuration.get_geoserver_url()}${Configuration.get_climatology_worspace()}/ows?service=WCS&request=GetCoverage&version=2.0.1&coverageId=${Configuration.get_prec_store()}&format=image/geotiff&subset=`;
-    const average = await tiffAverage(urlg, multiSelectData, selectedMonthAn);
-
-    const response = await fetch(
-      `${urlg}Time("2000-${selectedMonthAn
-        .toString()
-        .padStart(2, "0")}-01T00:00:00.000Z")`
-    );
-    const data = await response.arrayBuffer();
-
-    // Convertir los datos a un Float32Array
-    const arrayBuffer = await fromArrayBuffer(data);
-    const dataImage = await arrayBuffer.getImage();
-    const dataTiff = await dataImage.readRasters();
-
-    if (dataTiff.length !== average.length) {
-      console.log(
-        "Los datos a restar no tienen la misma longitud que el promedio calculado."
-      );
-      return;
-    }
-
-    // Restar los valores en cada posición
-    for (let i = 0; i < average.length; i++) {
-      average[i] -= dataTiff[i];
-    }
-
-    console.log(average);
+    setAnomalies({url: Configuration.get_api_url(), month:selectedMonthC, years:multiSelectData})
   };
 
   async function getDatesFromGeoserver(workspace, layer) {
@@ -184,6 +102,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+
     if (selectedYearHc == years[years.length - 1]) {
       const filteredMonths = months.slice(0, lastMonth);
       setMonths(filteredMonths);
@@ -205,6 +124,25 @@ export default function Home() {
           scrambled it to make a type specimen book. It has survived not only
           five centuries
         </p>
+        <FormControl sx={{ m: 1, minWidth: 60, width: "30%" }} size="small">
+          <InputLabel id="select_month">{"Mes"}</InputLabel>
+          <Select
+            labelId="select_month"
+            input={
+              <OutlinedInput
+                label={"Mes"}
+                value={selectedMonthC}
+                onChange={handleSelectChange(setSelectedMonthC)}
+              />
+            }
+          >
+            {monthsC.map((d, i) => (
+              <MenuItem key={i + 1} value={i + 1}>
+                {d}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </div>
 
       <div className={styles.map_container}>
@@ -235,25 +173,6 @@ export default function Home() {
                 ))}
               </Select>
             </FormControl>
-            <FormControl sx={{ m: 1, minWidth: 60, width: "30%" }} size="small">
-              <InputLabel id="select_month_hc">{"Mes"}</InputLabel>
-              <Select
-                labelId="select_month_hc"
-                input={
-                  <OutlinedInput
-                    label={"Mes"}
-                    value={selectedMonthHc}
-                    onChange={handleSelectChange(setSelectedMonthHc)}
-                  />
-                }
-              >
-                {months.map((d, i) => (
-                  <MenuItem key={i + 1} value={i + 1}>
-                    {d}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
           </div>
 
           <Map
@@ -264,7 +183,7 @@ export default function Home() {
             workspace={Configuration.get_historical_worspace()}
             store={Configuration.get_prec_store()}
             year={selectedYearHc}
-            month={selectedMonthHc}
+            month={selectedMonthC}
           />
         </div>
 
@@ -276,25 +195,6 @@ export default function Home() {
               Sed ut hendrerit tortor, non lobortis ex. Suspendisse sagittis
               sollicitudin lorem, quis ornare eros tempor congue
             </p>
-            <FormControl sx={{ m: 1, minWidth: 60, width: "30%" }} size="small">
-              <InputLabel id="select_month">{"Mes"}</InputLabel>
-              <Select
-                labelId="select_month"
-                input={
-                  <OutlinedInput
-                    label={"Mes"}
-                    value={selectedMonthC}
-                    onChange={handleSelectChange(setSelectedMonthC)}
-                  />
-                }
-              >
-                {monthsC.map((d, i) => (
-                  <MenuItem key={i + 1} value={i + 1}>
-                    {d}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
           </div>
 
           <Map
@@ -325,48 +225,26 @@ export default function Home() {
                 data={multiSelectData}
                 setData={setMultiSelectData}
               />
-              <FormControl
-                sx={{ m: 1, minWidth: 60, width: "25%" }}
-                size="small"
+              <IconButton
+                aria-label="Calcular anomalia"
+                color="primary"
+                onClick={createAnomaly}
               >
-                <InputLabel id="select_month_an">{"Mes"}</InputLabel>
-                <Select
-                  labelId="select_month_an"
-                  input={
-                    <OutlinedInput
-                      label={"Mes"}
-                      value={selectedMonthAn}
-                      onChange={handleSelectChange(setSelectedMonthAn)}
-                    />
-                  }
-                >
-                  {monthsC.map((d, i) => (
-                    <MenuItem key={i + 1} value={i + 1}>
-                      {d}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <IconButton 
-              aria-label="Calcular anomalia"
-              color="primary"
-              onClick={createAnomaly}
-              >
-              <SendIcon />
-            </IconButton >
+                <SendIcon />
+              </IconButton>
             </div>
           </div>
           <Map
             className={styles.map}
             zoom={7}
             center={[14.5007343, -86.6719949]}
-            url={Configuration.get_geoserver_url()}
-            workspace={Configuration.get_climatology_worspace()}
-            store={Configuration.get_prec_store()}
-            year={2000}
-            month={selectedMonthC}
+            anomalies={anomalies}
+            isAnomalies={true}
           />
         </div>
+      </div>
+      <div>
+        <Button>Cargar datos</Button>
       </div>
     </main>
   );

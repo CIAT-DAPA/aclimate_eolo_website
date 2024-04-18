@@ -1,11 +1,28 @@
 "use client";
-import { useRef } from "react";
-import { MapContainer, TileLayer, WMSTileLayer } from "react-leaflet";
+import { useEffect, useRef, useState } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  WMSTileLayer,
+  LayersControl,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet-geotiff";
+import TiffLayer from "./TiffLayer";
 
-const Map = ({ center, zoom, url, workspace, store, year, month }) => {
+const Map = ({
+  center,
+  zoom,
+  url,
+  workspace,
+  store,
+  year,
+  month,
+  anomalies = null,
+  isAnomalies = false,
+}) => {
   const mapRef = useRef(null);
-
+  
   return (
     <MapContainer
       center={center}
@@ -15,24 +32,28 @@ const Map = ({ center, zoom, url, workspace, store, year, month }) => {
         width: "85%",
         justifySelf: "center",
       }}
-      zoomControl={true}
       ref={mapRef}
+      zoomControl={true}
     >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <WMSTileLayer
-        key={
-          workspace + ":" + store
-        }
-        layers={
-          workspace + ":" + store
-        }
-        url={url+workspace+"/wms"}
-        format={"image/png"}
-        transparent={true}
-        params={{ time: year + "-" + month }}
-      />
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      {isAnomalies ? (
+        anomalies ? (
+          <LayersControl.Overlay id={"epa"} name="epa">
+            <TiffLayer anomalies={anomalies} />
+          </LayersControl.Overlay>
+        ) : (
+          <></>
+        )
+      ) : (
+        <WMSTileLayer
+          key={workspace + ":" + store}
+          layers={workspace + ":" + store}
+          url={url + workspace + "/wms"}
+          format={"image/png"}
+          transparent={true}
+          params={{ time: year + "-" + month }}
+        />
+      )}
     </MapContainer>
   );
 };

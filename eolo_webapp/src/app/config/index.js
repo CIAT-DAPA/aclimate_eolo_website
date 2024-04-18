@@ -13,6 +13,8 @@ const PREC_STORE = "PREC"
 const TMAX_STORE = "TMAX"
 const TMIN_STORE = "TMIN"
 
+const API_URL = "http://127.0.0.1:5000/api/subtract_rasters"
+
 
 class Configuration {
     get_geoserver_url() {
@@ -46,6 +48,9 @@ class Configuration {
     }
     get_tmin_store(){
         return TMIN_STORE;
+    }
+    get_api_url(){
+        return API_URL
     }
 
 }
