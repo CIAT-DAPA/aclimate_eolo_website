@@ -82,7 +82,7 @@ jobs:
       - name: Build with Next.js
         run: |
           cd eolo_webapp
-          ${{ steps.detect-package-manager.outputs.runner }} next build
+          ${{ steps.detect-package-manager.outputs.manager }} run predeploy
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
