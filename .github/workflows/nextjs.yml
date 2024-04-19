@@ -75,6 +75,10 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }} ${{ steps.detect-package-manager.outputs.path }}
+      - name: Install dependencies Encoding
+        run: |
+          cd eolo_webapp
+          ${{ steps.detect-package-manager.outputs.manager }} i -D encoding
       - name: Build with Next.js
         run: |
           cd eolo_webapp
