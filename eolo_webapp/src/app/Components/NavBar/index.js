@@ -1,10 +1,23 @@
+"use client"
+import { useContext } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "./nav_bar.module.css";
 import IconButton from "@mui/material/IconButton";
 import PersonIcon from '@mui/icons-material/Person';
 import Button from "@mui/material/Button"
+import AuthContext from "@/app/Context/auth/authContext";
+import authTypes from "@/app/Context/auth/authTypes";
 
 const NavBar = () => {
+  const router = useRouter()
+  const { dispatch } = useContext(AuthContext);
+
+  const handleSubmit = (e) => {
+    dispatch({type: authTypes.LOGOUT})
+    router.push('/login')
+  }
+
   return (
     <nav className={styles.nav}>
       <div className={styles.nav_logo}>Eolo</div>
@@ -36,7 +49,7 @@ const NavBar = () => {
           >
             <PersonIcon />
           </IconButton>
-          <Button variant="contained" >Salir</Button>
+          <Button variant="contained" onClick={handleSubmit} >Salir</Button>
         </div>
       </div>
     </nav>
