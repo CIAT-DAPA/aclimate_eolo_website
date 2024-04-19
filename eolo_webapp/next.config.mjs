@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export", // <=== enables static exports
+basePath: "/aclimate_eolo_website",
+  output: "export",
   reactStrictMode: true,
 };
 
