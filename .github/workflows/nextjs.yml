@@ -53,7 +53,7 @@ jobs:
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-          ache-dependency-path: ${{ github.workspace }}/eolo_webapp/package-lock.json
+          cache-dependency-path: ${{ github.workspace }}/eolo_webapp/package-lock.json
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
