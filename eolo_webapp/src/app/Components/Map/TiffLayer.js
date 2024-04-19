@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState, memo } from "react";
+import { useEffect, useRef, useState, memo, useContext } from "react";
 import proj4 from "proj4";
 import { useLeafletContext } from "@react-leaflet/core";
 import { useMap } from "react-leaflet";
 import parseGeoraster from "georaster";
 import GeoRasterLayer from "georaster-layer-for-leaflet";
 import chroma from "chroma-js";
+import AuthContext from "@/app/Context/auth/authContext";
 
 window.proj4 = proj4;
 
@@ -14,6 +15,8 @@ const TiffLayer = ({ anomalies }) => {
   const context = useLeafletContext();
   const map = useMap();
   const prevAnomalies = useRef();
+
+  const { user } = useContext(AuthContext);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -32,6 +35,8 @@ const TiffLayer = ({ anomalies }) => {
       body: JSON.stringify({
         month: anomalies.month,
         years: anomalies.years,
+        user: user.user.user,
+        passw: user.user.password
       }),
     })
       .then((response) => response.arrayBuffer())
