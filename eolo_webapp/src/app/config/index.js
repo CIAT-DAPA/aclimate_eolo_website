@@ -18,7 +18,9 @@ const NORMAL_STORE = "normal"
 const ABOVE_STORE = "above"
 const HIGPR_STORE = "highest_probability"
 
-const API_URL = "http://127.0.0.1:5000/api/subtract_rasters"
+const API_URL_DEV = "http://127.0.0.1:5000/api/subtract_rasters"
+
+const API_URL_PROD = "https://scalderon.pythonanywhere.com/api/subtract_rasters"
 
 
 class Configuration {
@@ -55,7 +57,7 @@ class Configuration {
         return TMIN_STORE;
     }
     get_api_url(){
-        return API_URL
+        return API_URL_PROD
     }
 
     get_below_store(){
