@@ -11,9 +11,11 @@ import Select from "@mui/material/Select";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Configuration from "@/app/config";
 import InputLabel from "@mui/material/InputLabel";
-import Map from "@/app/Components/Map";
 import axios from "axios";
 import styles from "./visualizer.module.css";
+import dynamic from "next/dynamic"
+
+const Map = dynamic(() => import("@/app/Components/Map"), { ssr:false })
 
 const Visualizer = () => {
   const [selectFirstForecast, setSelectFirstForecast] = useState("");
@@ -111,6 +113,7 @@ const Visualizer = () => {
     });
   }, []);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (selectYear == years[years.length - 1]) {
       const filteredMonths = months.slice(0, lastMonth);
@@ -127,11 +130,11 @@ const Visualizer = () => {
       <Box height={"13%"}>
         <h1>Visualizador</h1>
         <p>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
+          {`Lorem Ipsum is simply dummy text of the printing and typesetting
           industry. Lorem Ipsum has been the industry's standard dummy text ever
           since the 1500s, when an unknown printer took a galley of type and
           scrambled it to make a type specimen book. It has survived not only
-          five centuries
+          five centuries`}
         </p>
         <Box className={styles.first_part_inputs}>
           <FormControl>
@@ -192,9 +195,9 @@ const Visualizer = () => {
             <Box className={styles.info_title}>
               <h2>Pronostico 1</h2>
               <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
+                {`Lorem Ipsum is simply dummy text of the printing and typesetting
                 industry. Lorem Ipsum has been the industry's standard dummy
-                text ever
+                text ever`}
               </p>
             </Box>
 
@@ -243,10 +246,10 @@ const Visualizer = () => {
             <Box className={styles.info_title}>
               <h2>Pronostico 2</h2>
               <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
+                {`Lorem Ipsum is simply dummy text of the printing and typesetting
                 industry. Lorem Ipsum has been the industry's standard dummy
                 text ever type specimen book. It has survived not only five
-                centuries
+                centuries`}
               </p>
             </Box>
             <FormControl

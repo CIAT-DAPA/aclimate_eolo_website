@@ -15,6 +15,7 @@ const TiffLayer = ({ anomalies }) => {
   const map = useMap();
   const prevAnomalies = useRef();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!anomalies || anomalies === prevAnomalies.current) {
       // Si no hay cambios en anomalies o ya se ejecutó una vez, no hacer nada
@@ -78,6 +79,7 @@ const TiffLayer = ({ anomalies }) => {
       });
   }, [anomalies]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (layers.length > 1) {
       const container = context.map;

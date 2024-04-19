@@ -10,9 +10,11 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Configuration from "@/app/config";
-import Map from "@/app/Components/Map";
 import MultiSelect from "@/app/Components/MultiSelect";
 import axios from "axios";
+import dynamic from "next/dynamic"
+
+const Map = dynamic(() => import("@/app/Components/Map"), { ssr:false })
 
 export default function Home() {
   const [selectedYearHc, setSelectedYearHc] = useState("");
@@ -101,6 +103,7 @@ export default function Home() {
     });
   }, []);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
 
     if (selectedYearHc == years[years.length - 1]) {
@@ -118,11 +121,11 @@ export default function Home() {
       <div className={styles.title_analogues_container}>
         <h1>Analogos</h1>
         <p>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
+          {`Lorem Ipsum is simply dummy text of the printing and typesetting
           industry. Lorem Ipsum has been the industry's standard dummy text ever
           since the 1500s, when an unknown printer took a galley of type and
           scrambled it to make a type specimen book. It has survived not only
-          five centuries
+          five centuries`}
         </p>
         <FormControl sx={{ m: 1, minWidth: 60, width: "30%" }} size="small">
           <InputLabel id="select_month">{"Mes"}</InputLabel>

@@ -18,7 +18,7 @@ const NORMAL_STORE = "normal"
 const ABOVE_STORE = "above"
 const HIGPR_STORE = "highest_probability"
 
-const API_URL_DEV = "http://127.0.0.1:5000/api/subtract_rasters"
+//const API_URL_DEV = "http://127.0.0.1:5000/api/subtract_rasters"
 
 const API_URL_PROD = "https://scalderon.pythonanywhere.com/api/subtract_rasters"
 
