@@ -12,7 +12,7 @@
 
 # next.js
 /eolo_webapp/.next/
-/out/
+/eolo_webapp/out/
 
 # production
 /eolo_webapp/build
