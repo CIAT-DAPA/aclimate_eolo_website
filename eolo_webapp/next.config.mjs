@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   basePath: "/aclimate_eolo_website",
-  assetPrefix: "/nextjs-page",
+  assetPrefix: "/aclimate_eolo_website",
   output: "export",
   reactStrictMode: true,
 };
