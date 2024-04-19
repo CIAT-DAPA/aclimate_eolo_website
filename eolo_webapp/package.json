@@ -1,6 +1,7 @@
 {
   "name": "eolo_webapp",
   "version": "0.1.0",
+  "homepage": "https://ciat-dapa.github.io/aclimate_eolo_website/",
   "private": true,
   "scripts": {
     "dev": "next dev",

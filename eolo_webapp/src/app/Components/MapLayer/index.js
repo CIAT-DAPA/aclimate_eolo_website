@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Configuration from "@/app/config";
 import "leaflet/dist/leaflet.css";
 import styles from "./map_layer.module.css";
-import Image from 'next/image'
 
 function MapLegend({ workspace, layer }) {
   const [photo, setPhoto] = useState();
@@ -26,7 +25,7 @@ function MapLegend({ workspace, layer }) {
           <div className={[styles.info, styles.legend].join(" ")}>
             <h6>{legend}</h6>
 
-            <Image src={photo} alt="map legend"></Image>
+            <img src={photo} alt="map legend"></img>
           </div>
         )}
       </div>
