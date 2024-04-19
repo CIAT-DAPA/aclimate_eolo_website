@@ -2,6 +2,7 @@
 
 # dependencies
 /eolo_webapp/node_modules
+/eolo_webapp/package-lock.json
 /.pnp
 .pnp.js
 .yarn/install-state.gz
