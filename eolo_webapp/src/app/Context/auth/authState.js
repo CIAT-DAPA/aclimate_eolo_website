@@ -6,29 +6,43 @@ import reducer from "./authReducer";
 const AuthProvider = ({ children }) => {
   const [initialState, setInitialState] = useState({
     user: {},
-    token: null,
     isAuth: false,
+    loading: true
   });
 
   useEffect(() => {
-    try {
-      const userI = JSON.parse(window.localStorage.getItem("user"));
-      const tokenI = JSON.parse(window.localStorage.getItem("token"));
-
-      if (tokenI !== null) {
-        setInitialState({
-          user: userI,
-          token: tokenI,
-          isAuth: true,
-        });
+    const getLocalStorage = async () => {
+      try {
+        const userI = await JSON.parse(window.localStorage.getItem("user"));
+        if (userI && userI.password !== undefined && userI.user !== undefined) {
+          setInitialState({
+            user: userI,
+            isAuth: true,
+            loading: false
+          });
+        }else{
+          setInitialState({
+            ...isAuth,
+            loading: false,
+          });
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
+    };
+
+    getLocalStorage()
+    return () => {
+      console.log('Componente desmontado');
+    };
   }, []);
 
   useEffect(() => {
-    if (initialState.token !== null) {
+    if (
+      initialState.user &&
+      initialState.user.password !== undefined &&
+      initialState.user.user !== undefined
+    ) {
       dispatch({
         type: authTypes.LOGIN,
         payload: initialState,

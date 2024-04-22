@@ -12,14 +12,19 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import Configuration from "@/app/config";
 import MultiSelect from "@/app/Components/MultiSelect";
 import axios from "axios";
-import dynamic from "next/dynamic"
+import dynamic from "next/dynamic";
+import useAuth from "../Hooks/useAuth";
+import Loading from "../Components/Loading";
+import LoadingOverlay from "../Components/LoadingOverlay";
 
-const Map = dynamic(() => import("@/app/Components/Map"), { ssr:false })
+const Map = dynamic(() => import("@/app/Components/Map"), { ssr: false });
 
 export default function Home() {
+  const { loading, auth } = useAuth();
   const [selectedYearHc, setSelectedYearHc] = useState("");
   const [selectedMonthC, setSelectedMonthC] = useState("");
   const [anomalies, setAnomalies] = useState(null);
+  const [currentLoading, setCurrentLoading] = useState(false);
 
   const [multiSelectData, setMultiSelectData] = useState([]);
 
@@ -61,10 +66,12 @@ export default function Home() {
     setStateFunction(event.target.value);
   };
 
-  
-
   const createAnomaly = async (e) => {
-    setAnomalies({url: Configuration.get_api_url(), month:selectedMonthC, years:multiSelectData})
+    setAnomalies({
+      url: Configuration.get_api_url(),
+      month: selectedMonthC,
+      years: multiSelectData,
+    });
   };
 
   async function getDatesFromGeoserver(workspace, layer) {
@@ -105,7 +112,6 @@ export default function Home() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-
     if (selectedYearHc == years[years.length - 1]) {
       const filteredMonths = months.slice(0, lastMonth);
       setMonths(filteredMonths);
@@ -118,59 +124,33 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      <div className={styles.title_analogues_container}>
-        <h1>Analogos</h1>
-        <p>
-          {`Lorem Ipsum is simply dummy text of the printing and typesetting
+      {loading || !auth ? (
+        <Loading />
+      ) : (
+        <>
+          <div className={styles.title_analogues_container}>
+            <h1>Analogos</h1>
+            <p>
+              {`Lorem Ipsum is simply dummy text of the printing and typesetting
           industry. Lorem Ipsum has been the industry's standard dummy text ever
           since the 1500s, when an unknown printer took a galley of type and
           scrambled it to make a type specimen book. It has survived not only
           five centuries`}
-        </p>
-        <FormControl sx={{ m: 1, minWidth: 60, width: "30%" }} size="small">
-          <InputLabel id="select_month">{"Mes"}</InputLabel>
-          <Select
-            labelId="select_month"
-            input={
-              <OutlinedInput
-                label={"Mes"}
-                value={selectedMonthC}
-                onChange={handleSelectChange(setSelectedMonthC)}
-              />
-            }
-          >
-            {monthsC.map((d, i) => (
-              <MenuItem key={i + 1} value={i + 1}>
-                {d}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </div>
-
-      <div className={styles.map_container}>
-        <div className={styles.historical_map}>
-          <div className={styles.info_container}>
-            <h2>Historicos Climaticos</h2>
-            <p>
-              Vestibulum varius maximus odio, vitae porttitor metus lobortis in.
-              Sed ut hendrerit tortor, non lobortis ex. Suspendisse sagittis
-              sollicitudin lorem, quis ornare eros tempor congue
             </p>
             <FormControl sx={{ m: 1, minWidth: 60, width: "30%" }} size="small">
-              <InputLabel id="select_year_hc">{"Año"}</InputLabel>
+              <InputLabel id="select_month">{"Mes"}</InputLabel>
               <Select
-                labelId="select_year_hc"
+                labelId="select_month"
                 input={
                   <OutlinedInput
-                    label={"Año"}
-                    value={selectedYearHc}
-                    onChange={handleSelectChange(setSelectedYearHc)}
+                    label={"Mes"}
+                    value={selectedMonthC}
+                    onChange={handleSelectChange(setSelectedMonthC)}
                   />
                 }
               >
-                {years.map((d) => (
-                  <MenuItem key={d} value={d}>
+                {monthsC.map((d, i) => (
+                  <MenuItem key={i + 1} value={i + 1}>
                     {d}
                   </MenuItem>
                 ))}
@@ -178,77 +158,114 @@ export default function Home() {
             </FormControl>
           </div>
 
-          <Map
-            className={styles.map}
-            zoom={7}
-            center={[14.5007343, -86.6719949]}
-            url={Configuration.get_geoserver_url()}
-            workspace={Configuration.get_historical_worspace()}
-            store={Configuration.get_prec_store()}
-            year={selectedYearHc}
-            month={selectedMonthC}
-          />
-        </div>
+          <div className={styles.map_container}>
+            <div className={styles.historical_map}>
+              <div className={styles.info_container}>
+                <h2>Historicos Climaticos</h2>
+                <p>
+                  Vestibulum varius maximus odio, vitae porttitor metus lobortis
+                  in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
+                  sagittis sollicitudin lorem, quis ornare eros tempor congue
+                </p>
+                <FormControl
+                  sx={{ m: 1, minWidth: 60, width: "30%" }}
+                  size="small"
+                >
+                  <InputLabel id="select_year_hc">{"Año"}</InputLabel>
+                  <Select
+                    labelId="select_year_hc"
+                    input={
+                      <OutlinedInput
+                        label={"Año"}
+                        value={selectedYearHc}
+                        onChange={handleSelectChange(setSelectedYearHc)}
+                      />
+                    }
+                  >
+                    {years.map((d) => (
+                      <MenuItem key={d} value={d}>
+                        {d}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
 
-        <div className={styles.historical_map}>
-          <div className={styles.info_container}>
-            <h2>Promedio de historicos climaticos</h2>
-            <p>
-              Vestibulum varius maximus odio, vitae porttitor metus lobortis in.
-              Sed ut hendrerit tortor, non lobortis ex. Suspendisse sagittis
-              sollicitudin lorem, quis ornare eros tempor congue
-            </p>
-          </div>
-
-          <Map
-            className={styles.map}
-            zoom={7}
-            center={[14.5007343, -86.6719949]}
-            url={Configuration.get_geoserver_url()}
-            workspace={Configuration.get_climatology_worspace()}
-            store={Configuration.get_prec_store()}
-            year={2000}
-            month={selectedMonthC}
-          />
-        </div>
-
-        <div className={styles.anomalies_map}>
-          <div className={styles.info_container}>
-            <h2>Anomalias</h2>
-            <p>
-              Vestibulum varius maximus odio, vitae porttitor metus lobortis in.
-              Sed ut hendrerit tortor, non lobortis ex. Suspendisse sagittis
-              sollicitudin lorem, quis ornare eros tempor congue
-            </p>
-
-            <div className={styles.anomalies_but_cont}>
-              <MultiSelect
-                arrayData={multYears}
-                label={"Años analogos"}
-                data={multiSelectData}
-                setData={setMultiSelectData}
+              <Map
+                className={styles.map}
+                zoom={7}
+                center={[14.5007343, -86.6719949]}
+                url={Configuration.get_geoserver_url()}
+                workspace={Configuration.get_historical_worspace()}
+                store={Configuration.get_prec_store()}
+                year={selectedYearHc}
+                month={selectedMonthC}
               />
-              <IconButton
-                aria-label="Calcular anomalia"
-                color="primary"
-                onClick={createAnomaly}
-              >
-                <SendIcon />
-              </IconButton>
+            </div>
+
+            <div className={styles.historical_map}>
+              <div className={styles.info_container}>
+                <h2>Promedio de historicos climaticos</h2>
+                <p>
+                  Vestibulum varius maximus odio, vitae porttitor metus lobortis
+                  in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
+                  sagittis sollicitudin lorem, quis ornare eros tempor congue
+                </p>
+              </div>
+
+              <Map
+                className={styles.map}
+                zoom={7}
+                center={[14.5007343, -86.6719949]}
+                url={Configuration.get_geoserver_url()}
+                workspace={Configuration.get_climatology_worspace()}
+                store={Configuration.get_prec_store()}
+                year={2000}
+                month={selectedMonthC}
+              />
+            </div>
+
+            <div className={styles.anomalies_map}>
+              <div className={styles.info_container}>
+                <h2>Anomalias</h2>
+                <p>
+                  Vestibulum varius maximus odio, vitae porttitor metus lobortis
+                  in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
+                  sagittis sollicitudin lorem, quis ornare eros tempor congue
+                </p>
+
+                <div className={styles.anomalies_but_cont}>
+                  <MultiSelect
+                    arrayData={multYears}
+                    label={"Años analogos"}
+                    data={multiSelectData}
+                    setData={setMultiSelectData}
+                  />
+                  <IconButton
+                    aria-label="Calcular anomalia"
+                    color="primary"
+                    onClick={createAnomaly}
+                  >
+                    <SendIcon />
+                  </IconButton>
+                </div>
+              </div>
+              <Map
+                className={styles.map}
+                zoom={7}
+                center={[14.5007343, -86.6719949]}
+                anomalies={anomalies}
+                isAnomalies={true}
+                setCurrentLoading={setCurrentLoading}
+              />
             </div>
           </div>
-          <Map
-            className={styles.map}
-            zoom={7}
-            center={[14.5007343, -86.6719949]}
-            anomalies={anomalies}
-            isAnomalies={true}
-          />
-        </div>
-      </div>
-      <div>
-        <Button>Cargar datos</Button>
-      </div>
+          <div>
+            <Button>Cargar datos</Button>
+          </div>
+        </>
+      )}
+      {currentLoading && <LoadingOverlay />}
     </main>
   );
 }

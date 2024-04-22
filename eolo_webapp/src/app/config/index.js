@@ -22,6 +22,8 @@ const HIGPR_STORE = "highest_probability"
 
 const API_URL_PROD = "https://calculate-anomalies.onrender.com/api/subtract_rasters"
 
+const ACLIMATE_API_URL = "https://webapi.aclimate.org/api/"
+
 
 class Configuration {
     get_geoserver_url() {
@@ -71,6 +73,10 @@ class Configuration {
     }
     get_hgp_store(){
         return HIGPR_STORE
+    }
+
+    get_aclimate_url(){
+        return ACLIMATE_API_URL
     }
 
 }

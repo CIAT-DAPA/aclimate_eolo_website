@@ -21,6 +21,7 @@ const Map = ({
   month,
   anomalies = null,
   isAnomalies = false,
+  setCurrentLoading = null
 }) => {
   const mapRef = useRef(null);
 
@@ -40,7 +41,7 @@ const Map = ({
       {isAnomalies ? (
         anomalies ? (
           <LayersControl.Overlay id={"epa"} name="epa">
-            <TiffLayer anomalies={anomalies} />
+            <TiffLayer anomalies={anomalies} setCurrentLoading={setCurrentLoading} />
           </LayersControl.Overlay>
         ) : (
           <></>

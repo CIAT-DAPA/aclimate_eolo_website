@@ -7,17 +7,16 @@ const reducer = (state, action) => {
     case authTypes.LOGIN:
 
       localStorage.setItem("user", JSON.stringify(payload.user));
-      localStorage.setItem("token", JSON.stringify(payload.token));
       return {
         ...state,
         isAuth: true,
         user: payload.user,
-        token: payload.token,
+        loading: false
       };
     case  (authTypes.UPDATE):
       
         const userI = {
-          email: payload.email,
+          user: payload.user,
           password: payload.password
         }
         localStorage.setItem("user", JSON.stringify(userI));
@@ -32,7 +31,7 @@ const reducer = (state, action) => {
         ...state,
         isAuth: false,
         user: null,
-        token: null,
+        loading: false
       };
     default:
       return state;

@@ -9,7 +9,7 @@ import AuthContext from "@/app/Context/auth/authContext";
 
 window.proj4 = proj4;
 
-const TiffLayer = ({ anomalies }) => {
+const TiffLayer = ({ anomalies, setCurrentLoading }) => {
   const [layers, setLayers] = useState([]);
   const geoTiffLayerRef = useRef();
   const context = useLeafletContext();
@@ -24,6 +24,7 @@ const TiffLayer = ({ anomalies }) => {
       // Si no hay cambios en anomalies o ya se ejecutó una vez, no hacer nada
       return;
     }
+    setCurrentLoading(true);
     const container = context.map;
     prevAnomalies.current = anomalies;
     const url = anomalies.url; // Reemplaza con la URL de tu archivo GeoTIFF
@@ -36,7 +37,7 @@ const TiffLayer = ({ anomalies }) => {
         month: anomalies.month,
         years: anomalies.years,
         user: user.user.user,
-        passw: user.user.password
+        passw: user.user.password,
       }),
     })
       .then((response) => response.arrayBuffer())
@@ -80,8 +81,10 @@ const TiffLayer = ({ anomalies }) => {
           geoTiffLayerRef.current = new GeoRasterLayer(options);
           setLayers([...layers, geoTiffLayerRef.current]);
           container.addLayer(geoTiffLayerRef.current);
+          setCurrentLoading(false);
         });
       });
+    
   }, [anomalies]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
