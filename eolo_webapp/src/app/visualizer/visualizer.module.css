@@ -4,6 +4,8 @@
   color: #5e6873;
   margin-bottom: 3%;
   padding: 2% 6% !important;
+  display: flex;
+  flex-direction: column;
 }
 
 .grid_container{
@@ -16,8 +18,12 @@
     height: 70%;
 }
 
+.grid_card{
+    min-height: 670px;
+}
+
 .container_info{
-    height: 30%;
+    height: 26%;
     display: flex;
     flex-direction: column;
     margin-bottom: 2%;

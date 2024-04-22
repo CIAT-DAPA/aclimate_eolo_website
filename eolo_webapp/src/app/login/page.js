@@ -1,5 +1,5 @@
 "use client";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -7,12 +7,16 @@ import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Alert from '@mui/material/Alert';
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import AuthContext from "../Context/auth/authContext";
 import authTypes from "../Context/auth/authTypes";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
+import Configuration from "@/app/config";
+import useAuth from "../Hooks/useAuth";
+import LoadingOverlay from "../Components/LoadingOverlay";
 
 function Copyright(props) {
   return (
@@ -37,32 +41,55 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignIn() {
-  const router = useRouter()
+  const { loading, auth } = useAuth();
+  const [error, setError] = useState(false);
+  const [currentLoading, setCurrentLoading] = useState(false);
+  const router = useRouter();
   const { dispatch } = useContext(AuthContext);
-  
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setCurrentLoading(true)
     const data = new FormData(event.currentTarget);
+    const user = data.get("user");
+    const passw = data.get("password");
+
+    const url = `${Configuration.get_aclimate_url()}Account/Login`;
+
+    const params = {
+      email: user,
+      password: passw,
+    };
+
+    // Convertir el objeto a formato JSON
+    const queryString = Object.keys(params)
+      .map((key) => encodeURIComponent(params[key]))
+      .join("/");
+    const fullUrl = url + "/" + queryString;
+
+    // Configurar las opciones de la solicitud
+    const requestOptions = {
+      method: "GET", // Método GET
+      headers: {
+        "Content-Type": "application/json", // Tipo de contenido (en este caso, JSON)
+      },
+    };
+
+    const response = await fetch(fullUrl, requestOptions);
+    setCurrentLoading(false)
     const payload = {
       user: {
-        user: data.get("user"),
-        password: data.get("password"),
-        
+        user: user,
+        password: passw,
       },
-      token: {
-        value : "adsasdasdsad"
-      }
     };
-    if (true) {
-
+    if (response.ok) {
+      setError(false)
       dispatch({ type: authTypes.LOGIN, payload });
-      router.push('/analogues')
-      
+      router.push("/analogues");
     } else {
-      // Handle errors
+      setError(true)
     }
-    
   };
 
   return (
@@ -109,6 +136,7 @@ export default function SignIn() {
               id="password"
               autoComplete="current-password"
             />
+            {error && <Alert severity="warning">{"Usuario o contraseña incorrecto"}</Alert>}
             <Button
               type="submit"
               fullWidth
@@ -120,6 +148,7 @@ export default function SignIn() {
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
+        {currentLoading && <LoadingOverlay />}
       </Container>
     </ThemeProvider>
   );

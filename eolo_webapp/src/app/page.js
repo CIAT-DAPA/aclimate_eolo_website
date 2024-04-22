@@ -62,13 +62,19 @@ const HomePage = () => {
           </Typography>
           <Grid container spacing={2} justifyContent="center">
             <Grid item>
-              <Avatar alt="Socio 1" src="/socio1.png" />
+              <Avatar alt="Socio 1">
+                <ThunderstormIcon />
+              </Avatar>
             </Grid>
             <Grid item>
-              <Avatar alt="Socio 2" src="/socio2.png" />
+              <Avatar alt="Socio 2">
+                <ThunderstormIcon />
+              </Avatar>
             </Grid>
             <Grid item>
-              <Avatar alt="Socio 3" src="/socio3.png" />
+              <Avatar alt="Socio 3">
+                <ThunderstormIcon />
+              </Avatar>
             </Grid>
           </Grid>
         </Grid>
@@ -78,13 +84,17 @@ const HomePage = () => {
       <Grid container spacing={4} justifyContent="center" className={""}>
         <Grid item xs={12} md={4}>
           <Card className={""}>
-            <CardHeader
-              avatar={
-                <Avatar>
-                  <ThunderstormIcon />
-                </Avatar>
-              }
-            ></CardHeader>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              width={"100%"}
+              p={2}
+            >
+              <Avatar className={styles.card_avatar}>
+                <ThunderstormIcon />
+              </Avatar>
+            </Box>
             <CardContent>
               <Typography variant="h5" component="h2">
                 Modulo de Analogos
@@ -99,13 +109,17 @@ const HomePage = () => {
         </Grid>
         <Grid item xs={12} md={4}>
           <Card className={""}>
-            <CardHeader
-              avatar={
-                <Avatar>
-                  <PreviewIcon />
-                </Avatar>
-              }
-            ></CardHeader>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              width={"100%"}
+              p={2}
+            >
+              <Avatar className={styles.card_avatar}>
+                <ThunderstormIcon />
+              </Avatar>
+            </Box>
             <CardContent>
               <Typography variant="h5" component="h2">
                 Modulo de Visualización
@@ -120,13 +134,17 @@ const HomePage = () => {
         </Grid>
         <Grid item xs={12} md={4}>
           <Card className={""}>
-            <CardHeader
-              avatar={
-                <Avatar>
-                  <SummarizeIcon />
-                </Avatar>
-              }
-            ></CardHeader>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              width={"100%"}
+              p={2}
+            >
+              <Avatar className={styles.card_avatar}>
+                <ThunderstormIcon />
+              </Avatar>
+            </Box>
             <CardContent>
               <Typography variant="h5" component="h2">
                 Modulo de reportes

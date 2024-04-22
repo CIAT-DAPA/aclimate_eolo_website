@@ -17,10 +17,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          <main className={styles.body}>
+          <main className={styles.princ_main}>
             <NavBar />
             {children}
-            <Footer />
+            <Footer className={styles.footer} />
           </main>
         </Providers>
       </body>

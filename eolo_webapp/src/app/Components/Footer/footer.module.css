@@ -8,3 +8,28 @@
     font-size: 22px;
     margin-top: 12%;
 }
+
+
+.toolbar{
+    justify-content: center;
+    background-color: #f9fbfd;
+    color: #5e6873;
+    font-size: 22px;
+    min-height: 200px;
+}
+
+.logoImage{
+    margin-right: 1%;
+    width: 30px;
+    height: auto;
+}
+
+.column_container{
+    display: flex;
+    justify-content: center;
+    gap: 2%;
+    font-size: 22px;
+    color: #5e6873;
+    align-items: center;
+    font-weight: bold;
+}

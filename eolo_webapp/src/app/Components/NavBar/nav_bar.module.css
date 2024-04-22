@@ -5,7 +5,7 @@
     color: #5e6873;
     width: 100%;
     box-shadow: 0px -1px 4px rgba(84, 94, 106, 0.5);
-    
+    height: 80px;
 }
 
 
@@ -15,6 +15,17 @@
     align-items: center;
     font-size: 22px;
     margin-right:8%;
+}
+
+.logo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20%;
+    font-weight: bold;
+    font-size: 26px;
+    text-decoration: none;
+    color: #5e6873;
 }
 
 .nav_menu{
