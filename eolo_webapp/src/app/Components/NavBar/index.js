@@ -28,19 +28,17 @@ const NavBar = () => {
     <nav className={styles.nav}>
       <div className={styles.nav_logo}>
         <Link className={styles.logo} href={"/"}>
-          <Avatar>
-              <CloudRoundedIcon />
-          </Avatar>
+          <Avatar src="/logo.png" alt="navbar logo" />
           Eolo
         </Link>
       </div>
       <div className={styles.nav_menu}>
         <ul className={styles.nav_menu_ul}>
-          {user.isAuth ? (
+          {true ? (
             <>
               <li>
                 <Link className={styles.link} href={"/analogues"}>
-                  Analogos
+                  Análogos
                 </Link>
               </li>
               <li>
@@ -72,7 +70,7 @@ const NavBar = () => {
           </div>
         ) : pathname !== "/login" ? (
           <div className={styles.action_container}>
-            <Button variant="contained" onClick={handleSubmitLogin}>
+            <Button variant="contained" onClick={handleSubmitLogin} style={{marginLeft: "4%", width: "40%"}}>
               Login
             </Button>
           </div>

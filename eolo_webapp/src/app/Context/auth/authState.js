@@ -7,34 +7,34 @@ const AuthProvider = ({ children }) => {
   const [initialState, setInitialState] = useState({
     user: {},
     isAuth: false,
-    loading: true
+    loading: true,
   });
 
   useEffect(() => {
     const getLocalStorage = async () => {
-      try {
-        const userI = await JSON.parse(window.localStorage.getItem("user"));
-        if (userI && userI.password !== undefined && userI.user !== undefined) {
-          setInitialState({
+      const userI = await JSON.parse(window.localStorage.getItem("user"));
+      if (userI && userI.password !== undefined && userI.user !== undefined) {
+        dispatch({
+          type: authTypes.UPDATE,
+          payload: {
             user: userI,
             isAuth: true,
-            loading: false
-          });
-        }else{
-          setInitialState({
-            ...isAuth,
             loading: false,
-          });
-        }
-      } catch (error) {
-        console.log(error);
+          },
+        });
+      } else {
+        dispatch({
+          type: authTypes.UPDATE,
+          payload: {
+            user: {},
+            isAuth: false,
+            loading: false,
+          },
+        });
       }
     };
 
-    getLocalStorage()
-    return () => {
-      console.log('Componente desmontado');
-    };
+    getLocalStorage();
   }, []);
 
   useEffect(() => {

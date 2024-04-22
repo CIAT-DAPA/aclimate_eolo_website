@@ -13,9 +13,7 @@ const Footer = () => {
       <Toolbar className={styles.toolbar}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={4} className={styles.column_container}>
-            <Avatar>
-              <CloudRoundedIcon />
-            </Avatar>
+          <Avatar src="/logo.png" alt="navbar logo" />
             <Typography variant="h5" color="inherit">
               Eolo
             </Typography>

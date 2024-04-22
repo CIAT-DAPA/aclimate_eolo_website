@@ -1,5 +1,7 @@
 "use client";
-import React from "react";
+import { useContext } from "react";
+import AuthContext from "@/app/Context/auth/authContext";
+import { useRouter } from "next/navigation";
 import {
   Button,
   Container,
@@ -8,15 +10,15 @@ import {
   Card,
   CardContent,
   Box,
-  Avatar,
-  CardHeader,
+  Avatar
 } from "@mui/material";
-import PreviewIcon from "@mui/icons-material/Preview";
 import ThunderstormIcon from "@mui/icons-material/Thunderstorm";
-import SummarizeIcon from "@mui/icons-material/Summarize";
 import styles from "./homepage.module.css";
 
 const HomePage = () => {
+  const { user } = useContext(AuthContext);
+  const router = useRouter();
+
   return (
     <Container maxWidth="xl" className={styles.container}>
       {/* Sección 1 */}
@@ -37,13 +39,16 @@ const HomePage = () => {
               }
             </Typography>
           </Box>
-          <Button
-            variant="contained"
-            color="primary"
-            className={styles.fseccion_button}
-          >
-            Empezar
-          </Button>
+          {user && user.isAuth && (
+            <Button
+              variant="contained"
+              color="primary"
+              className={styles.fseccion_button}
+              onClick={(e)=> router.push("/analogues")}
+            >
+              Empezar
+            </Button>
+          )}
         </Grid>
         <Grid item xs={12} md={6} className={styles.img_container}>
           <img
@@ -51,32 +56,6 @@ const HomePage = () => {
             alt="Homepage image"
             style={{ maxWidth: "80%", borderRadius: "6px" }}
           />
-        </Grid>
-      </Grid>
-
-      {/* Sección 2 */}
-      <Grid container justifyContent="center" className={styles.second_section}>
-        <Grid item xs={12} md={8}>
-          <Typography variant="h4" align="center" gutterBottom>
-            Nuestros socios
-          </Typography>
-          <Grid container spacing={2} justifyContent="center">
-            <Grid item>
-              <Avatar alt="Socio 1">
-                <ThunderstormIcon />
-              </Avatar>
-            </Grid>
-            <Grid item>
-              <Avatar alt="Socio 2">
-                <ThunderstormIcon />
-              </Avatar>
-            </Grid>
-            <Grid item>
-              <Avatar alt="Socio 3">
-                <ThunderstormIcon />
-              </Avatar>
-            </Grid>
-          </Grid>
         </Grid>
       </Grid>
 
@@ -97,7 +76,7 @@ const HomePage = () => {
             </Box>
             <CardContent>
               <Typography variant="h5" component="h2">
-                Modulo de Analogos
+                Modulo de Análogos
               </Typography>
               <Typography variant="body2" color="textSecondary" component="p">
                 {

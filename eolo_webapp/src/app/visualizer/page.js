@@ -73,11 +73,11 @@ const Visualizer = () => {
     { display: "NextGen", value: Configuration.get_nextgen_worspace() },
     { display: "AClimate", value: Configuration.get_aclimate_worspace() },
     {
-      display: "Analogos - CIAT",
+      display: "Análogos - CIAT",
       value: Configuration.get_analogues_worspace(),
     },
     {
-      display: "Analogos - CENAOS",
+      display: "Análogos - CENAOS",
       value: Configuration.get_cenaos_worspace(),
     },
   ]);

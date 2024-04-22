@@ -4,7 +4,7 @@ import styles from "./page.module.css";
 import Select from "@mui/material/Select";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
-import SendIcon from "@mui/icons-material/Send";
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -129,7 +129,7 @@ export default function Home() {
       ) : (
         <>
           <div className={styles.title_analogues_container}>
-            <h1>Analogos</h1>
+            <h1>Análogos</h1>
             <p>
               {`Lorem Ipsum is simply dummy text of the printing and typesetting
           industry. Lorem Ipsum has been the industry's standard dummy text ever
@@ -237,7 +237,7 @@ export default function Home() {
                 <div className={styles.anomalies_but_cont}>
                   <MultiSelect
                     arrayData={multYears}
-                    label={"Años analogos"}
+                    label={"Años análogos"}
                     data={multiSelectData}
                     setData={setMultiSelectData}
                   />
@@ -245,8 +245,10 @@ export default function Home() {
                     aria-label="Calcular anomalia"
                     color="primary"
                     onClick={createAnomaly}
+                    size={"large"}
+                    
                   >
-                    <SendIcon />
+                    <PlayCircleIcon  style={{height: "1.5em", width: "1.5em"}}/>
                   </IconButton>
                 </div>
               </div>
