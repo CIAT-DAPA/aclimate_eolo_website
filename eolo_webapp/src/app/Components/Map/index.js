@@ -54,7 +54,7 @@ const Map = ({
             url={url + workspace + "/wms"}
             format={"image/png"}
             transparent={true}
-            params={{ time: year + "-" + month }}
+            params={{ time: year + "-" + month}}
           />
           <MapLegend workspace={workspace} layer={store} />
         </>

@@ -35,7 +35,11 @@ const HomePage = () => {
             </Typography>
             <Typography variant="p">
               {
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sem nulla, dictum eget maximus vitae, interdum sed nibh. Sed nec imperdiet ipsum. Nunc rhoncus tincidunt arcu eget dictum. Nulla commodo, nulla eget pellentesque venenatis, lorem orci sagittis lectus, vitae maximus elit tellus eu tortor"
+                `¡Bienvenido a nuestra plataforma de revisión de pronósticos climáticos estacionales!
+
+                Mejora tus pronósticos con análisis basados en años análogos, compara diferentes pronósticos y crea reportes climáticos detallados en minutos. 
+                ¿Listo para llevar tus pronósticos al siguiente nivel? Únete a nosotros hoy mismo.
+                `
               }
             </Typography>
           </Box>
@@ -50,17 +54,10 @@ const HomePage = () => {
             </Button>
           )}
         </Grid>
-        <Grid item xs={12} md={6} className={styles.img_container}>
-          <img
-            src="https://d3h3bmeuj906e6.cloudfront.net/wp-content/uploads/2022/11/WhatsApp-Image-2022-11-17-at-9.48.34-AM.jpeg.webp"
-            alt="Homepage image"
-            style={{ maxWidth: "80%", borderRadius: "6px" }}
-          />
-        </Grid>
       </Grid>
 
       {/* Sección 3 */}
-      <Grid container spacing={4} justifyContent="center" className={""}>
+      <Grid container spacing={4} justifyContent="center" className={styles.last_part}>
         <Grid item xs={12} md={4}>
           <Card className={""}>
             <Box
@@ -74,13 +71,13 @@ const HomePage = () => {
                 <ThunderstormIcon />
               </Avatar>
             </Box>
-            <CardContent>
-              <Typography variant="h5" component="h2">
-                Modulo de Análogos
+            <CardContent className={styles.card_content_text}>
+              <Typography variant="h5" component="h2" alignSelf={"center"}>
+                Análogos
               </Typography>
-              <Typography variant="body2" color="textSecondary" component="p">
+              <Typography variant="body2" color="textSecondary" component="p" className={styles.card_text}>
                 {
-                  "Etiam sed eros vel orci feugiat aliquet nec in urna. Aenean eget rhoncus magna. Vestibulum ut aliquet nunc. Cras sagittis suscipit convallis"
+                  `Descubre el poder de la predicción a través del tiempo con nuestra función de análisis basado en años análogos. Explora patrones climáticos pasados y encuentra similitudes con el presente para anticipar el futuro con mayor precisión.¡Da un paso adelante en tu comprensión del clima con nuestra herramienta de análisis basado en años análogos!`
                 }
               </Typography>
             </CardContent>
@@ -99,13 +96,13 @@ const HomePage = () => {
                 <ThunderstormIcon />
               </Avatar>
             </Box>
-            <CardContent>
-              <Typography variant="h5" component="h2">
-                Modulo de Visualización
+            <CardContent className={styles.card_content_text}>
+              <Typography variant="h5" component="h2" alignSelf={"center"}>
+                  Análisis
               </Typography>
-              <Typography variant="body2" color="textSecondary" component="p">
+              <Typography variant="body2" color="textSecondary" component="p" className={styles.card_text}>
                 {
-                  "Etiam sed eros vel orci feugiat aliquet nec in urna. Aenean eget rhoncus magna. Vestibulum ut aliquet nunc. Cras sagittis suscipit convallis"
+                  `Compara, contrasta y toma decisiones informadas con nuestra función de análisis de pronósticos. Con nuestra herramienta, puedes visualizar fácilmente múltiples pronósticos estacionales lado a lado. Identifica tendencias, evalúa la consistencia entre diferentes modelos y mejora la confianza en tus decisiones climáticas. ¡Optimiza tu estrategia con nuestra herramienta de análisis de pronósticos!`
                 }
               </Typography>
             </CardContent>
@@ -124,13 +121,13 @@ const HomePage = () => {
                 <ThunderstormIcon />
               </Avatar>
             </Box>
-            <CardContent>
-              <Typography variant="h5" component="h2">
-                Modulo de reportes
+            <CardContent className={styles.card_content_text}>
+              <Typography variant="h5" component="h2" alignSelf={"center"}>
+                Reportes
               </Typography>
-              <Typography variant="body2" color="textSecondary" component="p">
+              <Typography variant="body2" color="textSecondary" component="p" className={styles.card_text}>
                 {
-                  "Etiam sed eros vel orci feugiat aliquet nec in urna. Aenean eget rhoncus magna. Vestibulum ut aliquet nunc. Cras sagittis suscipit convallis"
+                  `Transforma tus datos en historias impactantes con nuestra función de creación de reportes climáticos. Desde resúmenes ejecutivos hasta análisis detallados, nuestra herramienta te permite generar informes y fácilmente comprensibles en cuestión de minutos. Con gráficos, mapas informativos y pronósticos a largo plazo, podrás comunicar de manera efectiva los eventos climáticos más relevantes. ¡Impulsa tu comunicación con nuestra potente herramienta de creación de reportes climáticos!`
                 }
               </Typography>
             </CardContent>

@@ -42,8 +42,8 @@ const NavBar = () => {
                 </Link>
               </li>
               <li>
-                <Link className={styles.link} href={"/visualizer"}>
-                  Visualización
+                <Link className={styles.link} href={"/analysis"}>
+                  Análisis
                 </Link>
               </li>
               <li>
@@ -61,16 +61,14 @@ const NavBar = () => {
         {pathname !== "/login" && <div className={styles.vertical_line}></div>}
         {user.isAuth ? (
           <div className={styles.action_container}>
-            <IconButton aria-label="user" color="primary">
-              <PersonIcon />
-            </IconButton>
-            <Button variant="contained" onClick={handleSubmit}>
+
+            <Button variant="contained" onClick={handleSubmit} style={{  marginLeft: "5%",backgroundColor: "#e37b13", width: "40%"}}>
               Salir
             </Button>
           </div>
         ) : pathname !== "/login" ? (
           <div className={styles.action_container}>
-            <Button variant="contained" onClick={handleSubmitLogin} style={{marginLeft: "4%", width: "40%"}}>
+            <Button variant="contained" onClick={handleSubmitLogin} style={{marginLeft: "4%", width: "40%", backgroundColor: "#e37b13"}}>
               Login
             </Button>
           </div>

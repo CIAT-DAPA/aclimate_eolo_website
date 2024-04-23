@@ -1,14 +1,18 @@
 .container{
     min-height: 100vh;
-    margin-top: 1%;
     color: #5e6873;
     margin-bottom: 3%;
-    padding: 2% 6% !important;
+    padding: 2% 0 !important;
+    width: 100%;
 }
 
 .section_1_container{
     padding: 1.2%;
     margin-bottom: 10%;
+    background: linear-gradient(77deg, #000, hsla(0, 0%, 100%, .199)), url('/homepage.png');
+    background-size: cover;
+    background-position: center;
+    height: 400px;
 }
 
 
@@ -28,8 +32,32 @@
     display: flex;
     flex-direction: column;
     gap: 30px;
+    color: #ffffff;
+    justify-content: center;
+    padding: 6% 0 6% 7% !important;
+    align-items: center;
 }
 
 .second_section{
     padding: 1%;
+}
+
+
+.card_content_text{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.card_text{
+    height: 200px;
+    text-wrap: pretty;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.last_part{
+    padding: 0 6%;
 }
