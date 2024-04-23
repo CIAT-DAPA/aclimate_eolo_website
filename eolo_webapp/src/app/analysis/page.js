@@ -163,7 +163,7 @@ const Visualizer = () => {
                     height: "100%",
                     justifySelf: "center",
                     display: "flex",
-                    justifyContent: "space-around"
+                    justifyContent: "space-around",
                   }}
                   child={
                     <Box className={styles.container_info}>
@@ -237,9 +237,13 @@ const Visualizer = () => {
                           width: "70%",
                         }}
                         size="small"
-                        
                       >
-                        <InputLabel id="select_layer_hc" style={{ color: "#7b8b9d", fontWeight: "bold" }}>{"Seleccione la capa"}</InputLabel>
+                        <InputLabel
+                          id="select_layer_hc"
+                          style={{ color: "#7b8b9d", fontWeight: "bold" }}
+                        >
+                          {"Seleccione la capa"}
+                        </InputLabel>
                         <Select
                           labelId="select_layer_hc"
                           input={
@@ -282,10 +286,87 @@ const Visualizer = () => {
                     height: "100%",
                     justifySelf: "center",
                     display: "flex",
-                    justifyContent: "flex-end",
+                    justifyContent: "space-around",
                   }}
                   child={
-                    <Box className={styles.container_info} style={{marginRight: "4%"}}>
+                    <Box className={styles.first_part_inputs}>
+                      <FormControl
+                        sx={{
+                          m: 1,
+                          minWidth: 120,
+                          width: "70%",
+                        }}
+                        size="small"
+                      >
+                        <InputLabel
+                          id="select_layer_hc"
+                          style={{ color: "#7b8b9d", fontWeight: "bold" }}
+                        >
+                          {"Seleccione el año"}
+                        </InputLabel>
+                        <Select
+                          labelId="select_layer_hc"
+                          input={
+                            <OutlinedInput
+                              style={{ backgroundColor: "#e6eaed" }}
+                              label={"Seleccione el año"}
+                              value={selectedLayer}
+                              onChange={handleSelectChange(setSelectedLayer)}
+                            />
+                          }
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {layers.map((d) => (
+                            <MenuItem key={d.value} value={d.value}>
+                              {d.display}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <FormControl
+                        sx={{
+                          m: 1,
+                          minWidth: 120,
+                          width: "70%",
+                        }}
+                        size="small"
+                      >
+                        <InputLabel
+                          id="select_layer_hc"
+                          style={{ color: "#7b8b9d", fontWeight: "bold" }}
+                        >
+                          {"Seleccione el mes"}
+                        </InputLabel>
+                        <Select
+                          labelId="select_layer_hc"
+                          input={
+                            <OutlinedInput
+                              style={{ backgroundColor: "#e6eaed" }}
+                              label={"Seleccione el mes"}
+                              value={selectedLayer}
+                              onChange={handleSelectChange(setSelectedLayer)}
+                            />
+                          }
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {layers.map((d) => (
+                            <MenuItem key={d.value} value={d.value}>
+                              {d.display}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  }
+                  childComponent={
+                    <Box
+                      className={styles.container_info}
+                      style={{ marginRight: "4%" }}
+                    >
                       <Box className={styles.info_title}>
                         <h2>Pronóstico 2</h2>
                       </Box>
