@@ -9,9 +9,6 @@
 .section_1_container{
     padding: 1.2%;
     margin-bottom: 10%;
-    background: linear-gradient(77deg, #000, hsla(0, 0%, 100%, .199)), url('/homepage.png');
-    background-size: cover;
-    background-position: center;
     height: 400px;
 }
 

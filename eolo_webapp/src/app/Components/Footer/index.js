@@ -1,10 +1,10 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Grid, IconButton, Avatar } from "@mui/material/";
+import { Toolbar, Typography, Grid, IconButton, Avatar } from "@mui/material/";
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import CloudRoundedIcon from '@mui/icons-material/CloudRounded';
 import styles from "./footer.module.css"
+import { prefix } from '../basePath';
 
 
 const Footer = () => {
@@ -13,7 +13,7 @@ const Footer = () => {
       <Toolbar className={styles.toolbar}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={4} className={styles.column_container}>
-          <Avatar src="/logo.png" alt="navbar logo" />
+          <Avatar src={`${prefix}/logo.png`} alt="navbar logo" />
             <Typography variant="h5" color="inherit">
               Eolo
             </Typography>
