@@ -13,6 +13,7 @@ import dynamic from "next/dynamic";
 import useAuth from "../Hooks/useAuth";
 import Loading from "../Components/Loading";
 import LoadingOverlay from "../Components/LoadingOverlay";
+import FileInputModal from "../Components/Modal";
 
 const Map = dynamic(() => import("@/app/Components/Map"), { ssr: false });
 
@@ -22,6 +23,8 @@ export default function Home() {
   const [selectedMonthC, setSelectedMonthC] = useState("");
   const [anomalies, setAnomalies] = useState(null);
   const [currentLoading, setCurrentLoading] = useState(false);
+
+  const [modalOpen, setModalOpen] = useState(false);
 
   const [multiSelectData, setMultiSelectData] = useState([]);
 
@@ -57,6 +60,9 @@ export default function Home() {
     "Noviembre",
     "Diciembre",
   ]);
+
+  const handleOpen = () => setModalOpen(true);
+  const handleClose = () => setModalOpen(false);
 
   // Función general para manejar el cambio en cualquier select
   const handleSelectChange = (setStateFunction) => (event) => {
@@ -156,7 +162,8 @@ export default function Home() {
                 </Select>
               </FormControl>
 
-              <Button style={{ width: "16%", backgroundColor: "#e37b13", color: "#ffff", marginRight: "2%" }}>
+              <Button style={{ width: "16%", backgroundColor: "#e37b13", color: "#ffff", marginRight: "2%" }}
+              onClick={handleOpen}>
                 Cargar rasters
               </Button>
             </Box>
@@ -271,6 +278,7 @@ export default function Home() {
         </>
       )}
       {currentLoading && <LoadingOverlay />}
+      <FileInputModal open={modalOpen} handleOpen={handleOpen} handleClose={handleClose} />
     </main>
   );
 }

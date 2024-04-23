@@ -10,6 +10,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-geotiff";
 import TiffLayer from "./TiffLayer";
 import MapLegend from "../MapLayer";
+import Configuration from "@/app/config"
 
 const Map = ({
   center,
@@ -33,6 +34,9 @@ const Map = ({
     [12.924146, -83.087018],
   ];
 
+  const shapefile_workspace = "fc_cenaos_hn";
+  const shapefile_layer = "CA_Norte_Cabeceras";
+
   return (
     <MapContainer
       center={center}
@@ -44,6 +48,15 @@ const Map = ({
       minZoom={7}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+      <WMSTileLayer
+        key={shapefile_workspace + ":" + shapefile_layer}
+        layers={shapefile_workspace + ":" + shapefile_layer}
+        url={Configuration.get_geoserver_url() + shapefile_workspace + "/wms"}
+        format={"image/png"}
+        transparent={true}
+        zIndex={10000}
+      />
 
       {child && (
         <LayersControl.Overlay
@@ -86,6 +99,7 @@ const Map = ({
             transparent={true}
             params={{ time: year + "-" + month }}
           />
+
           <MapLegend workspace={workspace} layer={store} />
         </>
       ) : (
