@@ -49,6 +49,7 @@ const HomePage = () => {
               color="primary"
               className={styles.fseccion_button}
               onClick={(e)=> router.push("/analogues")}
+              style={{backgroundColor: "#e37b13", alignSelf: "self-start"}}
             >
               Empezar
             </Button>

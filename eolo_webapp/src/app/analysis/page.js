@@ -141,68 +141,6 @@ const Visualizer = () => {
         <Loading />
       ) : (
         <>
-          <Box height={"13%"} marginBottom={"4%"}>
-            <h1>Visualizador</h1>
-            <p>
-              {`Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry. Lorem Ipsum has been the industry's standard dummy text ever
-        since the 1500s, when an unknown printer took a galley of type and
-        scrambled it to make a type specimen book. It has survived not only
-        five centuries`}
-            </p>
-            <Box className={styles.first_part_inputs}>
-              <FormControl>
-                <FormLabel id="row-radio-buttons-group-label">
-                  Tipo de pronostico:
-                </FormLabel>
-                <RadioGroup
-                  row
-                  aria-labelledby="row-radio-buttons-group-label"
-                  name="row-radio-buttons-group"
-                  value={typeForecast}
-                  onChange={handleChange}
-                >
-                  <FormControlLabel
-                    value={"bi"}
-                    control={<Radio />}
-                    label="Bimestral"
-                    labelPlacement="end"
-                  />
-                  <FormControlLabel
-                    value={"tri"}
-                    control={<Radio />}
-                    label="Trimestral"
-                    labelPlacement="end"
-                  />
-                </RadioGroup>
-              </FormControl>
-              <FormControl
-                sx={{ m: 1, minWidth: 120, width: "20%", alignSelf: "end" }}
-                size="small"
-              >
-                <InputLabel id="select_layer_hc">{"Capa"}</InputLabel>
-                <Select
-                  labelId="select_layer_hc"
-                  input={
-                    <OutlinedInput
-                      label={"Capa"}
-                      value={selectedLayer}
-                      onChange={handleSelectChange(setSelectedLayer)}
-                    />
-                  }
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  {layers.map((d) => (
-                    <MenuItem key={d.value} value={d.value}>
-                      {d.display}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
-          </Box>
           <Grid
             container
             spacing={2}
@@ -210,45 +148,6 @@ const Visualizer = () => {
             className={styles.grid_container}
           >
             <Grid className={styles.column_container} xs={6}>
-              <Box className={styles.container_info}>
-                <Box className={styles.info_title}>
-                  <h2>Pronostico 1</h2>
-                  <p>
-                    {`Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy
-              text ever`}
-                  </p>
-                </Box>
-
-                <FormControl
-                  className={styles.info_inputs}
-                  sx={{ m: 1, minWidth: 120 }}
-                  size="small"
-                >
-                  <InputLabel id="select_forecast1_hc">
-                    {"Pronostico"}
-                  </InputLabel>
-                  <Select
-                    labelId="select_forecast1_hc"
-                    input={
-                      <OutlinedInput
-                        label={"Pronostico"}
-                        value={selectFirstForecast}
-                        onChange={handleSelectChange(setSelectFirstForecast)}
-                      />
-                    }
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    {workspaces.map((d) => (
-                      <MenuItem key={d.value} value={d.value}>
-                        {d.display}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
               <Box className={styles.container_map}>
                 <Map
                   className={""}
@@ -259,49 +158,115 @@ const Visualizer = () => {
                   store={selectedLayer}
                   year={2024}
                   month={5}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    justifySelf: "center",
+                    display: "flex",
+                    justifyContent: "space-around"
+                  }}
+                  child={
+                    <Box className={styles.container_info}>
+                      <Box className={styles.info_title}>
+                        <h2>Pronóstico 1</h2>
+                      </Box>
+
+                      <FormControl
+                        className={styles.info_inputs}
+                        sx={{ m: 1, minWidth: 120 }}
+                        size="small"
+                      >
+                        <InputLabel
+                          id="select_forecast1_hc"
+                          style={{ color: "#7b8b9d", fontWeight: "bold" }}
+                        >
+                          {"Seleccione el pronóstico"}
+                        </InputLabel>
+                        <Select
+                          labelId="select_forecast1_hc"
+                          input={
+                            <OutlinedInput
+                              style={{ backgroundColor: "#e6eaed" }}
+                              label={"Pronóstico"}
+                              value={selectFirstForecast}
+                              onChange={handleSelectChange(
+                                setSelectFirstForecast
+                              )}
+                            />
+                          }
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {workspaces.map((d) => (
+                            <MenuItem key={d.value} value={d.value}>
+                              {d.display}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  }
+                  childComponent={
+                    <Box className={styles.first_part_inputs}>
+                      <FormControl>
+                        <RadioGroup
+                          row
+                          name="row-radio-buttons-group"
+                          value={typeForecast}
+                          onChange={handleChange}
+                        >
+                          <FormControlLabel
+                            value={"bi"}
+                            control={<Radio />}
+                            label="Bimestral"
+                            labelPlacement="end"
+                          />
+                          <FormControlLabel
+                            value={"tri"}
+                            control={<Radio />}
+                            label="Trimestral"
+                            labelPlacement="end"
+                          />
+                        </RadioGroup>
+                      </FormControl>
+                      <FormControl
+                        sx={{
+                          m: 1,
+                          minWidth: 120,
+                          width: "70%",
+                        }}
+                        size="small"
+                        
+                      >
+                        <InputLabel id="select_layer_hc" style={{ color: "#7b8b9d", fontWeight: "bold" }}>{"Seleccione la capa"}</InputLabel>
+                        <Select
+                          labelId="select_layer_hc"
+                          input={
+                            <OutlinedInput
+                              style={{ backgroundColor: "#e6eaed" }}
+                              label={"Seleccione la capa"}
+                              value={selectedLayer}
+                              onChange={handleSelectChange(setSelectedLayer)}
+                            />
+                          }
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {layers.map((d) => (
+                            <MenuItem key={d.value} value={d.value}>
+                              {d.display}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  }
                 />
               </Box>
             </Grid>
-            <Grid className={styles.grid_card} xs={6}>
-              <Box className={styles.container_info}>
-                <Box className={styles.info_title}>
-                  <h2>Pronostico 2</h2>
-                  <p>
-                    {`Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy
-              text ever type specimen book. It has survived not only five
-              centuries`}
-                  </p>
-                </Box>
-                <FormControl
-                  className={styles.info_inputs}
-                  sx={{ m: 1, minWidth: 120 }}
-                  size="small"
-                >
-                  <InputLabel id="select_forecast2_hc">
-                    {"Pronostico"}
-                  </InputLabel>
-                  <Select
-                    labelId="select_forecast2_hc"
-                    input={
-                      <OutlinedInput
-                        label={"Pronostico"}
-                        value={selectSecondForecast}
-                        onChange={handleSelectChange(setSelectSecondForecast)}
-                      />
-                    }
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    {workspaces.map((d) => (
-                      <MenuItem key={d.value} value={d.value}>
-                        {d.display}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
+            <Grid className={styles.column_container} xs={6}>
               <Box className={styles.container_map}>
                 <Map
                   className={""}
@@ -312,84 +277,55 @@ const Visualizer = () => {
                   store={selectedLayer}
                   year={2024}
                   month={8}
-                />
-              </Box>
-            </Grid>
-            <Grid className={styles.grid_card} xs={6}>
-              <Box className={styles.container_info}>
-                <Box className={styles.info_title}>
-                  <h2>Historico climatico</h2>
-                  <p>
-                    Lorem Ipsum is simply dummy text of the printing and type
-                    scrambled it to make a type specimen book. It has survived
-                    not only five centuries
-                  </p>
-                </Box>
-                <Box className={styles.multiple_inputs}>
-                  <FormControl
-                    className={styles.info_inputs}
-                    sx={{ m: 1, minWidth: 120 }}
-                    size="small"
-                  >
-                    <InputLabel id="select_year_hc">{"Año"}</InputLabel>
-                    <Select
-                      labelId="select_year_hc"
-                      input={
-                        <OutlinedInput
-                          label={"Año"}
-                          value={selectYear}
-                          onChange={handleSelectChange(setSelectYear)}
-                        />
-                      }
-                    >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
-                      {years.map((d) => (
-                        <MenuItem key={d} value={d}>
-                          {d}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl
-                    className={styles.info_inputs}
-                    sx={{ m: 1, minWidth: 120 }}
-                    size="small"
-                  >
-                    <InputLabel id="select_month_hc">{"Mes"}</InputLabel>
-                    <Select
-                      labelId="select_month_hc"
-                      input={
-                        <OutlinedInput
-                          label={"Mes"}
-                          value={selectHc}
-                          onChange={handleSelectChange(setSelectHc)}
-                        />
-                      }
-                    >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
-                      {months.map((d, i) => (
-                        <MenuItem key={i + 1} value={i + 1}>
-                          {d}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Box>
-              </Box>
-              <Box className={styles.container_map}>
-                <Map
-                  className={""}
-                  zoom={7}
-                  center={[14.5007343, -86.6719949]}
-                  url={Configuration.get_geoserver_url()}
-                  workspace={Configuration.get_historical_worspace()}
-                  store={Configuration.get_prec_store()}
-                  year={selectYear}
-                  month={selectHc}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    justifySelf: "center",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                  }}
+                  child={
+                    <Box className={styles.container_info} style={{marginRight: "4%"}}>
+                      <Box className={styles.info_title}>
+                        <h2>Pronóstico 2</h2>
+                      </Box>
+
+                      <FormControl
+                        className={styles.info_inputs}
+                        sx={{ m: 1, minWidth: 120 }}
+                        size="small"
+                      >
+                        <InputLabel
+                          id="select_forecast2_hc"
+                          style={{ color: "#7b8b9d", fontWeight: "bold" }}
+                        >
+                          {"Seleccione el pronóstico"}
+                        </InputLabel>
+                        <Select
+                          labelId="select_forecast2_hc"
+                          input={
+                            <OutlinedInput
+                              style={{ backgroundColor: "#e6eaed" }}
+                              label={"Pronóstico"}
+                              value={selectSecondForecast}
+                              onChange={handleSelectChange(
+                                setSelectSecondForecast
+                              )}
+                            />
+                          }
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {workspaces.map((d) => (
+                            <MenuItem key={d.value} value={d.value}>
+                              {d.display}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  }
                 />
               </Box>
             </Grid>

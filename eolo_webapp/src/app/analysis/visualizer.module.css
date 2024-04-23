@@ -1,21 +1,24 @@
 .container {
-  min-height: 210vh;
-  margin-top: 2%;
-  color: #5e6873;
-  margin-bottom: 3%;
-  padding: 2% 6% !important;
-  display: flex;
-  flex-direction: column;
+    max-height: 100vh;
+    /* margin-top: 2%; */
+    color: #5e6873;
+    margin-bottom: 3%;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
 }
 
 .grid_container{
-    gap:  2% 0%;
+    height: 100%;
 }
 
 .container_map{
     display: flex;
     justify-content: center;
-    height: 70%;
+    height: 100%;
+    width: 100%;
 }
 
 .grid_card{
@@ -23,16 +26,23 @@
 }
 
 .container_info{
-    height: 26%;
+    height: 17%;
     display: flex;
     flex-direction: column;
     margin-bottom: 2%;
+    z-index: 1000;
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 21px;
+    width: 40%;
+    margin-top: 1%;
+    padding: 2%;
 }
 
 .info_title{
-    height: 70%;
     padding: 0% 1.5%;
     text-wrap: pretty;
+    color: #7b8b9d;
 }
 
 .info_title > h2{
@@ -40,8 +50,9 @@
 }
 
 .info_inputs{
-    height: 30%;
-    width: 30%;
+    width: 90%;
+    background-color: #e6eaed;
+    border-radius: 9px;
 }
 
 .multiple_inputs{
@@ -49,7 +60,18 @@
 }
 
 .first_part_inputs{
+    z-index: 1000;
     display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    width: 36%;
+    background-color: #fff;
+    height: 17%;
+    border-radius: 14px;
     margin-top: 1%;
+}
+
+.column_container{
+    padding: calc(var(--Grid-rowSpacing) / 2) 0;
 }

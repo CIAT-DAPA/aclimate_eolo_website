@@ -250,6 +250,7 @@ export default function Home() {
                     color="primary"
                     onClick={createAnomaly}
                     size={"large"}
+                    style={{color: "#e37b13"}}
                   >
                     <PlayCircleIcon
                       style={{ height: "1.5em", width: "1.5em" }}
