@@ -73,11 +73,11 @@ const Visualizer = () => {
     { display: "NextGen", value: Configuration.get_nextgen_worspace() },
     { display: "AClimate", value: Configuration.get_aclimate_worspace() },
     {
-      display: "Analogos - CIAT",
+      display: "Análogos - CIAT",
       value: Configuration.get_analogues_worspace(),
     },
     {
-      display: "Analogos - CENAOS",
+      display: "Análogos - CENAOS",
       value: Configuration.get_cenaos_worspace(),
     },
   ]);
@@ -212,7 +212,7 @@ const Visualizer = () => {
             <Grid className={styles.column_container} xs={6}>
               <Box className={styles.container_info}>
                 <Box className={styles.info_title}>
-                  <h2>Pronostico 1</h2>
+                  <h2>Pronóstico 1</h2>
                   <p>
                     {`Lorem Ipsum is simply dummy text of the printing and typesetting
               industry. Lorem Ipsum has been the industry's standard dummy
@@ -226,13 +226,13 @@ const Visualizer = () => {
                   size="small"
                 >
                   <InputLabel id="select_forecast1_hc">
-                    {"Pronostico"}
+                    {"Pronóstico"}
                   </InputLabel>
                   <Select
                     labelId="select_forecast1_hc"
                     input={
                       <OutlinedInput
-                        label={"Pronostico"}
+                        label={"Pronóstico"}
                         value={selectFirstForecast}
                         onChange={handleSelectChange(setSelectFirstForecast)}
                       />
@@ -265,7 +265,7 @@ const Visualizer = () => {
             <Grid className={styles.grid_card} xs={6}>
               <Box className={styles.container_info}>
                 <Box className={styles.info_title}>
-                  <h2>Pronostico 2</h2>
+                  <h2>Pronóstico 2</h2>
                   <p>
                     {`Lorem Ipsum is simply dummy text of the printing and typesetting
               industry. Lorem Ipsum has been the industry's standard dummy
@@ -279,13 +279,13 @@ const Visualizer = () => {
                   size="small"
                 >
                   <InputLabel id="select_forecast2_hc">
-                    {"Pronostico"}
+                    {"Pronóstico"}
                   </InputLabel>
                   <Select
                     labelId="select_forecast2_hc"
                     input={
                       <OutlinedInput
-                        label={"Pronostico"}
+                        label={"Pronóstico"}
                         value={selectSecondForecast}
                         onChange={handleSelectChange(setSelectSecondForecast)}
                       />
@@ -315,7 +315,7 @@ const Visualizer = () => {
                 />
               </Box>
             </Grid>
-            <Grid className={styles.grid_card} xs={6}>
+            {/* <Grid className={styles.grid_card} xs={6}>
               <Box className={styles.container_info}>
                 <Box className={styles.info_title}>
                   <h2>Historico climatico</h2>
@@ -392,7 +392,7 @@ const Visualizer = () => {
                   month={selectHc}
                 />
               </Box>
-            </Grid>
+            </Grid> */}
           </Grid>
         </>
       )}

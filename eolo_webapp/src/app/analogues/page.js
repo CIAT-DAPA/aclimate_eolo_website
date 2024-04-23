@@ -1,11 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import styles from "./page.module.css";
-import Select from "@mui/material/Select";
-import IconButton from "@mui/material/IconButton";
-import Button from "@mui/material/Button";
-import SendIcon from "@mui/icons-material/Send";
-import InputLabel from "@mui/material/InputLabel";
+import {Button, Box , IconButton, Select ,InputLabel } from "@mui/material";
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
@@ -129,43 +126,50 @@ export default function Home() {
       ) : (
         <>
           <div className={styles.title_analogues_container}>
-            <h1>Analogos</h1>
-            <p>
-              {`Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries`}
+            <h1>Análogos</h1>
+            <p className={styles.title_analogues_text}>
+              {`El módulo de análogos es una herramienta dentro de nuestra plataforma que te permite mejorar la precisión de tus pronósticos climáticos al identificar y analizar patrones climáticos pasados que son análogos o similares al presente.
+                Aquí tienes una explicación más detallada de cómo funciona:
+              `}
             </p>
-            <FormControl sx={{ m: 1, minWidth: 60, width: "30%" }} size="small">
-              <InputLabel id="select_month">{"Mes"}</InputLabel>
-              <Select
-                labelId="select_month"
-                input={
-                  <OutlinedInput
-                    label={"Mes"}
-                    value={selectedMonthC}
-                    onChange={handleSelectChange(setSelectedMonthC)}
-                  />
-                }
+            <Box className={styles.accion_container}>
+              <FormControl
+                sx={{ m: 1, minWidth: 60, width: "30%" }}
+                size="small"
               >
-                {monthsC.map((d, i) => (
-                  <MenuItem key={i + 1} value={i + 1}>
-                    {d}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                <InputLabel id="select_month">{"Mes"}</InputLabel>
+                <Select
+                  labelId="select_month"
+                  input={
+                    <OutlinedInput
+                      label={"Mes"}
+                      value={selectedMonthC}
+                      onChange={handleSelectChange(setSelectedMonthC)}
+                    />
+                  }
+                >
+                  {monthsC.map((d, i) => (
+                    <MenuItem key={i + 1} value={i + 1}>
+                      {d}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <Button style={{ width: "16%", backgroundColor: "#e37b13", color: "#ffff", marginRight: "2%" }}>
+                Cargar rasters
+              </Button>
+            </Box>
           </div>
 
           <div className={styles.map_container}>
             <div className={styles.historical_map}>
               <div className={styles.info_container}>
-                <h2>Historicos Climaticos</h2>
+                <h2>Consultar históricos climáticos</h2>
                 <p>
-                  Vestibulum varius maximus odio, vitae porttitor metus lobortis
-                  in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
-                  sagittis sollicitudin lorem, quis ornare eros tempor congue
+                  {
+                    "Nuestra herramienta analiza un conjunto de datos históricos climáticos para identificar años en los que las condiciones climáticas fueron similares a las actuales. Esto se logra mediante el análisis de precipitación."
+                  }
                 </p>
                 <FormControl
                   sx={{ m: 1, minWidth: 60, width: "30%" }}
@@ -176,7 +180,7 @@ export default function Home() {
                     labelId="select_year_hc"
                     input={
                       <OutlinedInput
-                        label={"Año"}
+                        label={"Seleccione el año"}
                         value={selectedYearHc}
                         onChange={handleSelectChange(setSelectedYearHc)}
                       />
@@ -205,11 +209,11 @@ export default function Home() {
 
             <div className={styles.historical_map}>
               <div className={styles.info_container}>
-                <h2>Promedio de historicos climaticos</h2>
+                <h2>Promedio de históricos climáticos</h2>
                 <p>
-                  Vestibulum varius maximus odio, vitae porttitor metus lobortis
-                  in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
-                  sagittis sollicitudin lorem, quis ornare eros tempor congue
+                  {
+                    "La herramienta calcula el promedio histórico de la precipitación durante esos años. Esto proporciona una referencia adicional para evaluar las condiciones actuales y realizar pronósticos más precisos."
+                  }
                 </p>
               </div>
 
@@ -227,7 +231,7 @@ export default function Home() {
 
             <div className={styles.anomalies_map}>
               <div className={styles.info_container}>
-                <h2>Anomalias</h2>
+                <h2>Pronóstico de anomalía</h2>
                 <p>
                   Vestibulum varius maximus odio, vitae porttitor metus lobortis
                   in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
@@ -237,7 +241,7 @@ export default function Home() {
                 <div className={styles.anomalies_but_cont}>
                   <MultiSelect
                     arrayData={multYears}
-                    label={"Años analogos"}
+                    label={"Años análogos"}
                     data={multiSelectData}
                     setData={setMultiSelectData}
                   />
@@ -245,8 +249,12 @@ export default function Home() {
                     aria-label="Calcular anomalia"
                     color="primary"
                     onClick={createAnomaly}
+                    size={"large"}
+                    style={{color: "#e37b13"}}
                   >
-                    <SendIcon />
+                    <PlayCircleIcon
+                      style={{ height: "1.5em", width: "1.5em" }}
+                    />
                   </IconButton>
                 </div>
               </div>
@@ -259,9 +267,6 @@ export default function Home() {
                 setCurrentLoading={setCurrentLoading}
               />
             </div>
-          </div>
-          <div>
-            <Button>Cargar datos</Button>
           </div>
         </>
       )}

@@ -1,0 +1,77 @@
+.container {
+    max-height: 100vh;
+    /* margin-top: 2%; */
+    color: #5e6873;
+    margin-bottom: 3%;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.grid_container{
+    height: 100%;
+}
+
+.container_map{
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.grid_card{
+    min-height: 670px;
+}
+
+.container_info{
+    height: 17%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2%;
+    z-index: 1000;
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 21px;
+    width: 40%;
+    margin-top: 1%;
+    padding: 2%;
+}
+
+.info_title{
+    padding: 0% 1.5%;
+    text-wrap: pretty;
+    color: #7b8b9d;
+}
+
+.info_title > h2{
+    margin-bottom: 2%;
+}
+
+.info_inputs{
+    width: 90%;
+    background-color: #e6eaed;
+    border-radius: 9px;
+}
+
+.multiple_inputs{
+    display: flex;
+}
+
+.first_part_inputs{
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 36%;
+    background-color: #fff;
+    height: 17%;
+    border-radius: 14px;
+    margin-top: 1%;
+}
+
+.column_container{
+    padding: calc(var(--Grid-rowSpacing) / 2) 0;
+}

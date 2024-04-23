@@ -28,24 +28,22 @@ const NavBar = () => {
     <nav className={styles.nav}>
       <div className={styles.nav_logo}>
         <Link className={styles.logo} href={"/"}>
-          <Avatar>
-              <CloudRoundedIcon />
-          </Avatar>
+          <Avatar src="/logo.png" alt="navbar logo" />
           Eolo
         </Link>
       </div>
       <div className={styles.nav_menu}>
         <ul className={styles.nav_menu_ul}>
-          {user.isAuth ? (
+          {true ? (
             <>
               <li>
                 <Link className={styles.link} href={"/analogues"}>
-                  Analogos
+                  Análogos
                 </Link>
               </li>
               <li>
-                <Link className={styles.link} href={"/visualizer"}>
-                  Visualización
+                <Link className={styles.link} href={"/analysis"}>
+                  Análisis
                 </Link>
               </li>
               <li>
@@ -63,16 +61,14 @@ const NavBar = () => {
         {pathname !== "/login" && <div className={styles.vertical_line}></div>}
         {user.isAuth ? (
           <div className={styles.action_container}>
-            <IconButton aria-label="user" color="primary">
-              <PersonIcon />
-            </IconButton>
-            <Button variant="contained" onClick={handleSubmit}>
+
+            <Button variant="contained" onClick={handleSubmit} style={{  marginLeft: "5%",backgroundColor: "#e37b13", width: "40%"}}>
               Salir
             </Button>
           </div>
         ) : pathname !== "/login" ? (
           <div className={styles.action_container}>
-            <Button variant="contained" onClick={handleSubmitLogin}>
+            <Button variant="contained" onClick={handleSubmitLogin} style={{marginLeft: "4%", width: "40%", backgroundColor: "#e37b13"}}>
               Login
             </Button>
           </div>

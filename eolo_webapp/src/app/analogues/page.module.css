@@ -36,6 +36,9 @@
 
 .info_container > p {
   margin-bottom: 1%;
+  text-wrap: balance;
+  padding: 0 2%;
+  margin-top: 1%;
 }
 
 
@@ -62,4 +65,15 @@
   background-color: #f9fbfd;
   color: #5e6873;
   padding: 20px;
+}
+
+.title_analogues_text{
+  padding: 1%;
+  text-wrap: pretty;
+}
+
+.accion_container{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }

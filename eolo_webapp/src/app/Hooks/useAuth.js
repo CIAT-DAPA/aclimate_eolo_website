@@ -13,10 +13,10 @@ const useAuth = () => {
   useEffect(() => {
     setAuth(user?.isAuth);
     if (
-      (pathname === "/visualizer" ||
+      (pathname === "/analysis" ||
         pathname === "/analogues" ||
         pathname === "/report") &&
-      !user.isAuth && !loading
+      !user.isAuth && !user.loading
     ) {
       router.push("/login");
     } else if (pathname === "/login" && user.isAuth && !loading) {

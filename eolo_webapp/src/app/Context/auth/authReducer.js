@@ -14,16 +14,12 @@ const reducer = (state, action) => {
         loading: false
       };
     case  (authTypes.UPDATE):
-      
-        const userI = {
-          user: payload.user,
-          password: payload.password
-        }
-        localStorage.setItem("user", JSON.stringify(userI));
+
         return {
-         ...state,
-         user: userI,
-       };
+          user: payload.user,
+          isAuth: payload.isAuth,
+          loading: false,
+        };
       
     case authTypes.LOGOUT:
       localStorage.clear();
