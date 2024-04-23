@@ -3,13 +3,11 @@ import { useContext } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import styles from "./nav_bar.module.css";
-import IconButton from "@mui/material/IconButton";
 import Avatar from "@mui/material/Avatar";
-import PersonIcon from "@mui/icons-material/Person";
 import Button from "@mui/material/Button";
 import AuthContext from "@/app/Context/auth/authContext";
-import CloudRoundedIcon from '@mui/icons-material/CloudRounded';
 import authTypes from "@/app/Context/auth/authTypes";
+import { prefix } from "../basePath";
 
 const NavBar = () => {
   const router = useRouter();
@@ -28,7 +26,7 @@ const NavBar = () => {
     <nav className={styles.nav}>
       <div className={styles.nav_logo}>
         <Link className={styles.logo} href={"/"}>
-          <Avatar src="/logo.png" alt="navbar logo" />
+          <Avatar src={`${prefix}/logo.png`} alt="navbar logo" />
           Eolo
         </Link>
       </div>
