@@ -18,11 +18,15 @@ const NORMAL_STORE = "normal"
 const ABOVE_STORE = "above"
 const HIGPR_STORE = "highest_probability"
 
-//const API_URL_DEV = "http://127.0.0.1:5000/api/subtract_rasters"
+const ANOMALIES_STYLE = "style"
 
-const API_URL_PROD = "https://calculate-anomalies.onrender.com/api/subtract_rasters"
+const API_URL_DEV = "http://127.0.0.1:5000/api/"
+
+const API_URL_PROD = "https://calculate-anomalies.onrender.com/api/"
 
 const ACLIMATE_API_URL = "https://webapi.aclimate.org/api/"
+
+const IGNORE_STORES = ["CA_Norte_Cabeceras", "style"]
 
 
 class Configuration {
@@ -59,7 +63,7 @@ class Configuration {
         return TMIN_STORE;
     }
     get_api_url(){
-        return API_URL_PROD
+        return API_URL_DEV
     }
 
     get_below_store(){
@@ -75,8 +79,16 @@ class Configuration {
         return HIGPR_STORE
     }
 
+    get_anomalies_style(){
+        return ANOMALIES_STYLE
+    }
+
     get_aclimate_url(){
         return ACLIMATE_API_URL
+    }
+
+    get_stores_to_ignore(){
+        return IGNORE_STORES
     }
 
 }

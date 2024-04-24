@@ -71,7 +71,7 @@ export default function Home() {
 
   const createAnomaly = async (e) => {
     setAnomalies({
-      url: Configuration.get_api_url(),
+      url: `${Configuration.get_api_url()}subtract_rasters`,
       month: selectedMonthC,
       years: multiSelectData,
     });
@@ -272,8 +272,8 @@ export default function Home() {
                 anomalies={anomalies}
                 isAnomalies={true}
                 setCurrentLoading={setCurrentLoading}
-                workspace={Configuration.get_nextgen_worspace()}
-                store={Configuration.get_above_store()}
+                workspace={Configuration.get_cenaos_worspace()}
+                store={Configuration.get_anomalies_style()}
               />
             </div>
           </div>
