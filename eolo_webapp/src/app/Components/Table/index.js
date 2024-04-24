@@ -18,9 +18,9 @@ const CsvTable = ({ titles, data }) => {
           <TableRow>
             {titles.map((col, index) => {
               if (index === 0) {
-                return <TableCell className={styles.columns}>{col}</TableCell>;
+                return <TableCell key={col} className={styles.columns}>{col}</TableCell>;
               } else {
-                return <TableCell className={styles.columns} align="right">{col}</TableCell>;
+                return <TableCell key={col} className={styles.columns} align="right">{col}</TableCell>;
               }
             })}
           </TableRow>
