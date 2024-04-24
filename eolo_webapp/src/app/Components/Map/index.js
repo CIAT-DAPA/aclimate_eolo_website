@@ -80,12 +80,14 @@ const Map = ({
 
       {isAnomalies ? (
         anomalies ? (
-          <LayersControl.Overlay id={"anomalies"} name="Capa de Anomalia">
-            <TiffLayer
-              anomalies={anomalies}
-              setCurrentLoading={setCurrentLoading}
-            />
-          </LayersControl.Overlay>
+          <><LayersControl.Overlay id={"anomalies"} name="Capa de Anomalia">
+          <TiffLayer
+            anomalies={anomalies}
+            setCurrentLoading={setCurrentLoading}
+          />
+        </LayersControl.Overlay>
+        <MapLegend workspace={workspace} layer={store} />
+        </>
         ) : (
           <></>
         )

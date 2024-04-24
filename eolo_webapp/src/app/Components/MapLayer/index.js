@@ -13,6 +13,8 @@ function MapLegend({ workspace, layer }) {
 
     if (layer === Configuration.get_prec_store()) {
       setLegend("Cantidad mm/mes");
+    } else if(layer === Configuration.get_above_store()){
+      setLegend("Anomalia %");
     } else {
       setLegend("Temperatura promedio mensual °C");
     }

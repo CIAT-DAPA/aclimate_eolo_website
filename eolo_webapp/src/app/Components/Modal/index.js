@@ -50,7 +50,6 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
 
   const [stores, setStores] = useState([]);
 
-  const handleTextInputChange = (event) => setTextInput(event.target.value);
   const handleSelectChange = (event) => setSelectStore(event.target.value);
 
   const getStores = async () => {
@@ -63,8 +62,10 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
 
     try {
       const response = await fetch(url, {
+        mode: "cors",
         headers: {
           Authorization: `Basic ${basicAuth}`,
+          "Access-Control-Allow-Origin": "*",
         },
       });
 
