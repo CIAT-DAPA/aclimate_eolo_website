@@ -4,6 +4,10 @@ import styles from "./report.module.css";
 import { useState } from "react";
 import useAuth from "../Hooks/useAuth";
 import Configuration from "../config";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import CsvTable from "../Components/Table";
+import ChartReport from "../Components/Chart";
 import {
   OutlinedInput,
   Box,
@@ -11,11 +15,21 @@ import {
   Select,
   InputLabel,
   MenuItem,
+  Typography,
+  Button,
 } from "@mui/material";
 
 const Report = () => {
   const { loading, auth } = useAuth();
   const [forecastSelected, setForecastSelected] = useState("");
+  const [data, setData] = useState([]);
+  const [titles, setTitles] = useState([
+    "Región",
+    "Encima de lo normal",
+    "Normal",
+    "Debajo de lo normal",
+    "Mayor probabilidad",
+  ]);
   const [workspaces, setWorkspaces] = useState([
     { display: "NextGen", value: Configuration.get_nextgen_worspace() },
     { display: "AClimate", value: Configuration.get_aclimate_worspace() },
@@ -42,7 +56,7 @@ const Report = () => {
           <Box>
             <FormControl
               className={styles.info_inputs}
-              sx={{ m: 1, minWidth: 120 }}
+              sx={{ m: 1, minWidth: 120, width: "20%" }}
               size="small"
             >
               <InputLabel
@@ -73,6 +87,96 @@ const Report = () => {
               </Select>
             </FormControl>
           </Box>
+          <Typography
+            variant="h3"
+            color="textSecondary"
+            className={styles.report_title}
+          >
+            Reporte
+          </Typography>
+          <Box className={styles.graph_container}>
+            <Box>
+              <Typography
+                variant="h5"
+                color="textSecondary"
+                className={styles.report_title}
+              >
+                Pronóstico estacional
+              </Typography>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                className={styles.card_text}
+              >
+                {`Vestibulum varius maximus odio, vitae porttitor metus lobortis
+                  in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
+                  sagittis sollicitudin lorem, quis ornare eros tempor congue`}
+              </Typography>
+            </Box>
+            <Box>
+              <ChartReport
+                data={[]}
+                type="bar"
+                width="500"
+              />
+            </Box>
+            <Box>
+              <ChartReport
+                data={[]}
+                type="bar"
+                width="500"
+              />
+            </Box>
+            <Box className={styles.csv_table_container}>
+              <Box className={styles.csv_table_info}>
+                <Typography
+                  variant="h5"
+                  color="textSecondary"
+                  className={styles.report_title}
+                >
+                  Datos por región
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  className={styles.card_text}
+                >
+                  {`Vestibulum varius maximus odio, vitae porttitor metus lobortis
+                  in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
+                  sagittis sollicitudin lorem, quis ornare eros tempor congue`}
+                </Typography>
+                <Button
+                  startIcon={<UploadFileIcon />}
+                  style={{
+                    width: "20%",
+                    backgroundColor: "#e37b13",
+                    color: "#ffff",
+                    height: "42px",
+                    borderRadius: "6px",
+                  }}
+                >
+                  Cargar CSV
+                </Button>
+              </Box>
+              <Box>
+                <CsvTable titles={titles} data={data} />
+              </Box>
+            </Box>
+          </Box>
+          <Button
+            startIcon={<PictureAsPdfIcon />}
+            style={{
+              width: "20%",
+              backgroundColor: "#e37b13",
+              color: "#ffff",
+              height: "42px",
+              borderRadius: "6px",
+              alignSelf: "flex-end",
+              marginTop: "2%",
+            }}
+          >
+            Descargar PDF
+          </Button>
         </>
       )}
     </main>

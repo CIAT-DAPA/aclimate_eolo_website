@@ -18,6 +18,10 @@ const TiffLayer = ({ anomalies, setCurrentLoading }) => {
 
   const { user } = useContext(AuthContext);
 
+  function normalizeValue(value, min, max) {
+    return (value - min) / (max - min);
+  }
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!anomalies || anomalies === prevAnomalies.current) {
@@ -45,15 +49,31 @@ const TiffLayer = ({ anomalies, setCurrentLoading }) => {
         parseGeoraster(arrayBuffer).then((georaster) => {
           const min = -140; //georaster.mins[0];
           const range = georaster.ranges[0];
-          const scale = chroma.scale("Spectral").domain([2, -2]);
+          const minValue = -3.0312385e-5;
+          const maxValue = 4.544329e-5;
+          const colorScale = chroma.scale([
+            "#a08250",
+            "#ffc64a",
+            "#fff896",
+            "#bcef9b",
+            "#89ea54",
+            "#87cc48",
+            "#70ae48",
+            "#5c9344",
+            "#626d4b",
+          ]);
           const options = {
             pixelValuesToColorFn: function (pixelValues) {
               const pixelValue = pixelValues[0];
               if (pixelValue === -9999) return null;
-              //let color = null;
-              const scaledPixelValue = (pixelValue - min) / 100;
-              const color = scale(scaledPixelValue).hex();
-              // if (pixelValue > 40 && pixelValue <= 60) {
+              // let color = null;
+              const scaledPixelValue = normalizeValue(
+                pixelValue,
+                minValue,
+                maxValue
+              );
+              const color = colorScale(scaledPixelValue).hex();
+              // if (pixelValue < 40 && pixelValue <= 60) {
               //   color = "#a08250";
               // } else if (pixelValue > 60 && pixelValue <= 80) {
               //   color = "#ffc64a";
@@ -84,7 +104,6 @@ const TiffLayer = ({ anomalies, setCurrentLoading }) => {
           setCurrentLoading(false);
         });
       });
-    
   }, [anomalies]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

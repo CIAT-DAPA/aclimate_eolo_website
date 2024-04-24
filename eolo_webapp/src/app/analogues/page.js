@@ -272,6 +272,8 @@ export default function Home() {
                 anomalies={anomalies}
                 isAnomalies={true}
                 setCurrentLoading={setCurrentLoading}
+                workspace={Configuration.get_nextgen_worspace()}
+                store={Configuration.get_above_store()}
               />
             </div>
           </div>
