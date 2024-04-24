@@ -1,5 +1,6 @@
 "use client";
 import Loading from "../Components/Loading";
+import dynamic from "next/dynamic";
 import styles from "./report.module.css";
 import { useState } from "react";
 import useAuth from "../Hooks/useAuth";
@@ -7,7 +8,6 @@ import Configuration from "../config";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import CsvTable from "../Components/Table";
-import ChartReport from "../Components/Chart";
 import {
   OutlinedInput,
   Box,
@@ -18,6 +18,8 @@ import {
   Typography,
   Button,
 } from "@mui/material";
+
+const ChartReport = dynamic(() => import("../Components/Chart"), { ssr: false });
 
 const Report = () => {
   const { loading, auth } = useAuth();
