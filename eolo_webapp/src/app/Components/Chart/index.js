@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Chart from "react-apexcharts";
 
 const ChartReport = ({ data, type }) => {
@@ -7,17 +7,51 @@ const ChartReport = ({ data, type }) => {
       chart: {
         id: "basic-bar",
       },
+      colors: ['#0d6efd', '#20c997', '#ffc107', '#FF4560'],
       xaxis: {
-        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999],
+        categories: [
+          "Encima de lo normal",
+          "Normal",
+          "Debajo de lo normal",
+          "Mayor probabilidad",
+        ],
       },
     },
     series: [
       {
-        name: "series-1",
-        data: [30, 40, 45, 50, 49, 60, 70, 91],
+        name: "Probabilidades",
+        data: [0, 0, 0, 0],
       },
     ],
   });
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setChartData({
+        options: {
+          chart: {
+            id: "basic-bar",
+          },
+          colors: ['#0d6efd', '#20c997', '#ffc107', '#FF4560'],
+          xaxis: {
+            categories: [
+              "Encima de lo normal",
+              "Normal",
+              "Debajo de lo normal",
+              "Mayor probabilidad",
+            ],
+          },
+        },
+        series: [
+          {
+            name: "Probabilidades",
+            data: data,
+          },
+        ],
+      });
+    }
+  }, [data]);
+
   return (
     <div className="mixed-chart">
       <Chart
