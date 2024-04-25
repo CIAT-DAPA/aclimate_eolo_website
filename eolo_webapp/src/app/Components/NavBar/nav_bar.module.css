@@ -1,7 +1,7 @@
 .nav {
     display: grid;
     grid-template-columns: 15% 65% 20%;
-    background-color: #004487;
+    background-color: #0d2137;
     color: #ffffff;
     width: 100%;
     box-shadow: 0px -1px 4px rgba(84, 94, 106, 0.5);

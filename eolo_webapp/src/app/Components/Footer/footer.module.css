@@ -1,5 +1,5 @@
 .footer{
-    background-color: #f9fbfd;
+    background-color: #0d2137;
     display: grid;
     grid-template-columns: 25% 25% 25% 25%;
     justify-content: center;
@@ -12,7 +12,7 @@
 
 .toolbar{
     justify-content: center;
-    background-color: #f9fbfd;
+    background-color: #0d2137;
     color: #5e6873;
     font-size: 22px;
     min-height: 200px;
@@ -29,7 +29,7 @@
     justify-content: center;
     gap: 2%;
     font-size: 22px;
-    color: #5e6873;
+    color: #ffff;
     align-items: center;
     font-weight: bold;
 }

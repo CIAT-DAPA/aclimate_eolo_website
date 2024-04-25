@@ -1,14 +1,14 @@
 .container{
+    background-color: #f1f1f1;
     min-height: 100vh;
     color: #5e6873;
-    margin-bottom: 3%;
-    padding: 2% 0 !important;
+    padding: 2% 0 2% 0 !important;
     width: 100%;
 }
 
 .section_1_container{
     padding: 1.2%;
-    margin-bottom: 10%;
+    margin-bottom: 3%;
     height: 400px;
 }
 
@@ -49,12 +49,31 @@
 .card_text{
     height: 200px;
     text-wrap: pretty;
-    text-align: center;
+    text-align: left;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
 }
 
 .last_part{
     padding: 0 6%;
+}
+
+.card_content{
+    padding-top: 30px;
+    border-radius: 12px;
+    padding-inline: 15px;
+    box-shadow: 2px 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.avatar_images{
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+
+.card_header{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
 }

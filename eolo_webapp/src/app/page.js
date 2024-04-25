@@ -29,9 +29,10 @@ const HomePage = () => {
         alignItems="center"
         className={styles.section_1_container}
         style={{
+          height: "100vh",
           background: `linear-gradient(77deg, #000, hsla(0, 0%, 100%, .199)), url('${prefix}/homepage.png')`,
           backgroundSize: "cover",
-          backgroundPosition: "center"
+          backgroundPosition: "center",
         }}
       >
         <Grid item xs={12} md={6} className={styles.f_seccion_left}>
@@ -69,22 +70,28 @@ const HomePage = () => {
         className={styles.last_part}
       >
         <Grid item xs={12} md={4}>
-          <Card className={""}>
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              width={"100%"}
-              p={2}
-            >
-              <Avatar className={styles.card_avatar}>
-                <ThunderstormIcon />
-              </Avatar>
-            </Box>
-            <CardContent className={styles.card_content_text}>
-              <Typography variant="h5" component="h2" alignSelf={"center"}>
+          <Card className={styles.card_content}>
+            <Box className={styles.card_header}>
+              <Box
+                display="flex"
+                justifyContent="flex-start"
+                alignItems="center"
+                width={"60px"}
+                height={"60px"}
+                p={2}
+              >
+                <Avatar className={styles.card_avatar}>
+                  <img
+                    className={styles.avatar_images}
+                    src={`${prefix}/analogues_image.png`}
+                  />
+                </Avatar>
+              </Box>
+              <Typography variant="h5" component="h2">
                 Análogos
               </Typography>
+            </Box>
+            <CardContent className={styles.card_content_text}>
               <Typography
                 variant="body2"
                 color="textSecondary"
@@ -97,22 +104,28 @@ const HomePage = () => {
           </Card>
         </Grid>
         <Grid item xs={12} md={4}>
-          <Card className={""}>
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              width={"100%"}
-              p={2}
-            >
-              <Avatar className={styles.card_avatar}>
-                <ThunderstormIcon />
-              </Avatar>
-            </Box>
-            <CardContent className={styles.card_content_text}>
-              <Typography variant="h5" component="h2" alignSelf={"center"}>
+          <Card className={styles.card_content}>
+            <Box className={styles.card_header}>
+              <Box
+                display="flex"
+                justifyContent="flex-start"
+                alignItems="center"
+                width={"60px"}
+                height={"60px"}
+                p={2}
+              >
+                <Avatar className={styles.card_avatar}>
+                  <img
+                    className={styles.avatar_images}
+                    src={`${prefix}/analysis_image.png`}
+                  />
+                </Avatar>
+              </Box>
+              <Typography variant="h5" component="h2">
                 Análisis
               </Typography>
+            </Box>
+            <CardContent className={styles.card_content_text}>
               <Typography
                 variant="body2"
                 color="textSecondary"
@@ -125,22 +138,28 @@ const HomePage = () => {
           </Card>
         </Grid>
         <Grid item xs={12} md={4}>
-          <Card className={""}>
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              width={"100%"}
-              p={2}
-            >
-              <Avatar className={styles.card_avatar}>
-                <ThunderstormIcon />
-              </Avatar>
-            </Box>
-            <CardContent className={styles.card_content_text}>
-              <Typography variant="h5" component="h2" alignSelf={"center"}>
+          <Card className={styles.card_content}>
+            <Box className={styles.card_header}>
+              <Box
+                display="flex"
+                justifyContent="flex-start"
+                alignItems="center"
+                width={"60px"}
+                height={"60px"}
+                p={2}
+              >
+                <Avatar className={styles.card_avatar} style={{borderRadius: "6px"}}>
+                  <img
+                    className={styles.avatar_images}
+                    src={`${prefix}/report_image.png`}
+                  />
+                </Avatar>
+              </Box>
+              <Typography variant="h5" component="h2">
                 Reportes
               </Typography>
+            </Box>
+            <CardContent className={styles.card_content_text}>
               <Typography
                 variant="body2"
                 color="textSecondary"

@@ -80,7 +80,10 @@ const CsvTable = ({ titles, subTitles, data, filter }) => {
                     {Object.keys(data[row]).map((season) =>
                       Object.keys(data[row][season]).map((store) => (
                         <TableCell key={season + store} align="center">
-                          {Math.round(data[row][season][store])}
+                          {data[row][season][store] == NaN ||
+                          data[row][season][store] == "NaN"
+                            ? "Sin datos"
+                            : Math.round(data[row][season][store])}
                         </TableCell>
                       ))
                     )}
@@ -100,7 +103,10 @@ const CsvTable = ({ titles, subTitles, data, filter }) => {
                     {Object.keys(data[row]).map((season) =>
                       Object.keys(data[row][season]).map((store) => (
                         <TableCell key={season + store} align="center">
-                          {Math.round(data[row][season][store])}
+                          {data[row][season][store] == NaN ||
+                          data[row][season][store] == "NaN"
+                            ? "Sin datos"
+                            : Math.round(data[row][season][store])}
                         </TableCell>
                       ))
                     )}
