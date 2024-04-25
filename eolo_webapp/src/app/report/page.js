@@ -98,7 +98,6 @@ const Report = () => {
     { display: "Below", value: Configuration.get_below_store() },
     { display: "Highest probability", value: Configuration.get_hgp_store() },
   ]);
-  
 
   const cleanFilter = () => {
     setCsv(null);
@@ -463,12 +462,12 @@ const Report = () => {
               {seasons &&
                 seasons.length > 0 &&
                 seasons.map((season) => (
-                  <Box className={styles.maps_container}>
+                  <Box key={`${season}_box`} className={styles.maps_container}>
                     <Typography
                       key={`${season}_title`}
                       variant="h6"
                       color="textSecondary"
-                      style={{alignSelf:"center"}}
+                      style={{ alignSelf: "center" }}
                       className={styles.report_title}
                     >{`Temporada ${season}`}</Typography>
                     {[0, 1].map((index) => (
@@ -476,6 +475,7 @@ const Report = () => {
                         {[0, 1].map((subIndex) => (
                           <Box key={subIndex} className={styles.map_container}>
                             <Map
+                              key={`${subIndex}_map`}
                               className={styles.map}
                               zoom={7}
                               center={[14.5007343, -86.6719949]}
@@ -486,6 +486,7 @@ const Report = () => {
                               month={monthM}
                             />
                             <Typography
+                              key={`${subIndex}_title`}
                               variant="h5"
                               color="textSecondary"
                               className={styles.map_title}
