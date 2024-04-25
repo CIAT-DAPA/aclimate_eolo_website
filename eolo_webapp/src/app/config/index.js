@@ -18,6 +18,8 @@ const NORMAL_STORE = "normal"
 const ABOVE_STORE = "above"
 const HIGPR_STORE = "highest_probability"
 
+const DOMINANT_STORE = "highest_probability"
+
 const ANOMALIES_STYLE = "style"
 
 const API_URL_DEV = "http://127.0.0.1:5000/api/"
@@ -79,6 +81,10 @@ class Configuration {
     }
     get_hgp_store(){
         return HIGPR_STORE
+    }
+
+    get_dominant_store(){
+        return DOMINANT_STORE
     }
 
     get_anomalies_style(){
