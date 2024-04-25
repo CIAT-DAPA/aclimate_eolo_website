@@ -82,7 +82,7 @@
   position: absolute;
   background-color: #ffffffd9;
   z-index: 999;
-  bottom: 0px;
+  top: 30px;
   height: 35px;
   width: 170px;
   text-align: center;
