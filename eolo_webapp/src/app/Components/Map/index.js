@@ -35,8 +35,8 @@ const Map = ({
     [12.924146, -83.087018],
   ];
 
-  const shapefile_workspace = "fc_cenaos_hn";
-  const shapefile_layer = "Limite_Departamental_de_Honduras";
+  const shapefile_workspace = Configuration.get_cenaos_worspace();
+  const shapefile_layer = Configuration.get_shapefile_layer_hn();
 
   return (
     <MapContainer

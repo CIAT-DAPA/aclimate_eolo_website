@@ -26,7 +26,9 @@ const API_URL_PROD = "https://calculate-anomalies.onrender.com/api/"
 
 const ACLIMATE_API_URL = "https://webapi.aclimate.org/api/"
 
-const IGNORE_STORES = ["CA_Norte_Cabeceras", "style"]
+const IGNORE_STORES = ["CA_Norte_Cabeceras", "style", "Limite_Departamental_de_Honduras"]
+
+const SHAPEFILE_LAYER = "Limite_Departamental_de_Honduras"
 
 
 class Configuration {
@@ -89,6 +91,10 @@ class Configuration {
 
     get_stores_to_ignore(){
         return IGNORE_STORES
+    }
+
+    get_shapefile_layer_hn(){
+        return SHAPEFILE_LAYER
     }
 
 }
