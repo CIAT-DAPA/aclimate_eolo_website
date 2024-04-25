@@ -6,40 +6,108 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import styles from "./table.module.css"
+import styles from "./table.module.css";
 
-
-const CsvTable = ({ titles, data }) => {
-
+const CsvTable = ({ titles, subTitles, data, filter }) => {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
-          <TableRow>
+          <TableRow className={styles.title_row}>
             {titles.map((col, index) => {
               if (index === 0) {
-                return <TableCell key={col} className={styles.columns}>{col}</TableCell>;
+                return (
+                  <TableCell
+                    variant="head"
+                    key={col}
+                    className={styles.columns}
+                    colSpan={2}
+                  >
+                    {col}
+                  </TableCell>
+                );
               } else {
-                return <TableCell key={col} className={styles.columns} align="right">{col}</TableCell>;
+                return (
+                  <TableCell
+                    key={col}
+                    className={styles.columns}
+                    align="right"
+                    colSpan={4}
+                    variant="head"
+                  >
+                    {col}
+                  </TableCell>
+                );
               }
             })}
           </TableRow>
+          {subTitles && (
+            <TableRow>
+              <TableCell className={styles.subcolumn} colSpan={2}>
+                {""}
+              </TableCell>
+              {subTitles.map((col) => (
+                <TableCell key={col} className={styles.subcolumn}>
+                  {col}
+                </TableCell>
+              ))}
+              {subTitles.map((col) => (
+                <TableCell key={col} className={styles.subcolumn}>
+                  {col}
+                </TableCell>
+              ))}
+            </TableRow>
+          )}
         </TableHead>
         <TableBody>
-          {data.map((row) => (
-            <TableRow
-              key={row.name}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.above}</TableCell>
-              <TableCell align="right">{row.normal}</TableCell>
-              <TableCell align="right">{row.below}</TableCell>
-              <TableCell align="right">{row.htp}</TableCell>
-            </TableRow>
-          ))}
+          {data &&
+            Object.keys(data).length > 0 &&
+            Object.keys(data).map((row) => (
+              <TableRow
+                key={row}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                {filter && filter.length > 0 && filter.includes(row) ? (
+                  <>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      colSpan={2}
+                      className={styles.first_col}
+                    >
+                      {row}
+                    </TableCell>
+                    {Object.keys(data[row]).map((season) =>
+                      Object.keys(data[row][season]).map((store) => (
+                        <TableCell key={season + store} align="center">
+                          {Math.round(data[row][season][store])}
+                        </TableCell>
+                      ))
+                    )}
+                  </>
+                ) : filter && filter.length > 0 && !filter.includes(row) ? (
+                  <></>
+                ) : (
+                  <>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      colSpan={2}
+                      className={styles.first_col}
+                    >
+                      {row}
+                    </TableCell>
+                    {Object.keys(data[row]).map((season) =>
+                      Object.keys(data[row][season]).map((store) => (
+                        <TableCell key={season + store} align="center">
+                          {Math.round(data[row][season][store])}
+                        </TableCell>
+                      ))
+                    )}
+                  </>
+                )}
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </TableContainer>

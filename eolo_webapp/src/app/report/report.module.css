@@ -1,6 +1,6 @@
 .main {
-    min-height: 210vh;
-    padding: 2% 6%;
+    min-height: 100%;
+    padding: 2% 4%;
     color: #5e6873;
     margin-bottom: 5%;
     display: flex;
@@ -8,6 +8,9 @@
     gap: 20px;
   }
 
+  .container{
+    padding: 2% 4%
+  }
 
 .report_title{
   font-weight: bold;
@@ -48,4 +51,15 @@
   display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.buttons_container{
+  display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 2%;
+}
+
+.file_container{
+  width: 25%;
 }

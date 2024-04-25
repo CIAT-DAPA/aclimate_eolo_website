@@ -1,4 +1,21 @@
 .columns{
     font-size: 18px;
     font-weight: bold;
+    text-align: center;
+    color: #ffff;
+}
+
+
+.subcolumn{
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.title_row{
+    background-color: #004487;
+    color: #ffff;
+}
+
+.first_col{
+    font-weight: bold;
 }
