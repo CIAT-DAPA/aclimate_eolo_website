@@ -7,6 +7,7 @@ import useAuth from "../Hooks/useAuth";
 import Configuration from "../config";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import DeleteIcon from "@mui/icons-material/Delete";
 import CsvTable from "../Components/Table";
 import {
   OutlinedInput,
@@ -20,6 +21,7 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
+  IconButton,
 } from "@mui/material";
 import LoadingOverlay from "../Components/LoadingOverlay";
 import AuthContext from "@/app/Context/auth/authContext";
@@ -38,8 +40,13 @@ const Report = () => {
   const [currentLoading, setCurrentLoading] = useState(false);
   const [seasons, setSeasons] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [csv, setCsv] = useState(null);
   const [titles, setTitles] = useState([
     "Región",
+    "Temporada 1",
+    "Temporada 2",
+  ]);
+  const [subTitles, setSubTitles] = useState([
     "Encima de lo normal",
     "Normal",
     "Debajo de lo normal",
@@ -77,8 +84,27 @@ const Report = () => {
     Configuration.get_hgp_store(),
   ]);
 
+  const cleanFilter = () => {
+    setCsv(null);
+    setSelectedFile(null);
+  };
+
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
+    const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+    const reader = new FileReader(); // Crear un objeto FileReader
+
+    reader.onload = function (e) {
+      const content = e.target.result;
+      const rows = content.split("\n");
+
+      const splited = rows[0].split(",")
+
+      const column = splited.map(elemento => elemento.trim());
+      setCsv(column.slice(1));
+    };
+
+    reader.readAsText(file);
   };
 
   const handleSelectChange = (setStateFunction) => (event) => {
@@ -145,7 +171,6 @@ const Report = () => {
   };
 
   const getAverage = async () => {
-    setCurrentLoading(true);
     const url = `${Configuration.get_api_url()}global_average`;
     const dates = calculateDates();
 
@@ -172,7 +197,7 @@ const Report = () => {
             }
 
             const data = await response.json();
-            return { layer: element, value: Math.ceil(data.body) };
+            return { layer: element, value: Math.round(data.body) };
           });
 
           return await Promise.all(promises);
@@ -180,11 +205,8 @@ const Report = () => {
       );
 
       setAverageData(layers);
-      setCurrentLoading(false);
-      notify("El reporte se genero con exíto", "success");
     } catch (error) {
       notify(`Error al generar el reporte ${error}`, "error");
-      setCurrentLoading(false);
     }
   };
 
@@ -210,27 +232,66 @@ const Report = () => {
         const month = date.getMonth();
         const previousMonth = month === 0 ? 11 : month - 1;
         const nextMonth = month === 11 ? 0 : month + 1;
-
-        return `${monthNames[previousMonth]}-${monthNames[month]}-${monthNames[nextMonth]}`;
+        const season = `${monthNames[previousMonth]}-${monthNames[month]}-${monthNames[nextMonth]}`;
+        return season;
       });
     } else if (typeForecast === "bi") {
       seasonCalc = dates.map((date) => {
         const month = date.getMonth();
-        return `${monthNames[month]}-${monthNames[(month + 1) % 12]}`;
+        const season = `${monthNames[month]}-${monthNames[(month + 1) % 12]}`;
+        return season;
       });
     }
+    const calcTitles = [titles[0]];
+    seasonCalc.forEach((title) => calcTitles.push(`Temporada ${title}`));
+    setTitles(calcTitles);
     setSeasons(seasonCalc);
   };
 
-  const getRegionData = () => {
-    console.log("region")
-  }
+  const getRegionData = async () => {
+    const url = `${Configuration.get_api_url()}data_region`;
+    const dates = calculateDates().map((date) => [
+      date.getFullYear(),
+      date.getMonth() + 1,
+    ]);
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          workspace: forecastSelected,
+          stores: average,
+          shp_workspace:
+            "administrative" /*Configuration.get_cenaos_worspace()*/,
+          shp_store: "et_adm1" /*"Limite_Departamental_de_Honduras"*/,
+          dates: dates,
+          user: user.user.user,
+          passw: user.user.password,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const body = await JSON.parse(data.body);
+      setData(body);
+      setCurrentLoading(false);
+      notify("El reporte se genero con exíto", "success");
+    } catch (error) {
+      notify(`Error al generar el reporte ${error}`, "error");
+    }
+  };
 
   useEffect(() => {
     if (typeForecast !== "" && forecastSelected !== "") {
+      setCurrentLoading(true);
       calcSeason();
       getAverage();
-      getRegionData()
+      getRegionData();
     }
   }, [typeForecast, forecastSelected]);
 
@@ -387,39 +448,57 @@ const Report = () => {
                   in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
                   sagittis sollicitudin lorem, quis ornare eros tempor congue`}
                 </Typography>
-                <Box>
-                  <input
-                    type="file"
-                    id="file-input"
-                    style={{ display: "none" }}
-                    onChange={handleFileChange}
-                    accept=".csv"
-                  />
-                  <label htmlFor="file-input">
-                    <Button
-                      variant="contained"
-                      component="span"
-                      startIcon={<UploadFileIcon />}
-                      style={{
-                        width: "20%",
-                        backgroundColor: "#e37b13",
-                        color: "#ffff",
-                        height: "42px",
-                        borderRadius: "6px",
-                      }}
-                    >
-                      Cargar CSV
-                    </Button>
-                  </label>
-                  {selectedFile && (
-                    <Typography variant="body2">
-                      Archivo seleccionado: {selectedFile.name}
-                    </Typography>
-                  )}
+                <Box className={styles.buttons_container}>
+                  <Box className={styles.file_container}>
+                    <input
+                      type="file"
+                      id="file-input"
+                      style={{ display: "none" }}
+                      onChange={handleFileChange}
+                      accept=".csv"
+                    />
+                    <label htmlFor="file-input">
+                      <Button
+                        variant="contained"
+                        component="span"
+                        startIcon={<UploadFileIcon />}
+                        style={{
+                          width: "20%",
+                          backgroundColor: "#e37b13",
+                          color: "#ffff",
+                          height: "42px",
+                          borderRadius: "6px",
+                        }}
+                      >
+                        Cargar CSV
+                      </Button>
+                    </label>
+                    {selectedFile && (
+                      <Typography variant="body2">
+                        Archivo seleccionado: {selectedFile.name}
+                      </Typography>
+                    )}
+                  </Box>
+                  <Box>
+                    {selectedFile && (
+                      <IconButton
+                        aria-label="delete"
+                        size="large"
+                        onClick={cleanFilter}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    )}
+                  </Box>
                 </Box>
               </Box>
               <Box>
-                <CsvTable titles={titles} data={data} />
+                <CsvTable
+                  titles={titles}
+                  data={data}
+                  subTitles={subTitles}
+                  filter={csv}
+                />
               </Box>
             </Box>
           </Box>
