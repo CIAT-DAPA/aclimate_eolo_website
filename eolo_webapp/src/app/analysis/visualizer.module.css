@@ -12,6 +12,7 @@
 
 .grid_container{
     height: 100%;
+    margin: 0;
 }
 
 .container_map{
@@ -42,7 +43,7 @@
 .info_title{
     padding: 0% 1.5%;
     text-wrap: pretty;
-    color: #7b8b9d;
+    color: #0d2137;
 }
 
 .info_title > h2{
@@ -73,5 +74,5 @@
 }
 
 .column_container{
-    padding: calc(var(--Grid-rowSpacing) / 2) 0;
+    padding: 0;
 }

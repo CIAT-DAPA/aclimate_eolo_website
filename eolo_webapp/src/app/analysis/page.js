@@ -329,7 +329,7 @@ const Visualizer = () => {
                   child={
                     <Box className={styles.container_info}>
                       <Box className={styles.info_title}>
-                        <h2>Pronóstico 1</h2>
+                        <h3>Pronóstico 1</h3>
                       </Box>
 
                       <FormControl
@@ -339,7 +339,7 @@ const Visualizer = () => {
                       >
                         <InputLabel
                           id="select_forecast1_hc"
-                          style={{ color: "#7b8b9d", fontWeight: "bold" }}
+                          style={{ color: "#7b8b9d" }}
                         >
                           {"Seleccione el pronóstico"}
                         </InputLabel>
@@ -401,7 +401,7 @@ const Visualizer = () => {
                       >
                         <InputLabel
                           id="select_layer_hc"
-                          style={{ color: "#7b8b9d", fontWeight: "bold" }}
+                          style={{ color: "#7b8b9d" }}
                         >
                           {"Seleccione la capa"}
                         </InputLabel>
@@ -461,7 +461,7 @@ const Visualizer = () => {
                       >
                         <InputLabel
                           id="select_layer_hc"
-                          style={{ color: "#7b8b9d", fontWeight: "bold" }}
+                          style={{ color: "#7b8b9d"}}
                         >
                           {"Seleccione el año"}
                         </InputLabel>
@@ -496,7 +496,7 @@ const Visualizer = () => {
                       >
                         <InputLabel
                           id="select_layer_hc"
-                          style={{ color: "#7b8b9d", fontWeight: "bold" }}
+                          style={{ color: "#7b8b9d" }}
                         >
                           {"Seleccione el mes"}
                         </InputLabel>
@@ -529,7 +529,7 @@ const Visualizer = () => {
                       style={{ marginRight: "4%" }}
                     >
                       <Box className={styles.info_title}>
-                        <h2>Pronóstico 2</h2>
+                        <h3>Pronóstico 2</h3>
                       </Box>
 
                       <FormControl
@@ -539,7 +539,7 @@ const Visualizer = () => {
                       >
                         <InputLabel
                           id="select_forecast2_hc"
-                          style={{ color: "#7b8b9d", fontWeight: "bold" }}
+                          style={{ color: "#7b8b9d"}}
                         >
                           {"Seleccione el pronóstico"}
                         </InputLabel>
