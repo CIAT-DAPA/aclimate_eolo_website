@@ -28,6 +28,8 @@ import LoadingOverlay from "../Components/LoadingOverlay";
 import AuthContext from "@/app/Context/auth/authContext";
 import { toast } from "react-toastify";
 
+const Map = dynamic(() => import("@/app/Components/Map"), { ssr: false });
+
 const ChartReport = dynamic(() => import("../Components/Chart"), {
   ssr: false,
 });
@@ -45,6 +47,8 @@ const Report = () => {
   const [seasons, setSeasons] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [csv, setCsv] = useState(null);
+  const [monthM, setMonthM] = useState("");
+  const [yearM, setYearM] = useState("");
   const [titles, setTitles] = useState([
     "Región",
     "Temporada 1",
@@ -87,6 +91,14 @@ const Report = () => {
     Configuration.get_below_store(),
     Configuration.get_hgp_store(),
   ]);
+
+  const [layers, setLayers] = useState([
+    { display: "Above", value: Configuration.get_above_store() },
+    { display: "Normal", value: Configuration.get_normal_store() },
+    { display: "Below", value: Configuration.get_below_store() },
+    { display: "Highest probability", value: Configuration.get_hgp_store() },
+  ]);
+  
 
   const cleanFilter = () => {
     setCsv(null);
@@ -210,7 +222,7 @@ const Report = () => {
 
       setAverageData(layers);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -300,6 +312,22 @@ const Report = () => {
     }
   }, [typeForecast, forecastSelected]);
 
+  useEffect(() => {
+    const newDate = new Date();
+    if (typeForecast == "tri") {
+      if (newDate.getMonth() + 2 == 13) {
+        setMonthM(1);
+        setYearM(newDate.getFullYear() + 1);
+      } else {
+        setMonthM(newDate.getMonth() + 2);
+        setYearM(newDate.getFullYear());
+      }
+    } else {
+      setMonthM(newDate.getMonth());
+      setYearM(newDate.getFullYear());
+    }
+  }, [typeForecast]);
+
   return (
     <main className={styles.main}>
       {loading || !auth ? (
@@ -378,10 +406,7 @@ const Report = () => {
                 >
                   Pronóstico estacional
                 </Typography>
-                <Typography
-                  variant="body2"
-                  className={styles.card_text}
-                >
+                <Typography variant="body2" className={styles.card_text}>
                   {`Vestibulum varius maximus odio, vitae porttitor metus lobortis
                   in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
                   sagittis sollicitudin lorem, quis ornare eros tempor congue`}
@@ -435,6 +460,44 @@ const Report = () => {
                   </>
                 )}
               </Box>
+              {seasons &&
+                seasons.length > 0 &&
+                seasons.map((season) => (
+                  <Box className={styles.maps_container}>
+                    <Typography
+                      key={`${season}_title`}
+                      variant="h6"
+                      color="textSecondary"
+                      style={{alignSelf:"center"}}
+                      className={styles.report_title}
+                    >{`Temporada ${season}`}</Typography>
+                    {[0, 1].map((index) => (
+                      <Box key={index} className={styles.first_maps_container}>
+                        {[0, 1].map((subIndex) => (
+                          <Box key={subIndex} className={styles.map_container}>
+                            <Map
+                              className={styles.map}
+                              zoom={7}
+                              center={[14.5007343, -86.6719949]}
+                              url={Configuration.get_geoserver_url()}
+                              workspace={forecastSelected}
+                              store={layers[index * 2 + subIndex].value}
+                              year={yearM}
+                              month={monthM}
+                            />
+                            <Typography
+                              variant="h5"
+                              color="textSecondary"
+                              className={styles.map_title}
+                            >
+                              {`${layers[index * 2 + subIndex].display}`}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Box>
+                    ))}
+                  </Box>
+                ))}
               <Box className={styles.csv_table_container}>
                 <Box className={styles.csv_table_info}>
                   <Typography
@@ -444,10 +507,7 @@ const Report = () => {
                   >
                     Datos por región
                   </Typography>
-                  <Typography
-                    variant="body2"
-                    className={styles.card_text}
-                  >
+                  <Typography variant="body2" className={styles.card_text}>
                     {`Vestibulum varius maximus odio, vitae porttitor metus lobortis
                   in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
                   sagittis sollicitudin lorem, quis ornare eros tempor congue`}

@@ -12,8 +12,8 @@
 }
 
 .report_title {
-  font-weight: bold;
-  color: #0d2137;
+  font-weight: bold !important;
+    color: #0d2137 !important;
 }
 
 .graph_container {
@@ -62,4 +62,37 @@
 
 .file_container {
   width: 25%;
+}
+
+.maps_container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.first_maps_container {
+  height: 400px;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  justify-content: center;
+}
+
+.map_title {
+  font-size: 18px !important;
+  position: absolute;
+  background-color: #ffffffd9;
+  z-index: 999;
+  bottom: 0px;
+  height: 35px;
+  width: 170px;
+  text-align: center;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 6px;
+  color: #0d2137 !important;
+  padding: 5px;
+}
+
+.map_container {
+  position: relative;
 }
