@@ -9,6 +9,8 @@
 .subcolumn{
     font-size: 14px;
     font-weight: bold;
+    text-wrap: balance;
+    text-align: center;
 }
 
 .title_row{
