@@ -210,7 +210,7 @@ const Report = () => {
 
       setAverageData(layers);
     } catch (error) {
-      notify(`Error al generar el reporte ${error}`, "error");
+      console.log(error)
     }
   };
 
@@ -286,7 +286,8 @@ const Report = () => {
       setCurrentLoading(false);
       notify("El reporte se genero con exíto", "success");
     } catch (error) {
-      notify(`Error al generar el reporte ${error}`, "error");
+      notify(`No se encontro pronóstico para esta temporada`, "error");
+      setCurrentLoading(false);
     }
   };
 
