@@ -142,6 +142,7 @@ export default function SignIn() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              style={{ backgroundColor: "#e37b13"}}
             >
               Ingresar
             </Button>
