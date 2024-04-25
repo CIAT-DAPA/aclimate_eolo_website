@@ -9,6 +9,7 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CsvTable from "../Components/Table";
+import { usePDF } from "react-to-pdf";
 import {
   OutlinedInput,
   Box,
@@ -32,6 +33,9 @@ const ChartReport = dynamic(() => import("../Components/Chart"), {
 });
 
 const Report = () => {
+  const { toPDF, targetRef } = usePDF({
+    filename: "reporte_del_pronostico.pdf",
+  });
   const { loading, auth } = useAuth();
   const { user } = useContext(AuthContext);
   const [forecastSelected, setForecastSelected] = useState("");
@@ -98,9 +102,9 @@ const Report = () => {
       const content = e.target.result;
       const rows = content.split("\n");
 
-      const splited = rows[0].split(",")
+      const splited = rows[0].split(",");
 
-      const column = splited.map(elemento => elemento.trim());
+      const column = splited.map((elemento) => elemento.trim());
       setCsv(column.slice(1));
     };
 
@@ -301,143 +305,77 @@ const Report = () => {
         <Loading />
       ) : (
         <>
-          <Box className={styles.selectors_container}>
-            <FormControl
-              className={styles.info_inputs}
-              sx={{ m: 1, minWidth: 120, width: "20%" }}
-              size="small"
-            >
-              <InputLabel
-                id="select_forecast1_hc"
-                style={{ color: "#7b8b9d", fontWeight: "bold" }}
+          <Box ref={targetRef} className={styles.container}>
+            <Box className={styles.selectors_container}>
+              <FormControl
+                className={styles.info_inputs}
+                sx={{ m: 1, minWidth: 120, width: "20%" }}
+                size="small"
               >
-                {"Seleccione el pronóstico"}
-              </InputLabel>
-              <Select
-                labelId="select_forecast1_hc"
-                input={
-                  <OutlinedInput
-                    style={{ backgroundColor: "#e6eaed" }}
-                    label={"Seleccione el pronóstico"}
-                    value={forecastSelected}
-                    onChange={handleSelectChange(setForecastSelected)}
-                  />
-                }
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                {workspaces.map((d) => (
-                  <MenuItem key={d.value} value={d.value}>
-                    {d.display}
+                <InputLabel
+                  id="select_forecast1_hc"
+                  style={{ color: "#7b8b9d", fontWeight: "bold" }}
+                >
+                  {"Seleccione el pronóstico"}
+                </InputLabel>
+                <Select
+                  labelId="select_forecast1_hc"
+                  input={
+                    <OutlinedInput
+                      style={{ backgroundColor: "#e6eaed" }}
+                      label={"Seleccione el pronóstico"}
+                      value={forecastSelected}
+                      onChange={handleSelectChange(setForecastSelected)}
+                    />
+                  }
+                >
+                  <MenuItem value="">
+                    <em>None</em>
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl>
-              <RadioGroup
-                row
-                name="row-radio-buttons-group"
-                value={typeForecast}
-                onChange={handleSelectChange(setTypeForecast)}
-              >
-                <FormControlLabel
-                  value={"bi"}
-                  control={<Radio />}
-                  label="Bimestral"
-                  labelPlacement="end"
-                />
-                <FormControlLabel
-                  value={"tri"}
-                  control={<Radio />}
-                  label="Trimestral"
-                  labelPlacement="end"
-                />
-              </RadioGroup>
-            </FormControl>
-          </Box>
-          <Typography
-            variant="h3"
-            color="textSecondary"
-            className={styles.report_title}
-          >
-            Reporte
-          </Typography>
-          <Box className={styles.graph_container}>
-            <Box>
-              <Typography
-                variant="h5"
-                color="textSecondary"
-                className={styles.report_title}
-              >
-                Pronóstico estacional
-              </Typography>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                className={styles.card_text}
-              >
-                {`Vestibulum varius maximus odio, vitae porttitor metus lobortis
-                  in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
-                  sagittis sollicitudin lorem, quis ornare eros tempor congue`}
-              </Typography>
+                  {workspaces.map((d) => (
+                    <MenuItem key={d.value} value={d.value}>
+                      {d.display}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl>
+                <RadioGroup
+                  row
+                  name="row-radio-buttons-group"
+                  value={typeForecast}
+                  onChange={handleSelectChange(setTypeForecast)}
+                >
+                  <FormControlLabel
+                    value={"bi"}
+                    control={<Radio />}
+                    label="Bimestral"
+                    labelPlacement="end"
+                  />
+                  <FormControlLabel
+                    value={"tri"}
+                    control={<Radio />}
+                    label="Trimestral"
+                    labelPlacement="end"
+                  />
+                </RadioGroup>
+              </FormControl>
             </Box>
-            <Box className={styles.chart_container}>
-              {averageData &&
-              averageData.length > 0 &&
-              averageData[0].length > 0 ? (
-                averageData.map((chart, index) => {
-                  const values = chart.map((val) => val.value);
-                  return (
-                    <Box key={index} className={styles.chart_info}>
-                      <Typography
-                        key={`${index}_title`}
-                        variant="h5"
-                        color="textSecondary"
-                        className={styles.report_title}
-                      >{`Temporada ${seasons[index]}`}</Typography>
-                      <ChartReport
-                        key={`${index}_chart`}
-                        data={values}
-                        type="bar"
-                        width="500"
-                      />
-                    </Box>
-                  );
-                })
-              ) : (
-                <>
-                  <Box className={styles.chart_info}>
-                    <Typography
-                      variant="h5"
-                      color="textSecondary"
-                      className={styles.report_title}
-                    >
-                      Temporada 1
-                    </Typography>
-                    <ChartReport data={[0, 0, 0, 0]} type="bar" width="500" />
-                  </Box>
-                  <Box className={styles.chart_info}>
-                    <Typography
-                      variant="h5"
-                      color="textSecondary"
-                      className={styles.report_title}
-                    >
-                      Temporada 2
-                    </Typography>
-                    <ChartReport data={[0, 0, 0, 0]} type="bar" width="500" />
-                  </Box>
-                </>
-              )}
-            </Box>
-            <Box className={styles.csv_table_container}>
-              <Box className={styles.csv_table_info}>
+            <Typography
+              variant="h3"
+              color="textSecondary"
+              className={styles.report_title}
+            >
+              Reporte
+            </Typography>
+            <Box className={styles.graph_container}>
+              <Box>
                 <Typography
                   variant="h5"
                   color="textSecondary"
                   className={styles.report_title}
                 >
-                  Datos por región
+                  Pronóstico estacional
                 </Typography>
                 <Typography
                   variant="body2"
@@ -448,62 +386,131 @@ const Report = () => {
                   in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
                   sagittis sollicitudin lorem, quis ornare eros tempor congue`}
                 </Typography>
-                <Box className={styles.buttons_container}>
-                  <Box className={styles.file_container}>
-                    <input
-                      type="file"
-                      id="file-input"
-                      style={{ display: "none" }}
-                      onChange={handleFileChange}
-                      accept=".csv"
-                    />
-                    <label htmlFor="file-input">
-                      <Button
-                        variant="contained"
-                        component="span"
-                        startIcon={<UploadFileIcon />}
-                        style={{
-                          width: "20%",
-                          backgroundColor: "#e37b13",
-                          color: "#ffff",
-                          height: "42px",
-                          borderRadius: "6px",
-                        }}
+              </Box>
+              <Box className={styles.chart_container}>
+                {averageData &&
+                averageData.length > 0 &&
+                averageData[0].length > 0 ? (
+                  averageData.map((chart, index) => {
+                    const values = chart.map((val) => val.value);
+                    return (
+                      <Box key={index} className={styles.chart_info}>
+                        <Typography
+                          key={`${index}_title`}
+                          variant="h5"
+                          color="textSecondary"
+                          className={styles.report_title}
+                        >{`Temporada ${seasons[index]}`}</Typography>
+                        <ChartReport
+                          key={`${index}_chart`}
+                          data={values}
+                          type="bar"
+                          width="500"
+                        />
+                      </Box>
+                    );
+                  })
+                ) : (
+                  <>
+                    <Box className={styles.chart_info}>
+                      <Typography
+                        variant="h5"
+                        color="textSecondary"
+                        className={styles.report_title}
                       >
-                        Cargar CSV
-                      </Button>
-                    </label>
-                    {selectedFile && (
-                      <Typography variant="body2">
-                        Archivo seleccionado: {selectedFile.name}
+                        Temporada 1
                       </Typography>
-                    )}
-                  </Box>
-                  <Box>
-                    {selectedFile && (
-                      <IconButton
-                        aria-label="delete"
-                        size="large"
-                        onClick={cleanFilter}
+                      <ChartReport data={[0, 0, 0, 0]} type="bar" width="500" />
+                    </Box>
+                    <Box className={styles.chart_info}>
+                      <Typography
+                        variant="h5"
+                        color="textSecondary"
+                        className={styles.report_title}
                       >
-                        <DeleteIcon />
-                      </IconButton>
-                    )}
+                        Temporada 2
+                      </Typography>
+                      <ChartReport data={[0, 0, 0, 0]} type="bar" width="500" />
+                    </Box>
+                  </>
+                )}
+              </Box>
+              <Box className={styles.csv_table_container}>
+                <Box className={styles.csv_table_info}>
+                  <Typography
+                    variant="h5"
+                    color="textSecondary"
+                    className={styles.report_title}
+                  >
+                    Datos por región
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    className={styles.card_text}
+                  >
+                    {`Vestibulum varius maximus odio, vitae porttitor metus lobortis
+                  in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
+                  sagittis sollicitudin lorem, quis ornare eros tempor congue`}
+                  </Typography>
+                  <Box className={styles.buttons_container}>
+                    <Box className={styles.file_container}>
+                      <input
+                        type="file"
+                        id="file-input"
+                        style={{ display: "none" }}
+                        onChange={handleFileChange}
+                        accept=".csv"
+                      />
+                      <label htmlFor="file-input">
+                        <Button
+                          variant="contained"
+                          component="span"
+                          startIcon={<UploadFileIcon />}
+                          style={{
+                            width: "100%",
+                            backgroundColor: "#e37b13",
+                            color: "#ffff",
+                            height: "42px",
+                            borderRadius: "6px",
+                          }}
+                        >
+                          Cargar CSV
+                        </Button>
+                      </label>
+                      {selectedFile && (
+                        <Typography variant="body2">
+                          Archivo seleccionado: {selectedFile.name}
+                        </Typography>
+                      )}
+                    </Box>
+                    <Box>
+                      {selectedFile && (
+                        <IconButton
+                          aria-label="delete"
+                          size="large"
+                          onClick={cleanFilter}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
-              <Box>
-                <CsvTable
-                  titles={titles}
-                  data={data}
-                  subTitles={subTitles}
-                  filter={csv}
-                />
+                <Box>
+                  <CsvTable
+                    titles={titles}
+                    data={data}
+                    subTitles={subTitles}
+                    filter={csv}
+                  />
+                </Box>
               </Box>
             </Box>
           </Box>
           <Button
             startIcon={<PictureAsPdfIcon />}
+            onClick={() => toPDF()}
             style={{
               width: "20%",
               backgroundColor: "#e37b13",

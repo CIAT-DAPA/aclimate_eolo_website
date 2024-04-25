@@ -26,6 +26,7 @@ const Map = ({
   style = { width: "92%", height: "100%", justifySelf: "center" },
   child = null,
   childComponent = null,
+  minZoom=7
 }) => {
   const mapRef = useRef(null);
 
@@ -35,7 +36,7 @@ const Map = ({
   ];
 
   const shapefile_workspace = "fc_cenaos_hn";
-  const shapefile_layer = "CA_Norte_Cabeceras";
+  const shapefile_layer = "Limite_Departamental_de_Honduras";
 
   return (
     <MapContainer
@@ -43,9 +44,9 @@ const Map = ({
       zoom={zoom}
       style={style}
       ref={mapRef}
-      zoomControl={true}
+      zoomControl={false}
       maxBounds={bounds}
-      minZoom={7}
+      minZoom={minZoom}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 

@@ -70,7 +70,7 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        console.log("try")
       }
 
       const data = await response.json();
