@@ -396,7 +396,7 @@ const Report = () => {
                       <Box key={index} className={styles.chart_info}>
                         <Typography
                           key={`${index}_title`}
-                          variant="h5"
+                          variant="h6"
                           color="textSecondary"
                           className={styles.report_title}
                         >{`Temporada ${seasons[index]}`}</Typography>
