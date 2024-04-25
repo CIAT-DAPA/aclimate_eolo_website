@@ -22,7 +22,7 @@ const ANOMALIES_STYLE = "style"
 
 const API_URL_DEV = "http://127.0.0.1:5000/api/"
 
-const API_URL_PROD = "https://calculate-anomalies.onrender.com/api/"
+const API_URL_PROD = "https://geoapi.aclimate.org/api/"
 
 const ACLIMATE_API_URL = "https://webapi.aclimate.org/api/"
 
@@ -65,7 +65,7 @@ class Configuration {
         return TMIN_STORE;
     }
     get_api_url(){
-        return API_URL_DEV
+        return API_URL_PROD
     }
 
     get_below_store(){

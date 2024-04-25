@@ -362,7 +362,7 @@ const Report = () => {
               </FormControl>
             </Box>
             <Typography
-              variant="h3"
+              variant="h4"
               color="textSecondary"
               className={styles.report_title}
             >
@@ -379,7 +379,6 @@ const Report = () => {
                 </Typography>
                 <Typography
                   variant="body2"
-                  color="textSecondary"
                   className={styles.card_text}
                 >
                   {`Vestibulum varius maximus odio, vitae porttitor metus lobortis
@@ -414,7 +413,7 @@ const Report = () => {
                   <>
                     <Box className={styles.chart_info}>
                       <Typography
-                        variant="h5"
+                        variant="h6"
                         color="textSecondary"
                         className={styles.report_title}
                       >
@@ -424,7 +423,7 @@ const Report = () => {
                     </Box>
                     <Box className={styles.chart_info}>
                       <Typography
-                        variant="h5"
+                        variant="h6"
                         color="textSecondary"
                         className={styles.report_title}
                       >
@@ -446,7 +445,6 @@ const Report = () => {
                   </Typography>
                   <Typography
                     variant="body2"
-                    color="textSecondary"
                     className={styles.card_text}
                   >
                     {`Vestibulum varius maximus odio, vitae porttitor metus lobortis
