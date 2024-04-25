@@ -17,7 +17,6 @@ import dynamic from "next/dynamic";
 import useAuth from "../Hooks/useAuth";
 import Loading from "../Components/Loading";
 import LoadingOverlay from "../Components/LoadingOverlay";
-import zIndex from "@mui/material/styles/zIndex";
 
 const Map = dynamic(() => import("@/app/Components/Map"), { ssr: false });
 
