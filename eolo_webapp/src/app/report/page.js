@@ -342,7 +342,7 @@ const Report = () => {
               >
                 <InputLabel
                   id="select_forecast1_hc"
-                  style={{ color: "#7b8b9d", fontWeight: "bold" }}
+                  style={{ color: "#7b8b9d"}}
                 >
                   {"Seleccione el pronóstico"}
                 </InputLabel>

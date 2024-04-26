@@ -13,7 +13,8 @@
 
 .report_title {
   font-weight: bold !important;
-    color: #0d2137 !important;
+  color: #0d2137 !important;
+  margin-bottom: 1%;
 }
 
 .graph_container {
