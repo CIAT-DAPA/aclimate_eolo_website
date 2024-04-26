@@ -45,8 +45,8 @@
 .anomalies_map {
   width: 100%;
   display: grid;
-  grid-template-rows: 22% 70%;
-  min-height: 750px;
+  grid-template-rows: 22% 78%;
+  min-height: 900px;
   grid-column: 1 / 3;
 }
 
