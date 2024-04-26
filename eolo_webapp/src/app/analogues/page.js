@@ -162,7 +162,7 @@ export default function Home() {
                 </Select>
               </FormControl>
 
-              <Button style={{ width: "16%", backgroundColor: "#e37b13", color: "#ffff", marginRight: "2%" }}
+              <Button disabled={true} style={{ width: "16%", backgroundColor: "#e37b13", color: "#ffff", marginRight: "2%" }}
               onClick={handleOpen}>
                 Cargar rasters
               </Button>
@@ -182,9 +182,10 @@ export default function Home() {
                   sx={{ m: 1, minWidth: 60, width: "30%" }}
                   size="small"
                 >
-                  <InputLabel id="select_year_hc">{"Año"}</InputLabel>
+                  <InputLabel id="select_year_hc">{"Seleccione el año"}</InputLabel>
                   <Select
                     labelId="select_year_hc"
+                    disabled={!(selectedMonthC != "")}
                     input={
                       <OutlinedInput
                         label={"Seleccione el año"}
@@ -251,6 +252,7 @@ export default function Home() {
                     label={"Años análogos"}
                     data={multiSelectData}
                     setData={setMultiSelectData}
+                    disabled={!(selectedMonthC != "")}
                   />
                   <IconButton
                     aria-label="Calcular anomalia"
@@ -258,6 +260,7 @@ export default function Home() {
                     onClick={createAnomaly}
                     size={"large"}
                     style={{color: "#e37b13"}}
+                    disabled={multiSelectData.length < 2}
                   >
                     <PlayCircleIcon
                       style={{ height: "1.5em", width: "1.5em" }}
@@ -280,7 +283,7 @@ export default function Home() {
         </>
       )}
       {currentLoading && <LoadingOverlay />}
-      <FileInputModal open={modalOpen} handleOpen={handleOpen} handleClose={handleClose} />
+      {false && <FileInputModal open={modalOpen} handleOpen={handleOpen} handleClose={handleClose} />}
     </main>
   );
 }

@@ -19,7 +19,7 @@ const MenuProps = {
   },
 };
 
-export default function MultipleSelectCheckmarks({arrayData, label, data, setData}) {
+export default function MultipleSelectCheckmarks({arrayData, label, data, setData, disabled}) {
   
 
   const handleChange = (event) => {
@@ -40,6 +40,7 @@ export default function MultipleSelectCheckmarks({arrayData, label, data, setDat
           id="demo-multiple-checkbox"
           multiple
           value={data}
+          disabled={disabled}
           onChange={handleChange}
           input={<OutlinedInput label={label} />}
           renderValue={(selected) => selected.join(', ')}
