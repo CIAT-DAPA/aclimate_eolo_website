@@ -1,11 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
 import styles from "./page.module.css";
-import {Button, Box , IconButton, Select ,InputLabel } from "@mui/material";
+import {
+  FormControl,
+  OutlinedInput,
+  Button,
+  Box,
+  IconButton,
+  Select,
+  InputLabel,
+  Card,
+} from "@mui/material";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import OutlinedInput from "@mui/material/OutlinedInput";
 import Configuration from "@/app/config";
 import MultiSelect from "@/app/Components/MultiSelect";
 import axios from "axios";
@@ -162,8 +169,16 @@ export default function Home() {
                 </Select>
               </FormControl>
 
-              <Button disabled={true} style={{ width: "16%", backgroundColor: "#e37b13", color: "#ffff", marginRight: "2%" }}
-              onClick={handleOpen}>
+              <Button
+                disabled={true}
+                style={{
+                  width: "16%",
+                  backgroundColor: "#e37b13",
+                  color: "#ffff",
+                  marginRight: "2%",
+                }}
+                onClick={handleOpen}
+              >
                 Cargar rasters
               </Button>
             </Box>
@@ -179,10 +194,12 @@ export default function Home() {
                   }
                 </p>
                 <FormControl
-                  sx={{ m: 1, minWidth: 60, width: "30%" }}
+                  sx={{ m: 1, minWidth: 60, width: "40%" }}
                   size="small"
                 >
-                  <InputLabel id="select_year_hc">{"Seleccione el año"}</InputLabel>
+                  <InputLabel id="select_year_hc">
+                    {"Seleccione el año"}
+                  </InputLabel>
                   <Select
                     labelId="select_year_hc"
                     disabled={!(selectedMonthC != "")}
@@ -202,17 +219,23 @@ export default function Home() {
                   </Select>
                 </FormControl>
               </div>
-
-              <Map
-                className={styles.map}
-                zoom={7}
-                center={[14.5007343, -86.6719949]}
-                url={Configuration.get_geoserver_url()}
-                workspace={Configuration.get_historical_worspace()}
-                store={Configuration.get_prec_store()}
-                year={selectedYearHc}
-                month={selectedMonthC}
-              />
+              <Card>
+                <Map
+                  className={styles.map}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    justifySelf: "center",
+                  }}
+                  zoom={7}
+                  center={[14.5007343, -86.6719949]}
+                  url={Configuration.get_geoserver_url()}
+                  workspace={Configuration.get_historical_worspace()}
+                  store={Configuration.get_prec_store()}
+                  year={selectedYearHc}
+                  month={selectedMonthC}
+                />
+              </Card>
             </div>
 
             <div className={styles.historical_map}>
@@ -225,16 +248,23 @@ export default function Home() {
                 </p>
               </div>
 
-              <Map
-                className={styles.map}
-                zoom={7}
-                center={[14.5007343, -86.6719949]}
-                url={Configuration.get_geoserver_url()}
-                workspace={Configuration.get_climatology_worspace()}
-                store={Configuration.get_prec_store()}
-                year={2000}
-                month={selectedMonthC}
-              />
+              <Card>
+                <Map
+                  className={styles.map}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    justifySelf: "center",
+                  }}
+                  zoom={7}
+                  center={[14.5007343, -86.6719949]}
+                  url={Configuration.get_geoserver_url()}
+                  workspace={Configuration.get_climatology_worspace()}
+                  store={Configuration.get_prec_store()}
+                  year={2000}
+                  month={selectedMonthC}
+                />
+              </Card>
             </div>
 
             <div className={styles.anomalies_map}>
@@ -259,7 +289,7 @@ export default function Home() {
                     color="primary"
                     onClick={createAnomaly}
                     size={"large"}
-                    style={{color: "#e37b13"}}
+                    style={{ color: "#e37b13" }}
                     disabled={multiSelectData.length < 2}
                   >
                     <PlayCircleIcon
@@ -268,22 +298,35 @@ export default function Home() {
                   </IconButton>
                 </div>
               </div>
-              <Map
-                className={styles.map}
-                zoom={7.5}
-                center={[14.5007343, -86.6719949]}
-                anomalies={anomalies}
-                isAnomalies={true}
-                setCurrentLoading={setCurrentLoading}
-                workspace={Configuration.get_cenaos_worspace()}
-                store={Configuration.get_anomalies_style()}
-              />
+              <Card>
+                <Map
+                  className={styles.map}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    justifySelf: "center",
+                  }}
+                  zoom={7.5}
+                  center={[14.5007343, -86.6719949]}
+                  anomalies={anomalies}
+                  isAnomalies={true}
+                  setCurrentLoading={setCurrentLoading}
+                  workspace={Configuration.get_cenaos_worspace()}
+                  store={Configuration.get_anomalies_style()}
+                />
+              </Card>
             </div>
           </div>
         </>
       )}
       {currentLoading && <LoadingOverlay />}
-      {false && <FileInputModal open={modalOpen} handleOpen={handleOpen} handleClose={handleClose} />}
+      {false && (
+        <FileInputModal
+          open={modalOpen}
+          handleOpen={handleOpen}
+          handleClose={handleClose}
+        />
+      )}
     </main>
   );
 }
