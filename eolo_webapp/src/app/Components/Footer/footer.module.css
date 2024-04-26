@@ -1,35 +1,48 @@
-.footer{
-    background-color: #0d2137;
-    display: grid;
-    grid-template-columns: 25% 25% 25% 25%;
-    justify-content: center;
-    padding-top: 5%;
-    color: #5e6873;
-    font-size: 22px;
-    margin-top: 12%;
+.footer {
+  background-color: #0d2137;
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+  justify-content: center;
+  padding-top: 5%;
+  color: #5e6873;
+  font-size: 22px;
+  margin-top: 12%;
 }
 
-
-.toolbar{
-    justify-content: center;
-    background-color: #0d2137;
-    color: #5e6873;
-    font-size: 22px;
-    min-height: 200px;
+.toolbar {
+  justify-content: center;
+  background-color: #0d2137;
+  color: #5e6873;
+  font-size: 22px;
+  min-height: 200px;
 }
 
-.logoImage{
-    margin-right: 1%;
-    width: 30px;
-    height: auto;
+.logoImage {
+  margin-right: 1%;
+  width: 30px;
+  height: auto;
 }
 
-.column_container{
-    display: flex;
-    justify-content: center;
-    gap: 2%;
-    font-size: 22px;
-    color: #ffff;
-    align-items: center;
-    font-weight: bold;
+.column_container {
+  display: flex;
+  justify-content: center;
+  gap: 2%;
+  font-size: 22px;
+  color: #ffff;
+  align-items: center;
+  font-weight: bold;
+}
+
+.avatar_images {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+}
+
+.aclimate_link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none !important;
+  color: inherit !important;
 }
