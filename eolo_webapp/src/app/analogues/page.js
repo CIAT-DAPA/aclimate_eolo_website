@@ -270,7 +270,7 @@ export default function Home() {
               </div>
               <Map
                 className={styles.map}
-                zoom={7}
+                zoom={7.5}
                 center={[14.5007343, -86.6719949]}
                 anomalies={anomalies}
                 isAnomalies={true}
