@@ -23,6 +23,9 @@ import {
   Radio,
   FormControlLabel,
   IconButton,
+  Card,
+  CardHeader,
+  CardContent,
 } from "@mui/material";
 import LoadingOverlay from "../Components/LoadingOverlay";
 import AuthContext from "@/app/Context/auth/authContext";
@@ -342,7 +345,7 @@ const Report = () => {
               >
                 <InputLabel
                   id="select_forecast1_hc"
-                  style={{ color: "#7b8b9d"}}
+                  style={{ color: "#7b8b9d" }}
                 >
                   {"Seleccione el pronóstico"}
                 </InputLabel>
@@ -473,27 +476,25 @@ const Report = () => {
                     {[0, 1].map((index) => (
                       <Box key={index} className={styles.first_maps_container}>
                         {[0, 1].map((subIndex) => (
-                          <Box key={subIndex} className={styles.map_container}>
-                            <Map
-                              key={`${subIndex}_map`}
-                              className={styles.map}
-                              zoom={7}
-                              center={[14.5007343, -86.6719949]}
-                              url={Configuration.get_geoserver_url()}
-                              workspace={forecastSelected}
-                              store={layers[index * 2 + subIndex].value}
-                              year={yearM}
-                              month={monthM}
+                          <Card key={subIndex} className={styles.map_container}>
+                            <CardHeader
+                              className={styles.map_card_header}
+                              title={`${layers[index * 2 + subIndex].display}`}
                             />
-                            <Typography
-                              key={`${subIndex}_title`}
-                              variant="h5"
-                              color="textSecondary"
-                              className={styles.map_title}
-                            >
-                              {`${layers[index * 2 + subIndex].display}`}
-                            </Typography>
-                          </Box>
+                            <CardContent className={styles.map_card_content} style={{padding: 0}}>
+                              <Map
+                                key={`${subIndex}_map`}
+                                style={{ width: "100%", height: "100%", justifySelf: "center" }}
+                                zoom={7}
+                                center={[14.5007343, -86.6719949]}
+                                url={Configuration.get_geoserver_url()}
+                                workspace={forecastSelected}
+                                store={layers[index * 2 + subIndex].value}
+                                year={yearM}
+                                month={monthM}
+                              />
+                            </CardContent>
+                          </Card>
                         ))}
                       </Box>
                     ))}
