@@ -12,6 +12,7 @@ import {
   Card,
 } from "@mui/material";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import MenuItem from "@mui/material/MenuItem";
 import Configuration from "@/app/config";
 import MultiSelect from "@/app/Components/MultiSelect";
@@ -30,6 +31,7 @@ export default function Home() {
   const [selectedMonthC, setSelectedMonthC] = useState("");
   const [anomalies, setAnomalies] = useState(null);
   const [currentLoading, setCurrentLoading] = useState(false);
+  const [tiff, setTiff] = useState(null);
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -82,6 +84,32 @@ export default function Home() {
       month: selectedMonthC,
       years: multiSelectData,
     });
+  };
+
+  const downloadRaster = () => {
+    const link = document.createElement("a");
+    const url = `${Configuration.get_geoserver_url()}${Configuration.get_climatology_worspace()}/wms?service=WMS&version=1.1.0&time=2000-${selectedMonthC}&request=GetMap&layers=${Configuration.get_climatology_worspace()}%3A${Configuration.get_prec_store()}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
+    link.href = url;
+    link.download = `PromedioClimatico_${monthsC[selectedMonthC - 1]}.tiff`;
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      document.body.removeChild(link);
+    }, 0);
+  };
+
+  const downloadAnomalyRaster = () => {
+    const link = document.createElement("a");
+    link.href = tiff;
+    link.download = `Anomalía_${
+      monthsC[selectedMonthC - 1]
+    }_${multiSelectData.join("-")}.tiff`;
+
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      document.body.removeChild(link);
+    }, 0);
   };
 
   async function getDatesFromGeoserver(workspace, layer) {
@@ -255,6 +283,8 @@ export default function Home() {
                     width: "100%",
                     height: "100%",
                     justifySelf: "center",
+                    display: "flex",
+                    justifyContent: "flex-start",
                   }}
                   zoom={7}
                   center={[14.5007343, -86.6719949]}
@@ -263,6 +293,17 @@ export default function Home() {
                   store={Configuration.get_prec_store()}
                   year={2000}
                   month={selectedMonthC}
+                  child={
+                    <IconButton
+                      color="primary"
+                      aria-label="add to shopping cart"
+                      className={styles.download_raster_l}
+                      disabled={!selectedMonthC}
+                      onClick={downloadRaster}
+                    >
+                      <FileDownloadOutlinedIcon />
+                    </IconButton>
+                  }
                 />
               </Card>
             </div>
@@ -305,6 +346,8 @@ export default function Home() {
                     width: "100%",
                     height: "100%",
                     justifySelf: "center",
+                    display: "flex",
+                    justifyContent: "flex-end",
                   }}
                   zoom={7.5}
                   center={[14.5007343, -86.6719949]}
@@ -313,6 +356,19 @@ export default function Home() {
                   setCurrentLoading={setCurrentLoading}
                   workspace={Configuration.get_cenaos_worspace()}
                   store={Configuration.get_anomalies_style()}
+                  minZoom={8}
+                  setTiff={setTiff}
+                  child={
+                    <IconButton
+                      color="primary"
+                      aria-label="add to shopping cart"
+                      className={styles.download_raster}
+                      disabled={!tiff}
+                      onClick={downloadAnomalyRaster}
+                    >
+                      <FileDownloadOutlinedIcon />
+                    </IconButton>
+                  }
                 />
               </Card>
             </div>

@@ -77,3 +77,31 @@
   align-items: center;
   justify-content: space-between;
 }
+
+.download_raster_l {
+  background-color: #f2f2f2;
+  z-index: 999;
+  box-shadow: 2px 4px 8px 0 rgba(0, 0, 0, 0.2);
+  height: 40px;
+  margin-left: 2%;
+  width: 40px;
+  margin-top: 2%;
+}
+
+.download_raster_l:hover {
+  background-color: #d9d9d9;
+}
+
+.download_raster {
+  background-color: #f2f2f2;
+  z-index: 999;
+  box-shadow: 2px 4px 8px 0 rgba(0, 0, 0, 0.2);
+  height: 40px;
+  margin-right: 2%;
+  width: 40px;
+  margin-top: 2%;
+}
+
+.download_raster:hover {
+  background-color: #d9d9d9;
+}
