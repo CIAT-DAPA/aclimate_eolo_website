@@ -1,16 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Radio from "@mui/material/Radio";
-import { FormControlLabel, FormLabel, RadioGroup } from "@mui/material";
+import {
+  FormControlLabel,
+  RadioGroup,
+  OutlinedInput,
+  MenuItem,
+  FormControl,
+  Radio,
+  Box,
+  Container,
+  Select,
+  InputLabel,
+} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import OutlinedInput from "@mui/material/OutlinedInput";
 import Configuration from "@/app/config";
-import InputLabel from "@mui/material/InputLabel";
 import axios from "axios";
 import styles from "./visualizer.module.css";
 import dynamic from "next/dynamic";
@@ -258,24 +261,20 @@ const Visualizer = () => {
     }
   }, [selectYear]);
 
-
   useEffect(() => {
-    if(typeForecast === "tri"){
-      if(selectMonth == 12){
-        setSeasonMonth(1)
-        setSeasonYear(selectYear+1)
-      }else{
-        setSeasonMonth(selectMonth+1)
-        setSeasonYear(selectYear)
+    if (typeForecast === "tri") {
+      if (selectMonth == 12) {
+        setSeasonMonth(1);
+        setSeasonYear(selectYear + 1);
+      } else {
+        setSeasonMonth(selectMonth + 1);
+        setSeasonYear(selectYear);
       }
-    }else{
-      setSeasonMonth(selectMonth)
-      setSeasonYear(selectYear)
+    } else {
+      setSeasonMonth(selectMonth);
+      setSeasonYear(selectYear);
     }
-    
-  
-  }, [selectMonth, typeForecast])
-  
+  }, [selectMonth, typeForecast]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   // useEffect(() => {
@@ -308,6 +307,123 @@ const Visualizer = () => {
             height={"80%"}
             className={styles.grid_container}
           >
+            <Box className={styles.modal_container}>
+              <Box className={styles.first_part_inputs}>
+                <FormControl>
+                  <RadioGroup
+                    row
+                    name="row-radio-buttons-group"
+                    value={typeForecast}
+                    onChange={handleChange}
+                  >
+                    <FormControlLabel
+                      value={"bi"}
+                      control={<Radio size="small" />}
+                      label="Bimestral"
+                      labelPlacement="end"
+                    />
+                    <FormControlLabel
+                      value={"tri"}
+                      control={<Radio size="small" />}
+                      label="Trimestral"
+                      labelPlacement="end"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Box>
+              <Box className={styles.first_part_inputs}>
+                <FormControl
+                  className={styles.info_inputs_menu}
+                  sx={{ m: 1, minWidth: 120 }}
+                  size="small"
+                >
+                  <InputLabel id="select_layer_hc" style={{ color: "#7b8b9d" }}>
+                    {"Seleccione la capa"}
+                  </InputLabel>
+                  <Select
+                    labelId="select_layer_hc"
+                    input={
+                      <OutlinedInput
+                        style={{ backgroundColor: "#e6eaed" }}
+                        label={"Seleccione la capa"}
+                        value={selectedLayer}
+                        onChange={handleSelectChange(setSelectedLayer)}
+                      />
+                    }
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {layers.map((d) => (
+                      <MenuItem key={d.value} value={d.value}>
+                        {d.display}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <div className={styles.vertical_line}></div>
+                <FormControl
+                  className={styles.info_inputs_menu}
+                  sx={{ m: 1, minWidth: 120 }}
+                  size="small"
+                >
+                  <InputLabel id="select_year_hc" style={{ color: "#7b8b9d" }}>
+                    {"Seleccione el año"}
+                  </InputLabel>
+                  <Select
+                    labelId="select_year_hc"
+                    disabled={years.length == 0}
+                    input={
+                      <OutlinedInput
+                        style={{ backgroundColor: "#e6eaed" }}
+                        label={"Seleccione el año"}
+                        value={selectYear}
+                        onChange={handleSelectChange(setSelectYear)}
+                      />
+                    }
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {years.map((d) => (
+                      <MenuItem key={d} value={d}>
+                        {d}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl
+                  className={styles.info_inputs_menu}
+                  sx={{ m: 1, minWidth: 120 }}
+                  size="small"
+                >
+                  <InputLabel id="select_month_hc" style={{ color: "#7b8b9d" }}>
+                    {"Seleccione el mes"}
+                  </InputLabel>
+                  <Select
+                    labelId="select_month_hc"
+                    disabled={months.length == 0}
+                    input={
+                      <OutlinedInput
+                        style={{ backgroundColor: "#e6eaed" }}
+                        label={"Seleccione el mes"}
+                        value={selectMonth}
+                        onChange={handleSelectChange(setSelectMonth)}
+                      />
+                    }
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {months.map((d, i) => (
+                      <MenuItem key={d} value={monthsC.indexOf(d) + 1}>
+                        {d}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </Box>
             <Grid className={styles.column_container} xs={6}>
               <Box className={styles.container_map}>
                 <Map
@@ -324,10 +440,14 @@ const Visualizer = () => {
                     height: "100%",
                     justifySelf: "center",
                     display: "flex",
-                    justifyContent: "space-around",
                   }}
                   child={
-                    <Box className={styles.container_info}>
+                    <Box
+                      className={[
+                        styles.container_info,
+                        styles.first_forecast,
+                      ].join(" ")}
+                    >
                       <Box className={styles.info_title}>
                         <h3>Pronóstico 1</h3>
                       </Box>
@@ -348,7 +468,7 @@ const Visualizer = () => {
                           input={
                             <OutlinedInput
                               style={{ backgroundColor: "#e6eaed" }}
-                              label={"Pronóstico"}
+                              label={"Seleccione el pronóstico"}
                               value={selectFirstForecast}
                               onChange={handleSelectChange(
                                 setSelectFirstForecast
@@ -360,66 +480,6 @@ const Visualizer = () => {
                             <em>None</em>
                           </MenuItem>
                           {workspaces.map((d) => (
-                            <MenuItem key={d.value} value={d.value}>
-                              {d.display}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Box>
-                  }
-                  childComponent={
-                    <Box className={styles.first_part_inputs}>
-                      <FormControl>
-                        <RadioGroup
-                          row
-                          name="row-radio-buttons-group"
-                          value={typeForecast}
-                          onChange={handleChange}
-                        >
-                          <FormControlLabel
-                            value={"bi"}
-                            control={<Radio />}
-                            label="Bimestral"
-                            labelPlacement="end"
-                          />
-                          <FormControlLabel
-                            value={"tri"}
-                            control={<Radio />}
-                            label="Trimestral"
-                            labelPlacement="end"
-                          />
-                        </RadioGroup>
-                      </FormControl>
-                      <FormControl
-                        sx={{
-                          m: 1,
-                          minWidth: 120,
-                          width: "70%",
-                        }}
-                        size="small"
-                      >
-                        <InputLabel
-                          id="select_layer_hc"
-                          style={{ color: "#7b8b9d" }}
-                        >
-                          {"Seleccione la capa"}
-                        </InputLabel>
-                        <Select
-                          labelId="select_layer_hc"
-                          input={
-                            <OutlinedInput
-                              style={{ backgroundColor: "#e6eaed" }}
-                              label={"Seleccione la capa"}
-                              value={selectedLayer}
-                              onChange={handleSelectChange(setSelectedLayer)}
-                            />
-                          }
-                        >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
-                          {layers.map((d) => (
                             <MenuItem key={d.value} value={d.value}>
                               {d.display}
                             </MenuItem>
@@ -447,86 +507,13 @@ const Visualizer = () => {
                     height: "100%",
                     justifySelf: "center",
                     display: "flex",
-                    justifyContent: "space-around",
                   }}
                   child={
-                    <Box className={styles.first_part_inputs}>
-                      <FormControl
-                        sx={{
-                          m: 1,
-                          minWidth: 120,
-                          width: "70%",
-                        }}
-                        size="small"
-                      >
-                        <InputLabel
-                          id="select_layer_hc"
-                          style={{ color: "#7b8b9d"}}
-                        >
-                          {"Seleccione el año"}
-                        </InputLabel>
-                        <Select
-                          labelId="select_layer_hc"
-                          input={
-                            <OutlinedInput
-                              style={{ backgroundColor: "#e6eaed" }}
-                              label={"Seleccione el año"}
-                              value={selectYear}
-                              onChange={handleSelectChange(setSelectYear)}
-                            />
-                          }
-                        >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
-                          {years.map((d) => (
-                            <MenuItem key={d} value={d}>
-                              {d}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <FormControl
-                        sx={{
-                          m: 1,
-                          minWidth: 120,
-                          width: "70%",
-                        }}
-                        size="small"
-                      >
-                        <InputLabel
-                          id="select_layer_hc"
-                          style={{ color: "#7b8b9d" }}
-                        >
-                          {"Seleccione el mes"}
-                        </InputLabel>
-                        <Select
-                          labelId="select_layer_hc"
-                          input={
-                            <OutlinedInput
-                              style={{ backgroundColor: "#e6eaed" }}
-                              label={"Seleccione el mes"}
-                              value={selectMonth}
-                              onChange={handleSelectChange(setSelectMonth)}
-                            />
-                          }
-                        >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
-                          {months.map((d,i) => (
-                            <MenuItem key={d} value={monthsC.indexOf(d)+1}>
-                              {d}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Box>
-                  }
-                  childComponent={
                     <Box
-                      className={styles.container_info}
-                      style={{ marginRight: "4%" }}
+                      className={[
+                        styles.container_info,
+                        styles.second_forecast,
+                      ].join(" ")}
                     >
                       <Box className={styles.info_title}>
                         <h3>Pronóstico 2</h3>
@@ -539,7 +526,7 @@ const Visualizer = () => {
                       >
                         <InputLabel
                           id="select_forecast2_hc"
-                          style={{ color: "#7b8b9d"}}
+                          style={{ color: "#7b8b9d" }}
                         >
                           {"Seleccione el pronóstico"}
                         </InputLabel>
@@ -548,7 +535,7 @@ const Visualizer = () => {
                           input={
                             <OutlinedInput
                               style={{ backgroundColor: "#e6eaed" }}
-                              label={"Pronóstico"}
+                              label={"Seleccione el pronóstico"}
                               value={selectSecondForecast}
                               onChange={handleSelectChange(
                                 setSelectSecondForecast
@@ -574,7 +561,7 @@ const Visualizer = () => {
           </Grid>
         </>
       )}
-      {currentLoading && <LoadingOverlay style={{zIndex: 999999}} />}
+      {currentLoading && <LoadingOverlay style={{ zIndex: 999999 }} />}
     </Container>
   );
 };
