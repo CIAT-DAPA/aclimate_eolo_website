@@ -13,6 +13,7 @@
 .grid_container{
     height: 100%;
     margin: 0;
+    position: relative;
 }
 
 .container_map{
@@ -27,17 +28,24 @@
 }
 
 .container_info{
-    height: 17%;
+    height: 90px;
     display: flex;
     flex-direction: column;
-    margin-bottom: 2%;
     z-index: 1000;
     position: relative;
     background-color: #ffffff;
-    border-radius: 21px;
+    border-radius: 12px;
     width: 40%;
-    margin-top: 1%;
-    padding: 2%;
+    padding: 1%;
+    margin-top: 132px;
+}
+
+.first_forecast{
+    margin-left: 2%;
+}
+
+.second_forecast{
+    margin-left: 10px;
 }
 
 .info_title{
@@ -56,6 +64,12 @@
     border-radius: 9px;
 }
 
+.info_inputs_menu{
+    width: 15%;
+    background-color: #e6eaed;
+    border-radius: 9px;
+}
+
 .multiple_inputs{
     display: flex;
 }
@@ -63,16 +77,30 @@
 .first_part_inputs{
     z-index: 1000;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 36%;
-    background-color: #fff;
-    height: 17%;
-    border-radius: 14px;
-    margin-top: 1%;
+    width: 100%;
 }
 
 .column_container{
     padding: 0;
+}
+
+.modal_container{
+    position: absolute;
+    top: 10px;
+    z-index: 410;
+    background-color: #ffff;
+    width: 98%;
+    left: 50%;
+    padding: 8px 25px;
+    transform: translateX(-50%);
+    border-radius: 12px;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+
+.vertical_line{
+    border: 0.10px solid #0d213791;
+    height: inherit;
+    margin: 4px 1%;
 }
