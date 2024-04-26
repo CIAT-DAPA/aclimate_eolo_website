@@ -10,7 +10,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-geotiff";
 import TiffLayer from "./TiffLayer";
 import MapLegend from "../MapLayer";
-import Configuration from "@/app/config"
+import Configuration from "@/app/config";
 
 const Map = ({
   center,
@@ -26,7 +26,8 @@ const Map = ({
   style = { width: "92%", height: "100%", justifySelf: "center" },
   child = null,
   childComponent = null,
-  minZoom=7
+  minZoom = 7,
+  setTiff = null
 }) => {
   const mapRef = useRef(null);
 
@@ -81,14 +82,16 @@ const Map = ({
 
       {isAnomalies ? (
         anomalies ? (
-          <><LayersControl.Overlay id={"anomalies"} name="Capa de Anomalia">
-          <TiffLayer
-            anomalies={anomalies}
-            setCurrentLoading={setCurrentLoading}
-          />
-        </LayersControl.Overlay>
-        <MapLegend workspace={workspace} layer={store} />
-        </>
+          <>
+            <LayersControl.Overlay id={"anomalies"} name="Capa de Anomalia">
+              <TiffLayer
+                anomalies={anomalies}
+                setCurrentLoading={setCurrentLoading}
+                setTiff={setTiff}
+              />
+            </LayersControl.Overlay>
+            <MapLegend workspace={workspace} layer={store} />
+          </>
         ) : (
           <></>
         )
