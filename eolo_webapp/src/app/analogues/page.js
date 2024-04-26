@@ -143,12 +143,12 @@ export default function Home() {
                 sx={{ m: 1, minWidth: 60, width: "30%" }}
                 size="small"
               >
-                <InputLabel id="select_month">{"Mes"}</InputLabel>
+                <InputLabel id="select_month">{"Seleccione un mes"}</InputLabel>
                 <Select
                   labelId="select_month"
                   input={
                     <OutlinedInput
-                      label={"Mes"}
+                      label={"Seleccione un mes"}
                       value={selectedMonthC}
                       onChange={handleSelectChange(setSelectedMonthC)}
                     />
