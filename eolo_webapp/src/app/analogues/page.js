@@ -10,7 +10,7 @@ import {
   Select,
   InputLabel,
   Card,
-  Container
+  Container,
 } from "@mui/material";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
@@ -199,7 +199,6 @@ export default function Home() {
               </FormControl>
 
               <Button
-                disabled={true}
                 style={{
                   width: "16%",
                   backgroundColor: "#e37b13",
@@ -377,13 +376,11 @@ export default function Home() {
         </>
       )}
       {currentLoading && <LoadingOverlay />}
-      {false && (
-        <FileInputModal
-          open={modalOpen}
-          handleOpen={handleOpen}
-          handleClose={handleClose}
-        />
-      )}
+      <FileInputModal
+        open={modalOpen}
+        handleOpen={handleOpen}
+        handleClose={handleClose}
+      />
     </Container>
   );
 }
