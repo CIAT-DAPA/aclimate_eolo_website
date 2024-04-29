@@ -5,10 +5,8 @@ import {
   Typography,
   Button,
   FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  OutlinedInput,
+  TextField,
+  Autocomplete,
 } from "@mui/material";
 import styles from "./modal.module.css";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -18,12 +16,21 @@ import { toast } from "react-toastify";
 
 const FileInputModal = ({ open, handleOpen, handleClose }) => {
   const { user } = useContext(AuthContext);
-  const [textInput, setTextInput] = useState("");
   const [selectStore, setSelectStore] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    setSelectedFile(file);
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
   };
 
   const notify = (text, type) => {
@@ -50,7 +57,7 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
 
   const [stores, setStores] = useState([]);
 
-  const handleSelectChange = (event) => setSelectStore(event.target.value);
+  const handleSelectChange = (event, value) => setSelectStore(value);
 
   const getStores = async () => {
     const username = user.user.user;
@@ -67,7 +74,7 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
         body: JSON.stringify({
           user: username,
           passw: password,
-          workspace: Configuration.get_nextgen_worspace(),
+          workspace: Configuration.get_cenaos_worspace(),
           geo_url: `${Configuration.get_geoserver_url()}rest/`,
         }),
       });
@@ -77,7 +84,12 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
       }
 
       const data = await response.json();
-      setStores(data.body);
+      let body = data.body;
+      const storesToIgnore = Configuration.get_stores_to_ignore();
+      if (data.body.length > 0) {
+        body = body.filter((item) => !storesToIgnore.includes(item));
+      }
+      setStores(body);
     } catch (error) {
       console.error("Error fetching GeoServer stores:", error);
     }
@@ -100,7 +112,7 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
 
     // Datos JSON
     const jsonData = {
-      workspace: Configuration.get_nextgen_worspace(),
+      workspace: Configuration.get_cenaos_worspace(),
       user: username,
       passw: password,
       geo_url: `${Configuration.get_geoserver_url()}rest/`,
@@ -120,7 +132,7 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
 
       if (!response.ok) {
         notify(`Error al guardar el raster ${data.error}`, "error");
-        return
+        return;
       }
 
       notify(`El raster se guardo exitosamente`, "success");
@@ -143,34 +155,37 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
       aria-describedby="modal-description"
     >
       <Box className={styles.modal_container}>
-        <Typography
-          variant="h5"
-          id="modal-title"
-          className={styles.modal_title}
-        >
-          Carga de rasters al Geoserver
-        </Typography>
         <Box className={styles.accion_container}>
-          <FormControl sx={{ m: 1, minWidth: 60, width: "30%" }} size="small">
-            <InputLabel id="select_month">{"Seleccione la store"}</InputLabel>
-            <Select
-              labelId="select_month"
-              input={
-                <OutlinedInput
-                  label={"Seleccione la store"}
-                  value={selectStore}
-                  onChange={handleSelectChange}
-                />
-              }
-            >
-              {stores.map((d) => (
-                <MenuItem key={d} value={d}>
-                  {d}
-                </MenuItem>
-              ))}
-            </Select>
+          <Typography
+            variant="h5"
+            id="modal-title"
+            className={styles.modal_title}
+          >
+            Carga de rasters al Geoserver
+          </Typography>
+          <FormControl sx={{ m: 1, minWidth: 60, width: "40%" }} size="small">
+            <Autocomplete
+              id="autocomplete"
+              value={selectStore}
+              onChange={handleSelectChange}
+              freeSolo
+              autoSelect
+              options={stores}
+              renderInput={(params) => (
+                <TextField {...params} label="Selecciona o escriba una store" />
+              )}
+            />
           </FormControl>
-          <Box>
+          <Typography variant="body1">{"Seleccione el raster"}</Typography>
+          <Box
+            border={1}
+            borderRadius={2}
+            borderColor="grey.400"
+            p={2}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            className={styles.drag_drop}
+          >
             <input
               type="file"
               id="file-input"
@@ -178,6 +193,11 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
               onChange={handleFileChange}
               accept=".tif"
             />
+            <Typography
+              style={{ whiteSpace: "break-spaces", textAlign: "center" }}
+              variant="h6"
+            >{`Arrastre el archivo .Tiff \n o`}</Typography>
+
             <label htmlFor="file-input">
               <Button
                 variant="contained"
@@ -188,7 +208,7 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
                   borderRadius: "6px",
                 }}
               >
-                Seleccionar el archivo
+                Seleccione el archivo
               </Button>
             </label>
             {selectedFile && (
