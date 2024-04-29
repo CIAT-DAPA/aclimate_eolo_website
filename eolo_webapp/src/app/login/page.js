@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import Configuration from "@/app/config";
 import useAuth from "../Hooks/useAuth";
 import LoadingOverlay from "../Components/LoadingOverlay";
+import styles from "./login.module.css"
 
 function Copyright(props) {
   return (
@@ -94,7 +95,7 @@ export default function SignIn() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="xs" className={styles.container}>
         <CssBaseline />
         <Box
           sx={{
