@@ -33,6 +33,7 @@ const HomePage = () => {
           background: `linear-gradient(77deg, #000, hsla(0, 0%, 100%, .199)), url('${prefix}/homepage.png')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
+          marginTop: 0,
         }}
       >
         <Grid item xs={12} md={6} className={styles.f_seccion_left}>

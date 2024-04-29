@@ -10,6 +10,7 @@ import {
   Select,
   InputLabel,
   Card,
+  Container
 } from "@mui/material";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
@@ -161,7 +162,7 @@ export default function Home() {
   }, [selectedYearHc]);
 
   return (
-    <main className={styles.main}>
+    <Container className={styles.main}>
       {loading || !auth ? (
         <Loading />
       ) : (
@@ -212,7 +213,7 @@ export default function Home() {
             </Box>
           </div>
 
-          <div className={styles.map_container}>
+          <Box className={styles.map_container}>
             <div className={styles.historical_map}>
               <div className={styles.info_container}>
                 <h2>Consultar históricos climáticos</h2>
@@ -372,7 +373,7 @@ export default function Home() {
                 />
               </Card>
             </div>
-          </div>
+          </Box>
         </>
       )}
       {currentLoading && <LoadingOverlay />}
@@ -383,6 +384,6 @@ export default function Home() {
           handleClose={handleClose}
         />
       )}
-    </main>
+    </Container>
   );
 }
