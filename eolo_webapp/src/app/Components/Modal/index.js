@@ -53,29 +53,31 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
   const handleSelectChange = (event) => setSelectStore(event.target.value);
 
   const getStores = async () => {
-    const geoserverUrl = Configuration.get_geoserver_url();
     const username = user.user.user;
     const password = user.user.password;
 
-    const basicAuth = btoa(`${username}:${password}`);
-    const url = `${geoserverUrl}/rest/workspaces/${Configuration.get_cenaos_worspace()}/datastores.json`;
+    const url = `${Configuration.get_api_url()}get_geo_stores`;
 
     try {
       const response = await fetch(url, {
-        mode: "cors",
+        method: "POST",
         headers: {
-          Authorization: `Basic ${basicAuth}`,
-          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          user: username,
+          passw: password,
+          workspace: Configuration.get_nextgen_worspace(),
+          geo_url: `${Configuration.get_geoserver_url()}rest/`,
+        }),
       });
 
       if (!response.ok) {
-        console.log("try")
+        notify("Error al obtener los stores del Geoserver", "error");
       }
 
       const data = await response.json();
-      const dataStores = data.dataStores.dataStores.map((s) => s.name);
-      setStores(dataStores);
+      setStores(data.body);
     } catch (error) {
       console.error("Error fetching GeoServer stores:", error);
     }
@@ -90,27 +92,35 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
       notify("El archivo seleccionado no es un archivo .tif.", "error");
       return;
     }
-    const geoserverUrl = Configuration.get_geoserver_url();
+    const url = `${Configuration.get_api_url()}import_geoserver`;
+
+    const formData = new FormData();
     const username = user.user.user;
     const password = user.user.password;
 
-    const basicAuth = btoa(`${username}:${password}`);
-    const uploadUrl = `${geoserverUrl}/rest/workspaces/${Configuration.get_cenaos_worspace()}/coveragestores/${selectStore}/file.geotiff`;
+    // Datos JSON
+    const jsonData = {
+      workspace: Configuration.get_nextgen_worspace(),
+      user: username,
+      passw: password,
+      geo_url: `${Configuration.get_geoserver_url()}rest/`,
+      store: selectStore,
+    };
+    formData.append("data", JSON.stringify(jsonData));
 
-    const formData = new FormData();
-    formData.append("file", tiffFile, tiffFile.name);
+    formData.append("file", selectedFile);
 
     try {
-      const response = await fetch(uploadUrl, {
-        method: "PUT",
-        headers: {
-          Authorization: `Basic ${basicAuth}`,
-        },
+      const response = await fetch(url, {
+        method: "POST",
         body: formData,
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        notify(`Error al guardar el raster`, "error");
+        notify(`Error al guardar el raster ${data.error}`, "error");
+        return
       }
 
       notify(`El raster se guardo exitosamente`, "success");
@@ -120,8 +130,10 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
   };
 
   useEffect(() => {
-    getStores();
-  }, []);
+    if (user && user.user && user.user.user) {
+      getStores();
+    }
+  }, [user]);
 
   return (
     <Modal
