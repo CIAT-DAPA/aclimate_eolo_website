@@ -28,7 +28,7 @@ const API_URL_PROD = "https://geoapi.aclimate.org/api/"
 
 const ACLIMATE_API_URL = "https://webapi.aclimate.org/api/"
 
-const IGNORE_STORES = ["CA_Norte_Cabeceras", "style", "Limite_Departamental_de_Honduras"]
+const IGNORE_STORES = ["CA_Norte_Cabeceras", "style", "Limite_Departamental_de_Honduras", "admin_levels", "storename", "styles"]
 
 const SHAPEFILE_LAYER = "Limite_Departamental_de_Honduras"
 
