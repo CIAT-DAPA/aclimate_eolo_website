@@ -46,8 +46,7 @@ const Map = ({
       style={style}
       ref={mapRef}
       zoomControl={false}
-      maxBounds={bounds}
-      minZoom={minZoom}
+      minZoom={0}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
