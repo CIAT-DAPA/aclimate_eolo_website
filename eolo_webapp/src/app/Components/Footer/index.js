@@ -20,7 +20,7 @@ const Footer = () => {
           {/* Aquí va el contenido de la segunda columna */}
           <Typography variant="body1" color="inherit" align="center">
             © AClimate. Alliance Bioversity International & CIAT - All rights
-            reserver
+            reserved
           </Typography>
         </Grid>
         <Grid item xs={12} sm={4} className={styles.column_container}>

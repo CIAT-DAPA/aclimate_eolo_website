@@ -11,8 +11,8 @@ import {
   InputLabel,
   Card,
   Container,
+  Typography ,
 } from "@mui/material";
-import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import MenuItem from "@mui/material/MenuItem";
 import Configuration from "@/app/config";
@@ -33,6 +33,7 @@ export default function Home() {
   const [anomalies, setAnomalies] = useState(null);
   const [currentLoading, setCurrentLoading] = useState(false);
   const [tiff, setTiff] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState("Honduras");
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -167,6 +168,25 @@ export default function Home() {
         <Loading />
       ) : (
         <>
+          <Box className={styles.country_container}>
+            <FormControl sx={{ m: 1, minWidth: 60, width: "15%" }} size="small">
+              <InputLabel id="select_country">
+                {"Seleccione el país"}
+              </InputLabel>
+              <Select
+                labelId="select_country"
+                input={
+                  <OutlinedInput
+                    label={"Seleccione el país"}
+                    value={selectedCountry}
+                    onChange={handleSelectChange(setSelectedCountry)}
+                  />
+                }
+              >
+                <MenuItem value={"Honduras"}>{"Honduras"}</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
           <div className={styles.title_analogues_container}>
             <h1>Análogos</h1>
             <p className={styles.title_analogues_text}>
@@ -175,10 +195,11 @@ export default function Home() {
               `}
             </p>
             <Box className={styles.accion_container}>
+            <Typography variant="body1" style={{padding: "0 1%", color: "#0d2137"}} >Seleccione el mes que desea comparar:</Typography>
               <FormControl
                 sx={{ m: 1, minWidth: 60, width: "30%" }}
                 size="small"
-              >
+              >  
                 <InputLabel id="select_month">{"Seleccione un mes"}</InputLabel>
                 <Select
                   labelId="select_month"
@@ -197,28 +218,58 @@ export default function Home() {
                   ))}
                 </Select>
               </FormControl>
-
-              <Button
-                style={{
-                  width: "16%",
-                  backgroundColor: "#e37b13",
-                  color: "#ffff",
-                  marginRight: "2%",
-                }}
-                onClick={handleOpen}
-              >
-                Cargar rasters
-              </Button>
             </Box>
           </div>
 
           <Box className={styles.map_container}>
             <div className={styles.historical_map}>
               <div className={styles.info_container}>
+                <h2>Promedio de histórico climático</h2>
+                <p>
+                  {
+                    "La herramienta calcula el promedio histórico de la precipitación durante esos años. Esto proporciona una referencia adicional para evaluar los comportamientos históricos. En el siguiente mapa podrá ver los datos promedios históricos de precipitación de un mes seleccionado."
+                  }
+                </p>
+              </div>
+
+              <Card>
+                <Map
+                  className={styles.map}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    justifySelf: "center",
+                    display: "flex",
+                    justifyContent: "flex-start",
+                  }}
+                  zoom={7}
+                  center={[14.5007343, -86.6719949]}
+                  url={Configuration.get_geoserver_url()}
+                  workspace={Configuration.get_climatology_worspace()}
+                  store={Configuration.get_prec_store()}
+                  year={2000}
+                  month={selectedMonthC}
+                  child={
+                    <IconButton
+                      color="primary"
+                      aria-label="add to shopping cart"
+                      className={styles.download_raster_l}
+                      disabled={!selectedMonthC}
+                      onClick={downloadRaster}
+                    >
+                      <FileDownloadOutlinedIcon />
+                    </IconButton>
+                  }
+                />
+              </Card>
+            </div>
+
+            <div className={styles.historical_map}>
+              <div className={styles.info_container}>
                 <h2>Consultar históricos climáticos</h2>
                 <p>
                   {
-                    "Nuestra herramienta analiza un conjunto de datos históricos climáticos para identificar años en los que las condiciones climáticas fueron similares a las actuales. Esto se logra mediante el análisis de precipitación."
+                    "En esta sección usted podrá analizar los datos históricos climáticos observados sobre precipitación. En el siguiente mapa podrá ver los datos de precipitación de un mes y año que haya seleccionado."
                   }
                 </p>
                 <FormControl
@@ -266,77 +317,34 @@ export default function Home() {
               </Card>
             </div>
 
-            <div className={styles.historical_map}>
-              <div className={styles.info_container}>
-                <h2>Promedio de históricos climáticos</h2>
-                <p>
-                  {
-                    "La herramienta calcula el promedio histórico de la precipitación durante esos años. Esto proporciona una referencia adicional para evaluar las condiciones actuales y realizar pronósticos más precisos."
-                  }
-                </p>
-              </div>
-
-              <Card>
-                <Map
-                  className={styles.map}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    justifySelf: "center",
-                    display: "flex",
-                    justifyContent: "flex-start",
-                  }}
-                  zoom={7}
-                  center={[14.5007343, -86.6719949]}
-                  url={Configuration.get_geoserver_url()}
-                  workspace={Configuration.get_climatology_worspace()}
-                  store={Configuration.get_prec_store()}
-                  year={2000}
-                  month={selectedMonthC}
-                  child={
-                    <IconButton
-                      color="primary"
-                      aria-label="add to shopping cart"
-                      className={styles.download_raster_l}
-                      disabled={!selectedMonthC}
-                      onClick={downloadRaster}
-                    >
-                      <FileDownloadOutlinedIcon />
-                    </IconButton>
-                  }
-                />
-              </Card>
-            </div>
-
             <div className={styles.anomalies_map}>
               <div className={styles.info_container}>
                 <h2>Pronóstico de anomalía</h2>
                 <p>
-                  Vestibulum varius maximus odio, vitae porttitor metus lobortis
-                  in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
-                  sagittis sollicitudin lorem, quis ornare eros tempor congue
+                  {`Nuestra herramienta de análisis de anomalías climáticas utiliza el método de promedio de años análogos y la diferencia con la norma histórica para calcular las desviaciones significativas en las condiciones climáticas.
+                   Explora nuestro mapa interactivo para visualizar estas anomalías climáticas.`}
                 </p>
 
                 <div className={styles.anomalies_but_cont}>
                   <MultiSelect
                     arrayData={multYears}
-                    label={"Años análogos"}
+                    label={"Seleccione los años análogos"}
                     data={multiSelectData}
                     setData={setMultiSelectData}
                     disabled={!(selectedMonthC != "")}
                   />
-                  <IconButton
-                    aria-label="Calcular anomalia"
-                    color="primary"
+                  <Button
+                    style={{
+                      width: "16%",
+                      backgroundColor: "#e37b13",
+                      color: "#ffff",
+                      marginRight: "2%",
+                    }}
                     onClick={createAnomaly}
-                    size={"large"}
-                    style={{ color: "#e37b13" }}
                     disabled={multiSelectData.length < 2}
                   >
-                    <PlayCircleIcon
-                      style={{ height: "1.5em", width: "1.5em" }}
-                    />
-                  </IconButton>
+                    Calcular Anomalía
+                  </Button>
                 </div>
               </div>
               <Card>
@@ -347,7 +355,7 @@ export default function Home() {
                     height: "100%",
                     justifySelf: "center",
                     display: "flex",
-                    justifyContent: "flex-end",
+                    justifyContent: "flex-start",
                   }}
                   zoom={7.5}
                   center={[14.5007343, -86.6719949]}
@@ -362,7 +370,7 @@ export default function Home() {
                     <IconButton
                       color="primary"
                       aria-label="add to shopping cart"
-                      className={styles.download_raster}
+                      className={styles.download_raster_l}
                       disabled={!tiff}
                       onClick={downloadAnomalyRaster}
                     >

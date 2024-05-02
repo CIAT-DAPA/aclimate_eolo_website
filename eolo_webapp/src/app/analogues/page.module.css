@@ -56,6 +56,7 @@
   display: flex;
   width: 100%;
   justify-content: space-between;
+  align-items: center;
 }
 
 .princ_main {
@@ -78,8 +79,7 @@
 
 .accion_container {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
 }
 
 .download_raster_l {
@@ -108,4 +108,9 @@
 
 .download_raster:hover {
   background-color: #d9d9d9;
+}
+
+.country_container {
+  display: flex;
+  justify-content: flex-end;
 }
