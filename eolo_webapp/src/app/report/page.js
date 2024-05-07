@@ -61,7 +61,6 @@ const Report = () => {
     "Encima de lo normal",
     "Normal",
     "Debajo de lo normal",
-    "Mayor probabilidad",
   ]);
   const [workspaces, setWorkspaces] = useState([
     {
@@ -92,14 +91,13 @@ const Report = () => {
     Configuration.get_above_store(),
     Configuration.get_normal_store(),
     Configuration.get_below_store(),
-    Configuration.get_hgp_store(),
   ]);
 
   const [layers, setLayers] = useState([
-    { display: "Above", value: Configuration.get_above_store() },
+    { display: "Encima de lo normal", value: Configuration.get_above_store() },
     { display: "Normal", value: Configuration.get_normal_store() },
-    { display: "Below", value: Configuration.get_below_store() },
-    { display: "Highest probability", value: Configuration.get_hgp_store() },
+    { display: "Debajo de lo normal", value: Configuration.get_below_store() },
+    { display: "Dominant", value: Configuration.get_hgp_store() },
   ]);
 
   const cleanFilter = () => {
@@ -107,22 +105,97 @@ const Report = () => {
     setSelectedFile(null);
   };
 
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-    const file = event.target.files[0]; // Obtener el primer archivo seleccionado
-    const reader = new FileReader(); // Crear un objeto FileReader
+  const getPoints = async () => {
+    try {
+      setCurrentLoading(true);
+      const csv_data = csv;
+      const dates = calculateDates().map((date) => [
+        date.getFullYear(),
+        date.getMonth() + 1,
+      ]);
+      const results = {};
+      const layerOrder = layers
+        .slice(0, layers.length - 1)
+        .map((layer) => layer.value);
+      await Promise.all(
+        csv_data.map(async (row) => {
+          await Promise.all(
+            dates.map(async (date, index) => {
+              const season = `season_${index + 1}`;
+              if (!results[row.point]) {
+                results[row.point] = {};
+              }
+              if (!results[row.point][season]) {
+                results[row.point][season] = {};
+              }
+              await Promise.all(
+                layerOrder.map(async (layer) => {
+                  const lon_plus = parseFloat(row.lon) + 0.2;
+                  const lat_plus = parseFloat(row.lat) + 0.2;
+                  const point_url = `${Configuration.get_geoserver_url()}${forecastSelected}/wms?service=WMS&version=1.1.1&request=GetFeatureInfo&layers=${forecastSelected}:${layer}&query_layers=${forecastSelected}:${layer}&feature_count=10&info_format=application/json&format_options=callback:handleJson&SrsName=EPSG:4326&width=101&height=101&x=50&y=50&time=${
+                    date[0]
+                  }-${date[1]}&bbox=${row.lon},${
+                    row.lat
+                  },${lon_plus},${lat_plus}`;
+                  const response = await fetch(point_url);
+                  if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                  }
+                  const data = await response.json();
+                  // Manejar la respuesta JSON
+                  const grayIndex = data.features[0].properties.GRAY_INDEX;
+                  results[row.point][season][layer] = grayIndex;
+                })
+              );
+            })
+          );
+        })
+      );
+      setData(results);
+      setCurrentLoading(false);
+    } catch (error) {
+      setCurrentLoading(false);
+      notify(`Error al obtener los puntos`, "error");
+    }
+  };
 
-    reader.onload = function (e) {
-      const content = e.target.result;
-      const rows = content.split("\n");
+  const handleFileChange = async (event) => {
+    try {
+      setCurrentLoading(true);
+      const parsedData = await new Promise((resolve, reject) => {
+        const file = event.target.files[0]; // Obtener el primer archivo seleccionado
+        const reader = new FileReader(); // Crear un objeto FileReader
 
-      const splited = rows[0].split(",");
+        reader.onload = function (e) {
+          const content = e.target.result;
+          const rows = content.split("\n");
 
-      const column = splited.map((elemento) => elemento.trim());
-      setCsv(column.slice(1));
-    };
+          // Eliminar la primera línea ya que es el encabezado
+          rows.shift();
 
-    reader.readAsText(file);
+          const data = rows.reduce((acc, row) => {
+            const columns = row.split(",").map((col) => col.trim());
+            if (columns.length === 3) {
+              acc.push({
+                point: columns[0],
+                lat: columns[1],
+                lon: columns[2],
+              });
+            }
+            return acc;
+          }, []);
+
+          resolve(data);
+        };
+
+        reader.readAsText(file);
+      });
+      setCsv(parsedData);
+      setCurrentLoading(false);
+    } catch (error) {
+      setCurrentLoading(false);
+      notify(`Error al leer el archivo`, "error");
+    }
   };
 
   const handleSelectChange = (setStateFunction) => (event) => {
@@ -191,7 +264,6 @@ const Report = () => {
   const getAverage = async () => {
     const url = `${Configuration.get_api_url()}global_average`;
     const dates = calculateDates();
-
     try {
       const layers = await Promise.all(
         dates.map(async (date) => {
@@ -221,10 +293,9 @@ const Report = () => {
           return await Promise.all(promises);
         })
       );
-
       setAverageData(layers);
     } catch (error) {
-      console.log(error);
+      notify(`Error al generar los promedios`, "error");
     }
   };
 
@@ -296,6 +367,7 @@ const Report = () => {
 
       const data = await response.json();
       const body = await JSON.parse(data.body);
+      delete body["Addis Ababa"];
       setData(body);
       setCurrentLoading(false);
       notify("El reporte se genero con exíto", "success");
@@ -305,14 +377,17 @@ const Report = () => {
     }
   };
 
-  useEffect(() => {
-    if (typeForecast !== "" && forecastSelected !== "") {
-      setCurrentLoading(true);
-      calcSeason();
-      getAverage();
-      getRegionData();
+  const generateData = async () => {
+    if (typeForecast == "" || forecastSelected == "" || csv == null) {
+      notify(`Debe seleccionar el pronstico y cargar las localidades`, "error");
+      return;
     }
-  }, [typeForecast, forecastSelected]);
+    setCurrentLoading(true);
+    calcSeason();
+    await getAverage();
+    await getPoints();
+    setCurrentLoading(false);
+  };
 
   useEffect(() => {
     const newDate = new Date();
@@ -337,6 +412,37 @@ const Report = () => {
       ) : (
         <>
           <Box ref={targetRef} className={styles.container}>
+            <Box className={styles.radio_container}>
+              <Typography
+                variant="body1"
+                color="textSecondary"
+                className={styles.report_title}
+                style={{margin: 0, display: "flex", alignItems: "center"}}
+              >
+                Tipo de pronóstico:
+              </Typography>
+              <FormControl>
+                <RadioGroup
+                  row
+                  name="row-radio-buttons-group"
+                  value={typeForecast}
+                  onChange={handleSelectChange(setTypeForecast)}
+                >
+                  <FormControlLabel
+                    value={"bi"}
+                    control={<Radio />}
+                    label="Bimestral"
+                    labelPlacement="end"
+                  />
+                  <FormControlLabel
+                    value={"tri"}
+                    control={<Radio />}
+                    label="Trimestral"
+                    labelPlacement="end"
+                  />
+                </RadioGroup>
+              </FormControl>
+            </Box>
             <Box className={styles.selectors_container}>
               <FormControl
                 className={styles.info_inputs}
@@ -370,28 +476,69 @@ const Report = () => {
                   ))}
                 </Select>
               </FormControl>
-              <FormControl>
-                <RadioGroup
-                  row
-                  name="row-radio-buttons-group"
-                  value={typeForecast}
-                  onChange={handleSelectChange(setTypeForecast)}
-                >
-                  <FormControlLabel
-                    value={"bi"}
-                    control={<Radio />}
-                    label="Bimestral"
-                    labelPlacement="end"
+              <Box className={styles.buttons_container}>
+                <Box className={styles.file_container}>
+                  <input
+                    type="file"
+                    id="file-input"
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                    accept=".csv"
                   />
-                  <FormControlLabel
-                    value={"tri"}
-                    control={<Radio />}
-                    label="Trimestral"
-                    labelPlacement="end"
-                  />
-                </RadioGroup>
-              </FormControl>
+                  <label htmlFor="file-input">
+                    <Button
+                      variant="contained"
+                      component="span"
+                      startIcon={<UploadFileIcon />}
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#e37b13",
+                        color: "#ffff",
+                        height: "42px",
+                        borderRadius: "6px",
+                      }}
+                    >
+                      Cargar CSV
+                    </Button>
+                  </label>
+                  {selectedFile && (
+                    <Typography variant="body2">
+                      Archivo seleccionado: {selectedFile.name}
+                    </Typography>
+                  )}
+                </Box>
+                <Box>
+                  {selectedFile && (
+                    <IconButton
+                      aria-label="delete"
+                      size="large"
+                      onClick={cleanFilter}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
+                </Box>
+              </Box>
             </Box>
+
+            <Box>
+              <Button
+                variant="contained"
+                component="span"
+                style={{
+                  width: "18%",
+                  backgroundColor: "#e37b13",
+                  color: "#ffff",
+                  height: "42px",
+                  borderRadius: "6px",
+                  marginBottom: "1%",
+                }}
+                onClick={generateData}
+              >
+                Generar pronóstico
+              </Button>
+            </Box>
+
             <Typography
               variant="h4"
               color="textSecondary"
@@ -433,6 +580,12 @@ const Report = () => {
                           data={values}
                           type="bar"
                           width="500"
+                          colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
+                          titles={[
+                            "Encima de lo normal",
+                            "Normal",
+                            "Debajo de lo normal",
+                          ]}
                         />
                       </Box>
                     );
@@ -447,7 +600,17 @@ const Report = () => {
                       >
                         Temporada 1
                       </Typography>
-                      <ChartReport data={[0, 0, 0, 0]} type="bar" width="500" />
+                      <ChartReport
+                        data={[0, 0, 0, 0]}
+                        type="bar"
+                        width="500"
+                        colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
+                        titles={[
+                          "Encima de lo normal",
+                          "Normal",
+                          "Debajo de lo normal",
+                        ]}
+                      />
                     </Box>
                     <Box className={styles.chart_info}>
                       <Typography
@@ -457,7 +620,17 @@ const Report = () => {
                       >
                         Temporada 2
                       </Typography>
-                      <ChartReport data={[0, 0, 0, 0]} type="bar" width="500" />
+                      <ChartReport
+                        data={[0, 0, 0, 0]}
+                        type="bar"
+                        width="500"
+                        colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
+                        titles={[
+                          "Encima de lo normal",
+                          "Normal",
+                          "Debajo de lo normal",
+                        ]}
+                      />
                     </Box>
                   </>
                 )}
@@ -481,10 +654,17 @@ const Report = () => {
                               className={styles.map_card_header}
                               title={`${layers[index * 2 + subIndex].display}`}
                             />
-                            <CardContent className={styles.map_card_content} style={{padding: 0}}>
+                            <CardContent
+                              className={styles.map_card_content}
+                              style={{ padding: 0 }}
+                            >
                               <Map
                                 key={`${subIndex}_map`}
-                                style={{ width: "100%", height: "100%", justifySelf: "center" }}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  justifySelf: "center",
+                                }}
                                 zoom={7}
                                 center={[14.5007343, -86.6719949]}
                                 url={Configuration.get_geoserver_url()}
@@ -507,64 +687,16 @@ const Report = () => {
                     color="textSecondary"
                     className={styles.report_title}
                   >
-                    Datos por región
+                    Datos por localidad
                   </Typography>
                   <Typography variant="body2" className={styles.card_text}>
                     {`Vestibulum varius maximus odio, vitae porttitor metus lobortis
                   in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
                   sagittis sollicitudin lorem, quis ornare eros tempor congue`}
                   </Typography>
-                  <Box className={styles.buttons_container}>
-                    <Box className={styles.file_container}>
-                      <input
-                        type="file"
-                        id="file-input"
-                        style={{ display: "none" }}
-                        onChange={handleFileChange}
-                        accept=".csv"
-                      />
-                      <label htmlFor="file-input">
-                        <Button
-                          variant="contained"
-                          component="span"
-                          startIcon={<UploadFileIcon />}
-                          style={{
-                            width: "100%",
-                            backgroundColor: "#e37b13",
-                            color: "#ffff",
-                            height: "42px",
-                            borderRadius: "6px",
-                          }}
-                        >
-                          Cargar CSV
-                        </Button>
-                      </label>
-                      {selectedFile && (
-                        <Typography variant="body2">
-                          Archivo seleccionado: {selectedFile.name}
-                        </Typography>
-                      )}
-                    </Box>
-                    <Box>
-                      {selectedFile && (
-                        <IconButton
-                          aria-label="delete"
-                          size="large"
-                          onClick={cleanFilter}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      )}
-                    </Box>
-                  </Box>
                 </Box>
                 <Box>
-                  <CsvTable
-                    titles={titles}
-                    data={data}
-                    subTitles={subTitles}
-                    filter={csv}
-                  />
+                  <CsvTable titles={titles} data={data} subTitles={subTitles} />
                 </Box>
               </Box>
             </Box>

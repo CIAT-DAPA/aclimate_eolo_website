@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./page.module.css";
 import {
   FormControl,
@@ -11,7 +11,7 @@ import {
   InputLabel,
   Card,
   Container,
-  Typography ,
+  Typography,
 } from "@mui/material";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import MenuItem from "@mui/material/MenuItem";
@@ -23,6 +23,7 @@ import useAuth from "../Hooks/useAuth";
 import Loading from "../Components/Loading";
 import LoadingOverlay from "../Components/LoadingOverlay";
 import FileInputModal from "../Components/Modal";
+import ImageIcon from "@mui/icons-material/Image";
 
 const Map = dynamic(() => import("@/app/Components/Map"), { ssr: false });
 
@@ -34,7 +35,10 @@ export default function Home() {
   const [currentLoading, setCurrentLoading] = useState(false);
   const [tiff, setTiff] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState("Honduras");
-
+  const climatologyRef = useRef(null);
+  const historicalRef = useRef(null);
+  const anomaliesRef = useRef(null);
+  const exportComponentAsPNG = "";
   const [modalOpen, setModalOpen] = useState(false);
 
   const [multiSelectData, setMultiSelectData] = useState([]);
@@ -195,11 +199,16 @@ export default function Home() {
               `}
             </p>
             <Box className={styles.accion_container}>
-            <Typography variant="body1" style={{padding: "0 1%", color: "#0d2137"}} >Seleccione el mes que desea comparar:</Typography>
+              <Typography
+                variant="body1"
+                style={{ padding: "0 1%", color: "#0d2137" }}
+              >
+                Seleccione el mes que desea comparar:
+              </Typography>
               <FormControl
                 sx={{ m: 1, minWidth: 60, width: "30%" }}
                 size="small"
-              >  
+              >
                 <InputLabel id="select_month">{"Seleccione un mes"}</InputLabel>
                 <Select
                   labelId="select_month"
@@ -232,7 +241,7 @@ export default function Home() {
                 </p>
               </div>
 
-              <Card>
+              <Card ref={climatologyRef}>
                 <Map
                   className={styles.map}
                   style={{
@@ -250,15 +259,36 @@ export default function Home() {
                   year={2000}
                   month={selectedMonthC}
                   child={
-                    <IconButton
-                      color="primary"
-                      aria-label="add to shopping cart"
-                      className={styles.download_raster_l}
-                      disabled={!selectedMonthC}
-                      onClick={downloadRaster}
-                    >
-                      <FileDownloadOutlinedIcon />
-                    </IconButton>
+                    <Box className={styles.map_buttons_container}>
+                      <IconButton
+                        color="primary"
+                        aria-label="add to shopping cart"
+                        className={styles.download_raster_l}
+                        disabled={!selectedMonthC}
+                        onClick={downloadRaster}
+                      >
+                        <FileDownloadOutlinedIcon />
+                      </IconButton>
+                      <IconButton
+                        color="primary"
+                        aria-label="add to shopping cart"
+                        className={styles.download_raster_l}
+                        disabled={!selectedMonthC}
+                        onClick={async () => {
+                          const { exportComponentAsPNG } = await import(
+                            "react-component-export-image"
+                          );
+
+                          exportComponentAsPNG(climatologyRef, {
+                            fileName: `Promedio_histórico_${
+                              monthsC[selectedMonthC - 1]
+                            }.png`,
+                          });
+                        }}
+                      >
+                        <ImageIcon />
+                      </IconButton>
+                    </Box>
                   }
                 />
               </Card>
@@ -272,6 +302,12 @@ export default function Home() {
                     "En esta sección usted podrá analizar los datos históricos climáticos observados sobre precipitación. En el siguiente mapa podrá ver los datos de precipitación de un mes y año que haya seleccionado."
                   }
                 </p>
+                <Typography
+                  variant="body1"
+                  style={{ padding: "0 1%", color: "#0d2137", margin: 0 }}
+                >
+                  Seleccione el año que desea consultar:
+                </Typography>
                 <FormControl
                   sx={{ m: 1, minWidth: 60, width: "40%" }}
                   size="small"
@@ -321,18 +357,27 @@ export default function Home() {
               <div className={styles.info_container}>
                 <h2>Pronóstico de anomalía</h2>
                 <p>
-                  {`Nuestra herramienta de análisis de anomalías climáticas utiliza el método de promedio de años análogos y la diferencia con la norma histórica para calcular las desviaciones significativas en las condiciones climáticas.
+                  {`Nuestra herramienta de análisis de anomalías climáticas emplea el método de promedio de años análogos y evalúa las desviaciones significativas en las condiciones climáticas respecto a la norma histórica. Estas evaluaciones se realizan utilizando datos de CHIRPSv3 beta, con las anomalías normalizadas para una mejor interpretación de los resultados.
                    Explora nuestro mapa interactivo para visualizar estas anomalías climáticas.`}
                 </p>
 
                 <div className={styles.anomalies_but_cont}>
-                  <MultiSelect
-                    arrayData={multYears}
-                    label={"Seleccione los años análogos"}
-                    data={multiSelectData}
-                    setData={setMultiSelectData}
-                    disabled={!(selectedMonthC != "")}
-                  />
+                  <Box style={{ width: "60%" }}>
+                    <Typography
+                      variant="body1"
+                      style={{ padding: "0 1%", color: "#0d2137" }}
+                    >
+                      Seleccione los años analogos para calcular el promedio:
+                    </Typography>
+                    <MultiSelect
+                      arrayData={multYears}
+                      label={"Seleccione los años análogos"}
+                      data={multiSelectData}
+                      setData={setMultiSelectData}
+                      disabled={!(selectedMonthC != "")}
+                    />
+                  </Box>
+
                   <Button
                     style={{
                       width: "16%",
@@ -347,7 +392,7 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
-              <Card>
+              <Card ref={anomaliesRef}>
                 <Map
                   className={styles.map}
                   style={{
@@ -367,15 +412,35 @@ export default function Home() {
                   minZoom={8}
                   setTiff={setTiff}
                   child={
-                    <IconButton
-                      color="primary"
-                      aria-label="add to shopping cart"
-                      className={styles.download_raster_l}
-                      disabled={!tiff}
-                      onClick={downloadAnomalyRaster}
-                    >
-                      <FileDownloadOutlinedIcon />
-                    </IconButton>
+                    <Box className={styles.map_buttons_container}>
+                      <IconButton
+                        color="primary"
+                        aria-label="add to shopping cart"
+                        className={styles.download_raster_l}
+                        disabled={!tiff}
+                        onClick={downloadAnomalyRaster}
+                      >
+                        <FileDownloadOutlinedIcon />
+                      </IconButton>
+                      <IconButton
+                        color="primary"
+                        aria-label="add to shopping cart"
+                        className={styles.download_raster_l}
+                        disabled={!tiff}
+                        onClick={async () => {
+                          const { exportComponentAsPNG } = await import(
+                            "react-component-export-image"
+                          );
+                          exportComponentAsPNG(anomaliesRef, {
+                            fileName: `Anomalía_${
+                              monthsC[selectedMonthC - 1]
+                            }_${multiSelectData.join("-")}.png`,
+                          });
+                        }}
+                      >
+                        <ImageIcon />
+                      </IconButton>
+                    </Box>
                   }
                 />
               </Card>

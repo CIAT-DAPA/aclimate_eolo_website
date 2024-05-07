@@ -1,26 +1,32 @@
 import { useState, useEffect } from "react";
 import Chart from "react-apexcharts";
 
-const ChartReport = ({ data, type }) => {
+const ChartReport = ({ data, type, colors, titles }) => {
   const [chartData, setChartData] = useState({
     options: {
       chart: {
+        type: type,
         id: "basic-bar",
       },
-      colors: ['#0d6efd', '#20c997', '#ffc107', '#FF4560'],
+      legend: {
+        show: false,
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 4,
+          borderRadiusApplication: "end",
+          distributed: true,
+        },
+      },
+      colors: colors,
       xaxis: {
-        categories: [
-          "Encima de lo normal",
-          "Normal",
-          "Debajo de lo normal",
-          "Mayor probabilidad",
-        ],
+        categories: titles,
       },
     },
     series: [
       {
         name: "Probabilidades",
-        data: [0, 0, 0, 0],
+        data: [0, 0, 0],
       },
     ],
   });
@@ -30,16 +36,18 @@ const ChartReport = ({ data, type }) => {
       setChartData({
         options: {
           chart: {
+            type: type,
             id: "basic-bar",
           },
-          colors: ['#0d6efd', '#20c997', '#ffc107', '#FF4560'],
+          plotOptions: {
+            bar: {
+              borderRadius: 4,
+              borderRadiusApplication: "end",
+            },
+          },
+          colors: colors,
           xaxis: {
-            categories: [
-              "Encima de lo normal",
-              "Normal",
-              "Debajo de lo normal",
-              "Mayor probabilidad",
-            ],
+            categories: titles,
           },
         },
         series: [

@@ -57,7 +57,7 @@
 
 .buttons_container {
   display: flex;
-  width: 100%;
+  width: 50%;
   align-items: center;
   gap: 2%;
 }
@@ -108,4 +108,10 @@
 .map_card_header {
   height: 12%;
   padding: 2% 3%;
+}
+
+.radio_container{
+  display: flex;
+  gap: 1%;
+  margin-bottom: 5px;
 }

@@ -14,7 +14,7 @@
   background-color: #0d2137;
   color: #5e6873;
   font-size: 22px;
-  min-height: 200px;
+  min-height: 200px !important;
 }
 
 .logoImage {
