@@ -22,6 +22,12 @@ const ChartReport = ({ data, type, colors, titles }) => {
       xaxis: {
         categories: titles,
       },
+      yaxis: {
+        max: 100,
+        title: {
+          text: "Probabilidad (%)",
+        }
+      },
     },
     series: [
       {
@@ -48,6 +54,12 @@ const ChartReport = ({ data, type, colors, titles }) => {
           colors: colors,
           xaxis: {
             categories: titles,
+          },
+          yaxis: {
+            max: 100,
+            title: {
+              text: "Probabilidad (%)",
+            }
           },
         },
         series: [

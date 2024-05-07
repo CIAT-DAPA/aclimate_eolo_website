@@ -74,12 +74,12 @@ const Report = () => {
       type: "tri",
     },
     {
-      display: "Análogos - CIAT",
+      display: "Análogos Automatizado",
       value: Configuration.get_analogues_worspace(),
       type: "tri",
     },
     {
-      display: "Análogos - CENAOS",
+      display: "Análogos",
       value: Configuration.get_cenaos_worspace(),
       type: "tri",
     },
@@ -379,7 +379,7 @@ const Report = () => {
 
   const generateData = async () => {
     if (typeForecast == "" || forecastSelected == "" || csv == null) {
-      notify(`Debe seleccionar el pronstico y cargar las localidades`, "error");
+      notify(`Debe seleccionar el pronóstico y cargar las localidades`, "error");
       return;
     }
     setCurrentLoading(true);
