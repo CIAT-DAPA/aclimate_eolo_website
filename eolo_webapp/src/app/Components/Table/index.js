@@ -32,7 +32,7 @@ const CsvTable = ({ titles, subTitles, data, filter }) => {
                     key={col}
                     className={styles.columns}
                     align="right"
-                    colSpan={4}
+                    colSpan={3}
                     variant="head"
                   >
                     {col}
@@ -100,16 +100,28 @@ const CsvTable = ({ titles, subTitles, data, filter }) => {
                     >
                       {row}
                     </TableCell>
-                    {Object.keys(data[row]).map((season) =>
-                      Object.keys(data[row][season]).map((store) => (
-                        <TableCell key={season + store} align="center">
-                          {data[row][season][store] == NaN ||
-                          data[row][season][store] == "NaN"
+                    {Object.keys(data[row]).map((season) => (
+                      <>
+                        <TableCell key={season + "above"} align="center">
+                          {data[row][season]["above"] == NaN ||
+                          data[row][season]["above"] == "NaN"
                             ? "Sin datos"
-                            : Math.round(data[row][season][store])}
+                            : Math.round(data[row][season]["above"])}
                         </TableCell>
-                      ))
-                    )}
+                        <TableCell key={season + "normal"} align="center">
+                          {data[row][season]["normal"] == NaN ||
+                          data[row][season]["normal"] == "NaN"
+                            ? "Sin datos"
+                            : Math.round(data[row][season]["normal"])}
+                        </TableCell>
+                        <TableCell key={season + "below"} align="center">
+                          {data[row][season]["below"] == NaN ||
+                          data[row][season]["below"] == "NaN"
+                            ? "Sin datos"
+                            : Math.round(data[row][season]["below"])}
+                        </TableCell>
+                      </>
+                    ))}
                   </>
                 )}
               </TableRow>
