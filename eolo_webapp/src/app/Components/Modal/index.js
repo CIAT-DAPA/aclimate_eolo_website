@@ -14,7 +14,7 @@ import Configuration from "@/app/config";
 import AuthContext from "@/app/Context/auth/authContext";
 import { toast } from "react-toastify";
 
-const FileInputModal = ({ open, handleOpen, handleClose }) => {
+const FileInputModal = ({ open, setCurrentLoading, handleClose, getDates }) => {
   const { user } = useContext(AuthContext);
   const [selectStore, setSelectStore] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
@@ -104,6 +104,7 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
       notify("El archivo seleccionado no es un archivo .tif.", "error");
       return;
     }
+    setCurrentLoading(true)
     const url = `${Configuration.get_api_url()}import_geoserver`;
 
     const formData = new FormData();
@@ -134,9 +135,12 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
         notify(`Error al guardar el raster ${data.error}`, "error");
         return;
       }
-
+      await getStores()
+      await getDates()
+      setCurrentLoading(false)
       notify(`El raster se guardo exitosamente`, "success");
     } catch (error) {
+      setCurrentLoading(false)
       notify(`Error al guardar el raster`, "error");
     }
   };
@@ -196,7 +200,7 @@ const FileInputModal = ({ open, handleOpen, handleClose }) => {
             <Typography
               style={{ whiteSpace: "break-spaces", textAlign: "center" }}
               variant="h6"
-            >{`Arrastre el archivo .Tiff \n o`}</Typography>
+            >{`Arrastre el archivo .tif \n o`}</Typography>
 
             <label htmlFor="file-input">
               <Button

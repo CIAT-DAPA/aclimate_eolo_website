@@ -97,7 +97,7 @@ const Report = () => {
     { display: "Encima de lo normal", value: Configuration.get_above_store() },
     { display: "Normal", value: Configuration.get_normal_store() },
     { display: "Debajo de lo normal", value: Configuration.get_below_store() },
-    { display: "Dominant", value: Configuration.get_hgp_store() },
+    { display: "Dominante", value: Configuration.get_hgp_store() },
   ]);
 
   const cleanFilter = () => {
@@ -379,7 +379,10 @@ const Report = () => {
 
   const generateData = async () => {
     if (typeForecast == "" || forecastSelected == "" || csv == null) {
-      notify(`Debe seleccionar el pronóstico y cargar las localidades`, "error");
+      notify(
+        `Debe seleccionar el pronóstico y cargar las localidades`,
+        "error"
+      );
       return;
     }
     setCurrentLoading(true);
@@ -417,7 +420,7 @@ const Report = () => {
                 variant="body1"
                 color="textSecondary"
                 className={styles.report_title}
-                style={{margin: 0, display: "flex", alignItems: "center"}}
+                style={{ margin: 0, display: "flex", alignItems: "center" }}
               >
                 Tipo de pronóstico:
               </Typography>
@@ -444,39 +447,57 @@ const Report = () => {
               </FormControl>
             </Box>
             <Box className={styles.selectors_container}>
-              <FormControl
-                className={styles.info_inputs}
-                sx={{ m: 1, minWidth: 120, width: "20%" }}
-                size="small"
-              >
-                <InputLabel
-                  id="select_forecast1_hc"
-                  style={{ color: "#7b8b9d" }}
+              <Box>
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  className={styles.report_title}
+                  style={{ margin: 0, display: "flex", alignItems: "center" }}
                 >
-                  {"Seleccione el pronóstico"}
-                </InputLabel>
-                <Select
-                  labelId="select_forecast1_hc"
-                  input={
-                    <OutlinedInput
-                      style={{ backgroundColor: "#e6eaed" }}
-                      label={"Seleccione el pronóstico"}
-                      value={forecastSelected}
-                      onChange={handleSelectChange(setForecastSelected)}
-                    />
-                  }
+                  Seleccione el pronóstico para generar el reporte:
+                </Typography>
+                <FormControl
+                  className={styles.info_inputs}
+                  sx={{ m: 1, minWidth: 120, width: "80%" }}
+                  size="small"
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  {workspaces.map((d) => (
-                    <MenuItem key={d.value} value={d.value}>
-                      {d.display}
+                  <InputLabel
+                    id="select_forecast1_hc"
+                    style={{ color: "#7b8b9d" }}
+                  >
+                    {"Seleccione el pronóstico"}
+                  </InputLabel>
+                  <Select
+                    labelId="select_forecast1_hc"
+                    input={
+                      <OutlinedInput
+                        style={{ backgroundColor: "#e6eaed" }}
+                        label={"Seleccione el pronóstico"}
+                        value={forecastSelected}
+                        onChange={handleSelectChange(setForecastSelected)}
+                      />
+                    }
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
                     </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                    {workspaces.map((d) => (
+                      <MenuItem key={d.value} value={d.value}>
+                        {d.display}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
               <Box className={styles.buttons_container}>
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  className={styles.report_title}
+                  style={{ margin: 0, display: "flex", alignItems: "center" }}
+                >
+                  Seleccionar archivo CSV de Localidades:
+                </Typography>
                 <Box className={styles.file_container}>
                   <input
                     type="file"
@@ -634,6 +655,26 @@ const Report = () => {
                     </Box>
                   </>
                 )}
+              </Box>
+              <Box className={styles.temporal_container}>
+                <Typography
+                  variant="h6"
+                  color="textSecondary"
+                  className={styles.report_title}
+                >
+                  Temporada 2
+                </Typography>
+                <ChartReport
+                  data={[0, 0, 0, 0]}
+                  type="line"
+                  width="500"
+                  colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
+                  titles={[
+                    "Encima de lo normal",
+                    "Normal",
+                    "Debajo de lo normal",
+                  ]}
+                />
               </Box>
               {seasons &&
                 seasons.length > 0 &&
