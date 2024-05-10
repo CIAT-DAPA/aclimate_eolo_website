@@ -152,6 +152,7 @@ const Report = () => {
         })
       );
       setData(results);
+      console.log(results);
       setCurrentLoading(false);
     } catch (error) {
       setCurrentLoading(false);
@@ -699,26 +700,29 @@ const Report = () => {
                     ))}
                   </Box>
                 ))}
-              <Box className={styles.temporal_container}>
-                <Typography
-                  variant="h6"
-                  color="textSecondary"
-                  className={styles.report_title}
-                >
-                  Temporada 2
-                </Typography>
-                <ChartReport
-                  data={[0, 0, 0, 0]}
-                  type="line"
-                  width="500"
-                  colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
-                  titles={[
-                    "Encima de lo normal",
-                    "Normal",
-                    "Debajo de lo normal",
-                  ]}
-                />
-              </Box>
+              {data && (
+                <Box className={styles.temporal_container}>
+                  <Typography
+                    variant="h6"
+                    color="textSecondary"
+                    className={styles.report_title}
+                  >
+                    Temporada 2
+                  </Typography>
+                  <ChartReport
+                    data={[0, 0, 0, 0]}
+                    type="line"
+                    width="500"
+                    colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
+                    titles={[
+                      "Encima de lo normal",
+                      "Normal",
+                      "Debajo de lo normal",
+                    ]}
+                  />
+                </Box>
+              )}
+
               <Box className={styles.csv_table_container}>
                 <Box className={styles.csv_table_info}>
                   <Typography

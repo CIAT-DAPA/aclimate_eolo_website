@@ -80,7 +80,7 @@ const ChartReport = ({ data, type, colors, titles }) => {
       yaxis: [
         {
           title: {
-            text: "Pronostico (%)",
+            text: "Precipitación (%)",
           },
         }
       ],
@@ -89,7 +89,7 @@ const ChartReport = ({ data, type, colors, titles }) => {
 
   useEffect(() => {
     if (type == "line") {
-      console.log("ay");
+      
     } else {
       if (data && data.length > 0) {
         setChartData({
