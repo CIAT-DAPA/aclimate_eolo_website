@@ -77,11 +77,13 @@
 
 .first_part_inputs {
   z-index: 1000;
-  display: flex;
+  /* display: flex; */
+  display: grid;
   width: 100%;
   color: #0d2137;
   gap: 1%;
   align-items: center;
+  grid-template-columns: 50% 50%;
 }
 
 .column_container {
@@ -108,4 +110,10 @@
   font-weight: bold !important;
   color: #0d2137 !important;
   margin-bottom: 1%;
+}
+
+.forecast_container{
+  display: flex;
+  align-items: center;
+  gap: 2%;
 }
