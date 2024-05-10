@@ -173,7 +173,7 @@ const FileInputModal = ({ open, setCurrentLoading, handleClose, getDates, setSto
       await getDates();
       setSelectForecast(selectFirstForecast)
       const split_date = selectedFile.name.split("_")[selectedFile.name.split("_").length -1].split(".")[0]
-      selectedFile(null)
+      setSelectedFile(null)
       setMonth(split_date.slice(-2))
       setYear(split_date.slice(0,4))
       setStore(selectStore)

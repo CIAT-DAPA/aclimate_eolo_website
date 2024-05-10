@@ -53,7 +53,7 @@ const Report = () => {
   const [monthM, setMonthM] = useState("");
   const [yearM, setYearM] = useState("");
   const [titles, setTitles] = useState([
-    "Región",
+    "Localidad",
     "Temporada 1",
     "Temporada 2",
   ]);
