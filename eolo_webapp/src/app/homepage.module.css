@@ -49,7 +49,7 @@
 .card_text{
     height: 200px;
     text-wrap: pretty;
-    text-align: left;
+    text-align: justify;
     display: flex;
     justify-content: flex-start;
 }

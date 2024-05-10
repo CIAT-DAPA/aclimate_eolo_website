@@ -191,7 +191,6 @@ export default function Home() {
             <h1>Análogos</h1>
             <p className={styles.title_analogues_text}>
               {`El módulo de análogos es una herramienta dentro de nuestra plataforma que te permite mejorar la precisión de tus pronósticos climáticos al identificar y analizar patrones climáticos pasados que son análogos o similares al presente.
-                Aquí tienes una explicación más detallada de cómo funciona:
               `}
             </p>
             <Box className={styles.accion_container}>
@@ -355,7 +354,7 @@ export default function Home() {
 
             <div className={styles.anomalies_map}>
               <div className={styles.info_container}>
-                <h2>Pronóstico de anomalía</h2>
+                <h2>Anomalía</h2>
                 <p>
                   {`Nuestra herramienta de análisis de anomalías climáticas emplea el método de promedio de años análogos y evalúa las desviaciones significativas en las condiciones climáticas respecto a la norma histórica. Estas evaluaciones se realizan utilizando datos de CHIRPSv3 beta, con las anomalías normalizadas para una mejor interpretación de los resultados.
                    Explora nuestro mapa interactivo para visualizar estas anomalías climáticas.`}

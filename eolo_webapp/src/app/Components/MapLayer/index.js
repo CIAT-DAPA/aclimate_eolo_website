@@ -12,7 +12,7 @@ function MapLegend({ workspace, layer }) {
     setPhoto(image);
 
     if (layer === Configuration.get_prec_store()) {
-      setLegend("Cantidad mm/mes");
+      setLegend("Precipitación mm/mes");
     } else if (layer === Configuration.get_anomalies_style()) {
       setLegend("Anomalia %");
     } else if (
