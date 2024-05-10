@@ -53,7 +53,7 @@ const Report = () => {
   const [monthM, setMonthM] = useState("");
   const [yearM, setYearM] = useState("");
   const [titles, setTitles] = useState([
-    "Región",
+    "Localidad",
     "Temporada 1",
     "Temporada 2",
   ]);
@@ -577,9 +577,7 @@ const Report = () => {
                   Pronóstico estacional
                 </Typography>
                 <Typography variant="body2" className={styles.card_text}>
-                  {`Vestibulum varius maximus odio, vitae porttitor metus lobortis
-                  in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
-                  sagittis sollicitudin lorem, quis ornare eros tempor congue`}
+                  {``}
                 </Typography>
               </Box>
               <Box className={styles.chart_container}>
@@ -656,26 +654,6 @@ const Report = () => {
                   </>
                 )}
               </Box>
-              <Box className={styles.temporal_container}>
-                <Typography
-                  variant="h6"
-                  color="textSecondary"
-                  className={styles.report_title}
-                >
-                  Temporada 2
-                </Typography>
-                <ChartReport
-                  data={[0, 0, 0, 0]}
-                  type="line"
-                  width="500"
-                  colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
-                  titles={[
-                    "Encima de lo normal",
-                    "Normal",
-                    "Debajo de lo normal",
-                  ]}
-                />
-              </Box>
               {seasons &&
                 seasons.length > 0 &&
                 seasons.map((season) => (
@@ -721,6 +699,26 @@ const Report = () => {
                     ))}
                   </Box>
                 ))}
+              <Box className={styles.temporal_container}>
+                <Typography
+                  variant="h6"
+                  color="textSecondary"
+                  className={styles.report_title}
+                >
+                  Temporada 2
+                </Typography>
+                <ChartReport
+                  data={[0, 0, 0, 0]}
+                  type="line"
+                  width="500"
+                  colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
+                  titles={[
+                    "Encima de lo normal",
+                    "Normal",
+                    "Debajo de lo normal",
+                  ]}
+                />
+              </Box>
               <Box className={styles.csv_table_container}>
                 <Box className={styles.csv_table_info}>
                   <Typography
@@ -731,9 +729,7 @@ const Report = () => {
                     Datos por localidad
                   </Typography>
                   <Typography variant="body2" className={styles.card_text}>
-                    {`Vestibulum varius maximus odio, vitae porttitor metus lobortis
-                  in. Sed ut hendrerit tortor, non lobortis ex. Suspendisse
-                  sagittis sollicitudin lorem, quis ornare eros tempor congue`}
+                    {``}
                   </Typography>
                 </Box>
                 <Box>

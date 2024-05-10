@@ -31,6 +31,7 @@ const Visualizer = () => {
   const { loading, auth } = useAuth();
   const [currentLoading, setCurrentLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen2, setModalOpen2] = useState(false);
 
   // Selected forecast data
   const [selectFirstForecast, setSelectFirstForecast] = useState("");
@@ -44,9 +45,15 @@ const Visualizer = () => {
   const [lastMonth, setLastMonth] = useState(null);
   const [selectedLayer, setSelectedLayer] = useState("");
 
+
+  const [store_1, setStore_1] = useState("");
+  const [store_2, setStore_2] = useState("");
+
   // Calc year and month using forecast type
   const [seasonMonth, setSeasonMonth] = useState("");
   const [seasonYear, setSeasonYear] = useState("");
+  const [seasonMonth_2, setSeasonMonth_2] = useState("");
+  const [seasonYear_2, setSeasonYear_2] = useState("");
 
   const [uniqueMonth, setUniqueMonth] = useState({});
 
@@ -96,7 +103,9 @@ const Visualizer = () => {
   ]);
 
   const handleOpen = () => setModalOpen(true);
+  const handleOpen2 = () => setModalOpen2(true);
   const handleClose = () => setModalOpen(false);
+  const handleClose2 = () => setModalOpen2(false);
 
   const notify = (text, type) => {
     if (type == "error") {
@@ -287,55 +296,56 @@ const Visualizer = () => {
         }
       });
       setUniqueMonth(result);
-    } else {
-      if (!dataObject1 && !dataObject2) {
-        notify(
-          `Los dos workspace seleccionados, no tienen datos para le capa seleccionada`,
-          "error"
-        );
-      } else if (!dataObject1) {
-        notify(
-          `El workspace seleccionado para el primer pronóstico, no tiene dato para le capa seleccionada`,
-          "error"
-        );
-      } else if (!dataObject2) {
-        notify(
-          `El workspace seleccionado para el segundo pronóstico, no tiene dato para le capa seleccionada`,
-          "error"
-        );
-      }
     }
+    //else {
+    //   if (!dataObject1 && !dataObject2) {
+    //     notify(
+    //       `Los dos workspace seleccionados, no tienen datos para le capa seleccionada`,
+    //       "error"
+    //     );
+    //   } else if (!dataObject1) {
+    //     notify(
+    //       `El workspace seleccionado para el primer pronóstico, no tiene dato para le capa seleccionada`,
+    //       "error"
+    //     );
+    //   } else if (!dataObject2) {
+    //     notify(
+    //       `El workspace seleccionado para el segundo pronóstico, no tiene dato para le capa seleccionada`,
+    //       "error"
+    //     );
+    //   }
+    // }
     setCurrentLoading(false);
   };
 
-  useEffect(() => {
-    if (selectFirstForecast && selectSecondForecast && selectedLayer) {
-      getDates();
-    }
-  }, [selectFirstForecast, selectedLayer, selectSecondForecast]);
+  // useEffect(() => {
+  //   if (selectFirstForecast && selectSecondForecast && selectedLayer) {
+  //     getDates();
+  //   }
+  // }, [selectFirstForecast, selectedLayer, selectSecondForecast]);
 
-  useEffect(() => {
-    if (selectYear) {
-      const months = uniqueMonth[selectYear];
-      const filterMonths = months.map((position) => monthsC[position - 1]);
-      setMonths(filterMonths);
-    }
-  }, [selectYear]);
+  // useEffect(() => {
+  //   if (selectYear) {
+  //     const months = uniqueMonth[selectYear];
+  //     const filterMonths = months.map((position) => monthsC[position - 1]);
+  //     setMonths(filterMonths);
+  //   }
+  // }, [selectYear]);
 
-  useEffect(() => {
-    if (typeForecast === "tri") {
-      if (selectMonth == 12) {
-        setSeasonMonth(1);
-        setSeasonYear(selectYear + 1);
-      } else {
-        setSeasonMonth(selectMonth + 1);
-        setSeasonYear(selectYear);
-      }
-    } else {
-      setSeasonMonth(selectMonth);
-      setSeasonYear(selectYear);
-    }
-  }, [selectMonth, typeForecast]);
+  // useEffect(() => {
+  //   if (typeForecast === "tri") {
+  //     if (selectMonth == 12) {
+  //       setSeasonMonth(1);
+  //       setSeasonYear(selectYear + 1);
+  //     } else {
+  //       setSeasonMonth(selectMonth + 1);
+  //       setSeasonYear(selectYear);
+  //     }
+  //   } else {
+  //     setSeasonMonth(selectMonth);
+  //     setSeasonYear(selectYear);
+  //   }
+  // }, [selectMonth, typeForecast]);
 
   return (
     <Container maxWidth="xl" className={styles.container}>
@@ -345,7 +355,7 @@ const Visualizer = () => {
         <>
           <Box className={styles.modal_container}>
             <Box className={styles.first_part_inputs}>
-              <Typography
+              {/* <Typography
                 variant="body1"
                 color="textSecondary"
                 className={styles.report_title}
@@ -465,18 +475,49 @@ const Visualizer = () => {
                     </MenuItem>
                   ))}
                 </Select>
-              </FormControl>
-              <Button
-                style={{
-                  width: "16%",
-                  backgroundColor: "#e37b13",
-                  color: "#ffff",
-                  justifySelf: "flex-end",
-                }}
-                onClick={handleOpen}
-              >
-                Cargar rasters
-              </Button>
+              </FormControl> */}
+              <Box className={styles.forecast_container}>
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  className={styles.report_title}
+                  style={{ margin: 0, display: "flex", alignItems: "center" }}
+                >
+                  {selectFirstForecast ? workspaces.find(workspace => workspace.value === selectFirstForecast)?.display : "Pronóstico 1"}
+                </Typography>
+                <Button
+                  style={{
+                    width: "16%",
+                    backgroundColor: "#e37b13",
+                    color: "#ffff",
+                    justifySelf: "flex-end",
+                  }}
+                  onClick={handleOpen}
+                >
+                  Cargar raster
+                </Button>
+              </Box>
+              <Box className={styles.forecast_container}>
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  className={styles.report_title}
+                  style={{ margin: 0, display: "flex", alignItems: "center" }}
+                >
+                  {selectSecondForecast ? workspaces.find(workspace => workspace.value === selectSecondForecast)?.display  : "Pronóstico 2"}
+                </Typography>
+                <Button
+                  style={{
+                    width: "16%",
+                    backgroundColor: "#e37b13",
+                    color: "#ffff",
+                    justifySelf: "flex-end",
+                  }}
+                  onClick={handleOpen2}
+                >
+                  Cargar raster
+                </Button>
+              </Box>
             </Box>
           </Box>
           <Grid
@@ -493,7 +534,7 @@ const Visualizer = () => {
                   center={[14.5007343, -86.6719949]}
                   url={Configuration.get_geoserver_url()}
                   workspace={selectFirstForecast}
-                  store={selectedLayer}
+                  store={store_1}
                   year={seasonYear}
                   month={seasonMonth}
                   style={{
@@ -502,53 +543,53 @@ const Visualizer = () => {
                     justifySelf: "center",
                     display: "flex",
                   }}
-                  child={
-                    <Box
-                      className={[
-                        styles.container_info,
-                        styles.first_forecast,
-                      ].join(" ")}
-                    >
-                      <Box className={styles.info_title}>
-                        <h3>Pronóstico 1</h3>
-                      </Box>
+                  // child={
+                  //   <Box
+                  //     className={[
+                  //       styles.container_info,
+                  //       styles.first_forecast,
+                  //     ].join(" ")}
+                  //   >
+                  //     <Box className={styles.info_title}>
+                  //       <h3>Pronóstico 1</h3>
+                  //     </Box>
 
-                      <FormControl
-                        className={styles.info_inputs}
-                        sx={{ m: 1, minWidth: 120 }}
-                        size="small"
-                      >
-                        <InputLabel
-                          id="select_forecast1_hc"
-                          style={{ color: "#7b8b9d" }}
-                        >
-                          {"Seleccione el pronóstico"}
-                        </InputLabel>
-                        <Select
-                          labelId="select_forecast1_hc"
-                          input={
-                            <OutlinedInput
-                              style={{ backgroundColor: "#e6eaed" }}
-                              label={"Seleccione el pronóstico"}
-                              value={selectFirstForecast}
-                              onChange={handleSelectChange(
-                                setSelectFirstForecast
-                              )}
-                            />
-                          }
-                        >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
-                          {workspaces.map((d) => (
-                            <MenuItem key={d.value} value={d.value}>
-                              {d.display}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Box>
-                  }
+                  //     <FormControl
+                  //       className={styles.info_inputs}
+                  //       sx={{ m: 1, minWidth: 120 }}
+                  //       size="small"
+                  //     >
+                  //       <InputLabel
+                  //         id="select_forecast1_hc"
+                  //         style={{ color: "#7b8b9d" }}
+                  //       >
+                  //         {"Seleccione el pronóstico"}
+                  //       </InputLabel>
+                  //       <Select
+                  //         labelId="select_forecast1_hc"
+                  //         input={
+                  //           <OutlinedInput
+                  //             style={{ backgroundColor: "#e6eaed" }}
+                  //             label={"Seleccione el pronóstico"}
+                  //             value={selectFirstForecast}
+                  //             onChange={handleSelectChange(
+                  //               setSelectFirstForecast
+                  //             )}
+                  //           />
+                  //         }
+                  //       >
+                  //         <MenuItem value="">
+                  //           <em>None</em>
+                  //         </MenuItem>
+                  //         {workspaces.map((d) => (
+                  //           <MenuItem key={d.value} value={d.value}>
+                  //             {d.display}
+                  //           </MenuItem>
+                  //         ))}
+                  //       </Select>
+                  //     </FormControl>
+                  //   </Box>
+                  // }
                 />
               </Box>
             </Grid>
@@ -560,62 +601,62 @@ const Visualizer = () => {
                   center={[14.5007343, -86.6719949]}
                   url={Configuration.get_geoserver_url()}
                   workspace={selectSecondForecast}
-                  store={selectedLayer}
-                  year={seasonYear}
-                  month={seasonMonth}
+                  store={store_2}
+                  year={seasonYear_2}
+                  month={seasonMonth_2}
                   style={{
                     width: "100%",
                     height: "100%",
                     justifySelf: "center",
                     display: "flex",
                   }}
-                  child={
-                    <Box
-                      className={[
-                        styles.container_info,
-                        styles.second_forecast,
-                      ].join(" ")}
-                    >
-                      <Box className={styles.info_title}>
-                        <h3>Pronóstico 2</h3>
-                      </Box>
+                  // child={
+                  //   <Box
+                  //     className={[
+                  //       styles.container_info,
+                  //       styles.second_forecast,
+                  //     ].join(" ")}
+                  //   >
+                  //     <Box className={styles.info_title}>
+                  //       <h3>Pronóstico 2</h3>
+                  //     </Box>
 
-                      <FormControl
-                        className={styles.info_inputs}
-                        sx={{ m: 1, minWidth: 120 }}
-                        size="small"
-                      >
-                        <InputLabel
-                          id="select_forecast2_hc"
-                          style={{ color: "#7b8b9d" }}
-                        >
-                          {"Seleccione el pronóstico"}
-                        </InputLabel>
-                        <Select
-                          labelId="select_forecast2_hc"
-                          input={
-                            <OutlinedInput
-                              style={{ backgroundColor: "#e6eaed" }}
-                              label={"Seleccione el pronóstico"}
-                              value={selectSecondForecast}
-                              onChange={handleSelectChange(
-                                setSelectSecondForecast
-                              )}
-                            />
-                          }
-                        >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
-                          {workspaces.map((d) => (
-                            <MenuItem key={d.value} value={d.value}>
-                              {d.display}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Box>
-                  }
+                  //     <FormControl
+                  //       className={styles.info_inputs}
+                  //       sx={{ m: 1, minWidth: 120 }}
+                  //       size="small"
+                  //     >
+                  //       <InputLabel
+                  //         id="select_forecast2_hc"
+                  //         style={{ color: "#7b8b9d" }}
+                  //       >
+                  //         {"Seleccione el pronóstico"}
+                  //       </InputLabel>
+                  //       <Select
+                  //         labelId="select_forecast2_hc"
+                  //         input={
+                  //           <OutlinedInput
+                  //             style={{ backgroundColor: "#e6eaed" }}
+                  //             label={"Seleccione el pronóstico"}
+                  //             value={selectSecondForecast}
+                  //             onChange={handleSelectChange(
+                  //               setSelectSecondForecast
+                  //             )}
+                  //           />
+                  //         }
+                  //       >
+                  //         <MenuItem value="">
+                  //           <em>None</em>
+                  //         </MenuItem>
+                  //         {workspaces.map((d) => (
+                  //           <MenuItem key={d.value} value={d.value}>
+                  //             {d.display}
+                  //           </MenuItem>
+                  //         ))}
+                  //       </Select>
+                  //     </FormControl>
+                  //   </Box>
+                  // }
                 />
               </Box>
             </Grid>
@@ -628,6 +669,20 @@ const Visualizer = () => {
         setCurrentLoading={setCurrentLoading}
         handleClose={handleClose}
         getDates={getDates}
+        setSelectForecast={setSelectFirstForecast}
+        setStore={setStore_1}
+        setMonth={setSeasonMonth}
+        setYear={setSeasonYear}
+      />
+      <FileInputModal
+        open={modalOpen2}
+        setCurrentLoading={setCurrentLoading}
+        handleClose={handleClose2}
+        getDates={getDates}
+        setSelectForecast={setSelectSecondForecast}
+        setStore={setStore_2}
+        setMonth={setSeasonMonth_2}
+        setYear={setSeasonYear_2}
       />
     </Container>
   );

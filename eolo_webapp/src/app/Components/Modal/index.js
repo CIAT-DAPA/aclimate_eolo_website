@@ -7,6 +7,10 @@ import {
   FormControl,
   TextField,
   Autocomplete,
+  InputLabel,
+  Select,
+  OutlinedInput,
+  MenuItem,
 } from "@mui/material";
 import styles from "./modal.module.css";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -14,10 +18,28 @@ import Configuration from "@/app/config";
 import AuthContext from "@/app/Context/auth/authContext";
 import { toast } from "react-toastify";
 
-const FileInputModal = ({ open, setCurrentLoading, handleClose, getDates }) => {
+const FileInputModal = ({ open, setCurrentLoading, handleClose, getDates, setStore, setMonth, setYear, setSelectForecast }) => {
   const { user } = useContext(AuthContext);
   const [selectStore, setSelectStore] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [selectFirstForecast, setSelectFirstForecast] = useState("");
+
+  const [workspaces, setWorkspaces] = useState([
+    { display: "NextGen", value: Configuration.get_nextgen_worspace() },
+    { display: "AClimate", value: Configuration.get_aclimate_worspace() },
+    {
+      display: "Análogos Automatizado",
+      value: Configuration.get_analogues_worspace(),
+    },
+    {
+      display: "Análogos",
+      value: Configuration.get_cenaos_worspace(),
+    },
+  ]);
+
+  const handleSelectChangeW = (setStateFunction) => (event) => {
+    setStateFunction(event.target.value);
+  };
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -60,6 +82,7 @@ const FileInputModal = ({ open, setCurrentLoading, handleClose, getDates }) => {
   const handleSelectChange = (event, value) => setSelectStore(value);
 
   const getStores = async () => {
+    setCurrentLoading(true)
     const username = user.user.user;
     const password = user.user.password;
 
@@ -74,12 +97,13 @@ const FileInputModal = ({ open, setCurrentLoading, handleClose, getDates }) => {
         body: JSON.stringify({
           user: username,
           passw: password,
-          workspace: Configuration.get_cenaos_worspace(),
+          workspace: selectFirstForecast,
           geo_url: `${Configuration.get_geoserver_url()}rest/`,
         }),
       });
 
       if (!response.ok) {
+        setCurrentLoading(false)
         notify("Error al obtener los stores del Geoserver", "error");
       }
 
@@ -90,21 +114,30 @@ const FileInputModal = ({ open, setCurrentLoading, handleClose, getDates }) => {
         body = body.filter((item) => !storesToIgnore.includes(item));
       }
       setStores(body);
+      setCurrentLoading(false)
     } catch (error) {
+      setCurrentLoading(false)
       console.error("Error fetching GeoServer stores:", error);
     }
   };
 
   const uploadTiffToGeoServer = async () => {
-    if (selectStore === "" || selectedFile?.files?.length === 0) {
-      notify("Debe seleccionar la store y un archivo valido", "error");
+    if (
+      selectStore === "" ||
+      selectedFile?.files?.length === 0 ||
+      selectFirstForecast === ""
+    ) {
+      notify(
+        "Debe seleccionar el workspace, la store y un archivo valido",
+        "error"
+      );
       return;
     }
     if (!selectedFile.name.endsWith(".tif")) {
       notify("El archivo seleccionado no es un archivo .tif.", "error");
       return;
     }
-    setCurrentLoading(true)
+    setCurrentLoading(true);
     const url = `${Configuration.get_api_url()}import_geoserver`;
 
     const formData = new FormData();
@@ -113,7 +146,7 @@ const FileInputModal = ({ open, setCurrentLoading, handleClose, getDates }) => {
 
     // Datos JSON
     const jsonData = {
-      workspace: Configuration.get_cenaos_worspace(),
+      workspace: selectFirstForecast,
       user: username,
       passw: password,
       geo_url: `${Configuration.get_geoserver_url()}rest/`,
@@ -132,24 +165,31 @@ const FileInputModal = ({ open, setCurrentLoading, handleClose, getDates }) => {
       const data = await response.json();
 
       if (!response.ok) {
+        setCurrentLoading(false);
         notify(`Error al guardar el raster ${data.error}`, "error");
         return;
       }
-      await getStores()
-      await getDates()
-      setCurrentLoading(false)
+      await getStores();
+      await getDates();
+      setSelectForecast(selectFirstForecast)
+      const split_date = selectedFile.name.split("_")[selectedFile.name.split("_").length -1].split(".")[0]
+      setSelectedFile(null)
+      setMonth(split_date.slice(-2))
+      setYear(split_date.slice(0,4))
+      setStore(selectStore)
+      setCurrentLoading(false);
       notify(`El raster se guardo exitosamente`, "success");
     } catch (error) {
-      setCurrentLoading(false)
+      setCurrentLoading(false);
       notify(`Error al guardar el raster`, "error");
     }
   };
 
   useEffect(() => {
-    if (user && user.user && user.user.user) {
+    if (user && user.user && user.user.user && selectFirstForecast) {
       getStores();
     }
-  }, [user]);
+  }, [user,selectFirstForecast]);
 
   return (
     <Modal
@@ -167,19 +207,58 @@ const FileInputModal = ({ open, setCurrentLoading, handleClose, getDates }) => {
           >
             Carga de rasters al Geoserver
           </Typography>
-          <FormControl sx={{ m: 1, minWidth: 60, width: "40%" }} size="small">
-            <Autocomplete
-              id="autocomplete"
-              value={selectStore}
-              onChange={handleSelectChange}
-              freeSolo
-              autoSelect
-              options={stores}
-              renderInput={(params) => (
-                <TextField {...params} label="Selecciona o escriba una store" />
-              )}
-            />
-          </FormControl>
+          <Typography variant="body1" id="modal-title">
+            {`El archivo que elijas debe seguir el siguiente formato:
+            'nombrearchivo_YYYYmm.tif', donde 'YYYY' representa el año y 'mm'
+            representa el mes en formato numérico.`}
+          </Typography>
+          <Box className={styles.select_container}>
+            <FormControl
+              className={styles.info_inputs}
+              sx={{ m: 1, minWidth: 120, width: "35%" }}
+              size="small"
+            >
+              <InputLabel id="select_forecast1_hc">
+                {"Seleccione el workspace"}
+              </InputLabel>
+              <Select
+                labelId="select_forecast1_hc"
+                input={
+                  <OutlinedInput
+                    label={"Seleccione el workspace"}
+                    value={selectFirstForecast}
+                    onChange={handleSelectChangeW(setSelectFirstForecast)}
+                  />
+                }
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                {workspaces.map((d) => (
+                  <MenuItem key={d.value} value={d.value}>
+                    {d.display}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl sx={{ m: 1, minWidth: 60, width: "40%" }} size="small">
+              <Autocomplete
+                id="autocomplete"
+                value={selectStore}
+                onChange={handleSelectChange}
+                disabled={!selectFirstForecast}
+                freeSolo
+                autoSelect
+                options={stores}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Selecciona o escriba una store"
+                  />
+                )}
+              />
+            </FormControl>
+          </Box>
           <Typography variant="body1">{"Seleccione el raster"}</Typography>
           <Box
             border={1}

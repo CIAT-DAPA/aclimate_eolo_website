@@ -49,3 +49,10 @@
   align-items: center;
   gap: 12px;
 }
+
+
+.select_container{
+  display: flex;
+    width: 100%;
+    align-items: center;
+}
