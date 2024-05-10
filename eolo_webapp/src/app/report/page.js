@@ -700,7 +700,7 @@ const Report = () => {
                     ))}
                   </Box>
                 ))}
-              {data && (
+              {/* {data && (
                 <Box className={styles.temporal_container}>
                   <Typography
                     variant="h6"
@@ -721,7 +721,7 @@ const Report = () => {
                     ]}
                   />
                 </Box>
-              )}
+              )} */}
 
               <Box className={styles.csv_table_container}>
                 <Box className={styles.csv_table_info}>
