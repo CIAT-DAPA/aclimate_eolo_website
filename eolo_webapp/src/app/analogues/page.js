@@ -12,6 +12,7 @@ import {
   Card,
   Container,
   Typography,
+  Tooltip,
 } from "@mui/material";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import MenuItem from "@mui/material/MenuItem";
@@ -22,7 +23,6 @@ import dynamic from "next/dynamic";
 import useAuth from "../Hooks/useAuth";
 import Loading from "../Components/Loading";
 import LoadingOverlay from "../Components/LoadingOverlay";
-import FileInputModal from "../Components/Modal";
 import ImageIcon from "@mui/icons-material/Image";
 
 const Map = dynamic(() => import("@/app/Components/Map"), { ssr: false });
@@ -39,7 +39,6 @@ export default function Home() {
   const historicalRef = useRef(null);
   const anomaliesRef = useRef(null);
   const exportComponentAsPNG = "";
-  const [modalOpen, setModalOpen] = useState(false);
 
   const [multiSelectData, setMultiSelectData] = useState([]);
 
@@ -76,9 +75,6 @@ export default function Home() {
     "Diciembre",
   ]);
 
-  const handleOpen = () => setModalOpen(true);
-  const handleClose = () => setModalOpen(false);
-
   // Función general para manejar el cambio en cualquier select
   const handleSelectChange = (setStateFunction) => (event) => {
     setStateFunction(event.target.value);
@@ -96,7 +92,7 @@ export default function Home() {
     const link = document.createElement("a");
     const url = `${Configuration.get_geoserver_url()}${Configuration.get_climatology_worspace()}/wms?service=WMS&version=1.1.0&time=2000-${selectedMonthC}&request=GetMap&layers=${Configuration.get_climatology_worspace()}%3A${Configuration.get_prec_store()}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
     link.href = url;
-    link.download = `PromedioClimatico_${monthsC[selectedMonthC - 1]}.tiff`;
+    link.download = `PromedioClimatico_${monthsC[selectedMonthC - 1]}.tif`;
     document.body.appendChild(link);
     link.click();
     setTimeout(() => {
@@ -109,7 +105,7 @@ export default function Home() {
     link.href = tiff;
     link.download = `Anomalía_${
       monthsC[selectedMonthC - 1]
-    }_${multiSelectData.join("-")}.tiff`;
+    }_${multiSelectData.join("-")}.tif`;
 
     document.body.appendChild(link);
     link.click();
@@ -260,34 +256,38 @@ export default function Home() {
                   month={selectedMonthC}
                   child={
                     <Box className={styles.map_buttons_container}>
-                      <IconButton
-                        color="primary"
-                        aria-label="add to shopping cart"
-                        className={styles.download_raster_l}
-                        disabled={!selectedMonthC}
-                        onClick={downloadRaster}
-                      >
-                        <FileDownloadOutlinedIcon />
-                      </IconButton>
-                      <IconButton
-                        color="primary"
-                        aria-label="add to shopping cart"
-                        className={styles.download_raster_l}
-                        disabled={!selectedMonthC}
-                        onClick={async () => {
-                          const { exportComponentAsPNG } = await import(
-                            "react-component-export-image"
-                          );
+                      <Tooltip title="Descargar raster">
+                        <IconButton
+                          color="primary"
+                          aria-label="add to shopping cart"
+                          className={styles.download_raster_l}
+                          disabled={!selectedMonthC}
+                          onClick={downloadRaster}
+                        >
+                          <FileDownloadOutlinedIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Descargar png">
+                        <IconButton
+                          color="primary"
+                          aria-label="add to shopping cart"
+                          className={styles.download_raster_l}
+                          disabled={!selectedMonthC}
+                          onClick={async () => {
+                            const { exportComponentAsPNG } = await import(
+                              "react-component-export-image"
+                            );
 
-                          exportComponentAsPNG(climatologyRef, {
-                            fileName: `Promedio_histórico_${
-                              monthsC[selectedMonthC - 1]
-                            }.png`,
-                          });
-                        }}
-                      >
-                        <ImageIcon />
-                      </IconButton>
+                            exportComponentAsPNG(climatologyRef, {
+                              fileName: `Promedio_histórico_${
+                                monthsC[selectedMonthC - 1]
+                              }.png`,
+                            });
+                          }}
+                        >
+                          <ImageIcon />
+                        </IconButton>
+                      </Tooltip>
                     </Box>
                   }
                 />
@@ -413,33 +413,37 @@ export default function Home() {
                   setTiff={setTiff}
                   child={
                     <Box className={styles.map_buttons_container}>
-                      <IconButton
-                        color="primary"
-                        aria-label="add to shopping cart"
-                        className={styles.download_raster_l}
-                        disabled={!tiff}
-                        onClick={downloadAnomalyRaster}
-                      >
-                        <FileDownloadOutlinedIcon />
-                      </IconButton>
-                      <IconButton
-                        color="primary"
-                        aria-label="add to shopping cart"
-                        className={styles.download_raster_l}
-                        disabled={!tiff}
-                        onClick={async () => {
-                          const { exportComponentAsPNG } = await import(
-                            "react-component-export-image"
-                          );
-                          exportComponentAsPNG(anomaliesRef, {
-                            fileName: `Anomalía_${
-                              monthsC[selectedMonthC - 1]
-                            }_${multiSelectData.join("-")}.png`,
-                          });
-                        }}
-                      >
-                        <ImageIcon />
-                      </IconButton>
+                      <Tooltip title="Descargar raster">
+                        <IconButton
+                          color="primary"
+                          aria-label="add to shopping cart"
+                          className={styles.download_raster_l}
+                          disabled={!tiff}
+                          onClick={downloadAnomalyRaster}
+                        >
+                          <FileDownloadOutlinedIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Descargar png">
+                        <IconButton
+                          color="primary"
+                          aria-label="add to shopping cart"
+                          className={styles.download_raster_l}
+                          disabled={!tiff}
+                          onClick={async () => {
+                            const { exportComponentAsPNG } = await import(
+                              "react-component-export-image"
+                            );
+                            exportComponentAsPNG(anomaliesRef, {
+                              fileName: `Anomalía_${
+                                monthsC[selectedMonthC - 1]
+                              }_${multiSelectData.join("-")}.png`,
+                            });
+                          }}
+                        >
+                          <ImageIcon />
+                        </IconButton>
+                      </Tooltip>
                     </Box>
                   }
                 />
@@ -449,11 +453,6 @@ export default function Home() {
         </>
       )}
       {currentLoading && <LoadingOverlay />}
-      <FileInputModal
-        open={modalOpen}
-        handleOpen={handleOpen}
-        handleClose={handleClose}
-      />
     </Container>
   );
 }
