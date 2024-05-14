@@ -105,6 +105,16 @@ const Report = () => {
     setSelectedFile(null);
   };
 
+  const normalizer = (value) => {
+    const min = -60;
+    const max = 120;
+
+    // Normalizar el valor
+    const normalizerValue = (value - min) / (max - min);
+
+    return normalizerValue;
+  };
+
   const getPoints = async () => {
     try {
       setCurrentLoading(true);
@@ -144,7 +154,11 @@ const Report = () => {
                   const data = await response.json();
                   // Manejar la respuesta JSON
                   const grayIndex = data.features[0].properties.GRAY_INDEX;
-                  results[row.point][season][layer] = grayIndex;
+                  let value = Math.round(grayIndex);
+                  if (forecastSelected == Configuration.get_cenaos_worspace()) {
+                    value = Math.round(normalizer(value) * 100);
+                  }
+                  results[row.point][season][layer] = value;
                 })
               );
             })
@@ -152,7 +166,6 @@ const Report = () => {
         })
       );
       setData(results);
-      console.log(results);
       setCurrentLoading(false);
     } catch (error) {
       setCurrentLoading(false);
@@ -288,7 +301,11 @@ const Report = () => {
             }
 
             const data = await response.json();
-            return { layer: element, value: Math.round(data.body) };
+            let value = Math.round(data.body);
+            if (forecastSelected == Configuration.get_cenaos_worspace()) {
+              value = Math.round(normalizer(value) * 100);
+            }
+            return { layer: element, value: value };
           });
 
           return await Promise.all(promises);
