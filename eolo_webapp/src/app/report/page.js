@@ -124,6 +124,7 @@ const Report = () => {
         date.getMonth() + 1,
       ]);
       const results = {};
+      const errors = new Set();
       const layerOrder = layers
         .slice(0, layers.length - 1)
         .map((layer) => layer.value);
@@ -153,19 +154,42 @@ const Report = () => {
                   }
                   const data = await response.json();
                   // Manejar la respuesta JSON
-                  const grayIndex = data.features[0].properties.GRAY_INDEX;
-                  let value = Math.round(grayIndex);
-                  if (forecastSelected == Configuration.get_cenaos_worspace()) {
-                    value = Math.round(normalizer(value) * 100);
+
+                  if (data.features.length > 0) {
+                    const grayIndex = data.features[0].properties.GRAY_INDEX;
+                    let value = Math.round(grayIndex);
+                    if (
+                      forecastSelected == Configuration.get_cenaos_worspace()
+                    ) {
+                      value = Math.round(normalizer(value) * 100);
+                    }
+                    results[row.point][season][layer] = value;
+                  } else {
+                    errors.add(row.point);
+                    delete results[row.point][season];
                   }
-                  results[row.point][season][layer] = value;
                 })
               );
             })
           );
         })
       );
-      setData(results);
+      if (errors.size > 0) {
+        notify(
+          `Las siguientes localidades ingresadas no se encuentran en la región: ${[
+            ...errors,
+          ].join(", ")}`,
+          "error"
+        );
+      }
+      if (
+        Object.keys(results).length > 0 &&
+        Object.keys(results).some(
+          (propertie) => Object.keys(results[propertie]).length > 0
+        )
+      ) {
+        setData(results);
+      }
       setCurrentLoading(false);
     } catch (error) {
       setCurrentLoading(false);
