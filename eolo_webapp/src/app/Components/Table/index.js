@@ -74,6 +74,7 @@ const CsvTable = ({ titles, subTitles, data, filter }) => {
                       scope="row"
                       colSpan={2}
                       className={styles.first_col}
+                      key={row}
                     >
                       {row}
                     </TableCell>

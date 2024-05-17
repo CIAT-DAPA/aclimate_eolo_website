@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Chart from "react-apexcharts";
 
-const ChartReport = ({ data, type, colors, titles }) => {
+const ChartReport = ({ data, type, colors, titles, second_data=[] }) => {
   const [chartData, setChartData] = useState({
     options: {
       chart: {
@@ -54,28 +54,22 @@ const ChartReport = ({ data, type, colors, titles }) => {
         height: 350,
         type: "line",
       },
+      plotOptions: {
+        bar: {
+          borderRadius: 4,
+          borderRadiusApplication: "end",
+          distributed: true,
+        },
+      },
+      colors: colors,
       legend: {
         show: false,
       },
       stroke: {
         width: [0, 4],
       },
-      labels: [
-        "01 Jan 2001",
-        "02 Jan 2001",
-        "03 Jan 2001",
-        "04 Jan 2001",
-        "05 Jan 2001",
-        "06 Jan 2001",
-        "07 Jan 2001",
-        "08 Jan 2001",
-        "09 Jan 2001",
-        "10 Jan 2001",
-        "11 Jan 2001",
-        "12 Jan 2001",
-      ],
       xaxis: {
-        type: "datetime",
+        categories: titles,
       },
       yaxis: [
         {
@@ -89,7 +83,50 @@ const ChartReport = ({ data, type, colors, titles }) => {
 
   useEffect(() => {
     if (type == "line") {
-      
+      setCharLinetData({
+        series: [
+          {
+            name: "Probabilidades",
+            type: "column",
+            data: data,
+          },
+          {
+            name: "Norma Historica",
+            type: "line",
+            data: second_data,
+          },
+        ],
+        options: {
+          chart: {
+            height: 350,
+            type: "line",
+          },
+          plotOptions: {
+            bar: {
+              borderRadius: 4,
+              borderRadiusApplication: "end",
+              distributed: true,
+            },
+          },
+          colors: colors,
+          legend: {
+            show: false,
+          },
+          stroke: {
+            width: [0, 4],
+          },
+          xaxis: {
+            categories: titles,
+          },
+          yaxis: [
+            {
+              title: {
+                text: "Precipitación (%)",
+              },
+            }
+          ],
+        },
+      })
     } else {
       if (data && data.length > 0) {
         setChartData({
@@ -102,6 +139,7 @@ const ChartReport = ({ data, type, colors, titles }) => {
               bar: {
                 borderRadius: 4,
                 borderRadiusApplication: "end",
+                distributed: true,
               },
             },
             colors: colors,
@@ -131,7 +169,7 @@ const ChartReport = ({ data, type, colors, titles }) => {
       <Chart
         options={type == "line" ? chartLineData.options : chartData.options}
         series={type == "line" ? chartLineData.series : chartData.series}
-        type="bar"
+        type={type}
         width="500"
       />
     </div>
