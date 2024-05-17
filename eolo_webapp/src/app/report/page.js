@@ -45,6 +45,7 @@ const Report = () => {
   const { user } = useContext(AuthContext);
   const [forecastSelected, setForecastSelected] = useState("");
   const [data, setData] = useState([]);
+  const [secondData, setSecondData] = useState([]);
   const [typeForecast, setTypeForecast] = useState("tri");
   const [currentLoading, setCurrentLoading] = useState(false);
   const [seasons, setSeasons] = useState([]);
@@ -103,6 +104,16 @@ const Report = () => {
   const cleanFilter = () => {
     setCsv(null);
     setSelectedFile(null);
+  };
+
+  const generateTitles = (seasons_data) => {
+    const titles = ["Encima de lo normal", "Normal", "Debajo de lo normal"];
+
+    const result = [];
+
+    Object.keys(seasons_data).forEach((s) => result.push(titles));
+
+    return result.flat();
   };
 
   const normalizer = (value) => {
@@ -419,6 +430,79 @@ const Report = () => {
     }
   };
 
+  const calcNewDates = (dates) => {
+    function addMonths(year, month, num) {
+      let newMonth = month + num;
+      let newYear = year;
+      while (newMonth > 12) {
+        newMonth -= 12;
+        newYear += 1;
+      }
+      while (newMonth < 1) {
+        newMonth += 12;
+        newYear -= 1;
+      }
+      return [newYear, newMonth];
+    }
+    let result = [];
+
+    dates.forEach(([year, month]) => {
+        if (typeForecast === "tri") {
+            result.push(addMonths(year, month, -1));
+            result.push([year, month]);
+            result.push(addMonths(year, month, 1));
+        } else if (typeForecast === "bi") {
+            result.push([year, month]);
+            result.push(addMonths(year, month, 1));
+        }
+    });
+
+    return result;
+  };
+
+  const getHistorical = async () => {
+    try {
+      const csv_data = csv;
+      const dates = calculateDates().map((date) => [
+        date.getFullYear(),
+        date.getMonth() + 1,
+      ]);
+      const newDates = calcNewDates(dates);
+      const results = [];
+
+      await Promise.all(
+        csv_data.map(async (row) => {
+          await Promise.all(
+            newDates.map(async (date, index) => {
+              if (!results[row.point]) {
+                results[row.point] = [];
+              }
+              const lon_plus = parseFloat(row.lon) + 0.2;
+              const lat_plus = parseFloat(row.lat) + 0.2;
+              const point_url = `${Configuration.get_geoserver_url()}${Configuration.get_climatology_worspace()}/wms?service=WMS&version=1.1.1&request=GetFeatureInfo&layers=${Configuration.get_climatology_worspace()}:${Configuration.get_prec_store()}&query_layers=${Configuration.get_climatology_worspace()}:${Configuration.get_prec_store()}&feature_count=10&info_format=application/json&format_options=callback:handleJson&SrsName=EPSG:4326&width=101&height=101&x=50&y=50&time=${2000}-${
+                date[1]
+              }&bbox=${row.lon},${row.lat},${lon_plus},${lat_plus}`;
+              const response = await fetch(point_url);
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+              const data = await response.json();
+              if (data.features.length > 0) {
+                const grayIndex = data.features[0].properties.GRAY_INDEX;
+                const value = Math.round(grayIndex);
+                results[row.point].push(value);
+              }
+            })
+          );
+        })
+      );
+      setSecondData(results)
+    } catch (error) {
+      console.log(error);
+      notify(`Error al obtener los historicos`, "error");
+    }
+  };
+
   const generateData = async () => {
     if (typeForecast == "" || forecastSelected == "" || csv == null) {
       notify(
@@ -430,6 +514,7 @@ const Report = () => {
     setCurrentLoading(true);
     calcSeason();
     await getAverage();
+    await getHistorical();
     await getPoints();
     setCurrentLoading(false);
   };
@@ -741,28 +826,33 @@ const Report = () => {
                     ))}
                   </Box>
                 ))}
-              {/* {data && (
-                <Box className={styles.temporal_container}>
-                  <Typography
-                    variant="h6"
-                    color="textSecondary"
-                    className={styles.report_title}
-                  >
-                    Temporada 2
-                  </Typography>
-                  <ChartReport
-                    data={[0, 0, 0, 0]}
-                    type="line"
-                    width="500"
-                    colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
-                    titles={[
-                      "Encima de lo normal",
-                      "Normal",
-                      "Debajo de lo normal",
-                    ]}
-                  />
-                </Box>
-              )} */}
+              <Box className={styles.line_chart_container}>
+                {data &&
+                  secondData &&
+                  Object.keys(data).map((p,index) => (
+                    <Box className={styles.temporal_container} key={`box_${index}`}>
+                      <Typography
+                        variant="h6"
+                        color="textSecondary"
+                        className={styles.report_title}
+                        key={`title_${index}`}
+                      >
+                        {`Datos localidad: ${p}`}
+                      </Typography>
+                      <ChartReport
+                        key={`chart_${index}`}
+                        data={Object.values(data[p]).reduce((acc, season) => {
+                          return acc.concat(Object.values(season));
+                        }, [])}
+                        second_data={secondData[p]}
+                        type="line"
+                        width="500"
+                        colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
+                        titles={generateTitles(data[p])}
+                      />
+                    </Box>
+                  ))}
+              </Box>
 
               <Box className={styles.csv_table_container}>
                 <Box className={styles.csv_table_info}>

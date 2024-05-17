@@ -19,7 +19,7 @@ const CsvTable = ({ titles, subTitles, data, filter }) => {
                 return (
                   <TableCell
                     variant="head"
-                    key={col}
+                    key={`${col}_${index}`}
                     className={styles.columns}
                     colSpan={2}
                   >
@@ -29,7 +29,7 @@ const CsvTable = ({ titles, subTitles, data, filter }) => {
               } else {
                 return (
                   <TableCell
-                    key={col}
+                    key={`${col}_${index}`}
                     className={styles.columns}
                     align="right"
                     colSpan={3}
@@ -62,7 +62,7 @@ const CsvTable = ({ titles, subTitles, data, filter }) => {
         <TableBody>
           {data &&
             Object.keys(data).length > 0 &&
-            Object.keys(data).map((row) => (
+            Object.keys(data).map((row, index) => (
               <TableRow
                 key={row}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -74,6 +74,7 @@ const CsvTable = ({ titles, subTitles, data, filter }) => {
                       scope="row"
                       colSpan={2}
                       className={styles.first_col}
+                      key={row}
                     >
                       {row}
                     </TableCell>
@@ -97,24 +98,25 @@ const CsvTable = ({ titles, subTitles, data, filter }) => {
                       scope="row"
                       colSpan={2}
                       className={styles.first_col}
+                      key={`cell_${row}_${index}`}
                     >
                       {row}
                     </TableCell>
                     {Object.keys(data[row]).map((season) => (
                       <>
-                        <TableCell key={season + "above"} align="center">
+                        <TableCell key={row + season + "above" + index} align="center">
                           {data[row][season]["above"] == NaN ||
                           data[row][season]["above"] == "NaN"
                             ? "Sin datos"
                             : Math.round(data[row][season]["above"])}
                         </TableCell>
-                        <TableCell key={season + "normal"} align="center">
+                        <TableCell key={row + season + "normal" + index} align="center">
                           {data[row][season]["normal"] == NaN ||
                           data[row][season]["normal"] == "NaN"
                             ? "Sin datos"
                             : Math.round(data[row][season]["normal"])}
                         </TableCell>
-                        <TableCell key={season + "below"} align="center">
+                        <TableCell key={row + season + "below" + index} align="center">
                           {data[row][season]["below"] == NaN ||
                           data[row][season]["below"] == "NaN"
                             ? "Sin datos"
