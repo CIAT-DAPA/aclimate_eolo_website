@@ -15,6 +15,7 @@
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
+    "@next/third-parties": "^14.2.3",
     "@react-leaflet/core": "^2.1.0",
     "apexcharts": "^3.49.0",
     "axios": "^1.6.8",

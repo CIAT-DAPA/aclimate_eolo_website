@@ -487,7 +487,7 @@ const Visualizer = () => {
                 </Typography>
                 <Button
                   style={{
-                    width: "16%",
+                    width: "20%",
                     backgroundColor: "#e37b13",
                     color: "#ffff",
                     justifySelf: "flex-end",
@@ -508,7 +508,7 @@ const Visualizer = () => {
                 </Typography>
                 <Button
                   style={{
-                    width: "16%",
+                    width: "20%",
                     backgroundColor: "#e37b13",
                     color: "#ffff",
                     justifySelf: "flex-end",

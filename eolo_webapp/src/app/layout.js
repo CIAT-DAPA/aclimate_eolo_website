@@ -6,6 +6,7 @@ import styles from "./analogues/page.module.css";
 import Providers from "@/app/Components/Provider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { GoogleAnalytics  } from '@next/third-parties/google'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
           </main>
         </Providers>
       </body>
+      <GoogleAnalytics gaId="G-KFRHFCFS0J" />
     </html>
   );
 }
