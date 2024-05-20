@@ -49,6 +49,7 @@ const Report = () => {
   const [typeForecast, setTypeForecast] = useState("tri");
   const [currentLoading, setCurrentLoading] = useState(false);
   const [seasons, setSeasons] = useState([]);
+  const [monthsTitles, setMonthsTitles] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [csv, setCsv] = useState(null);
   const [monthM, setMonthM] = useState("");
@@ -369,24 +370,35 @@ const Report = () => {
       "Nov",
       "Dic",
     ];
+    const monthsC = [];
     if (typeForecast === "tri") {
       seasonCalc = dates.map((date) => {
         const month = date.getMonth();
         const previousMonth = month === 0 ? 11 : month - 1;
         const nextMonth = month === 11 ? 0 : month + 1;
         const season = `${monthNames[previousMonth]}-${monthNames[month]}-${monthNames[nextMonth]}`;
+
+        monthsC.push(monthNames[previousMonth]);
+        monthsC.push(monthNames[month]);
+        monthsC.push(monthNames[nextMonth]);
+
         return season;
       });
     } else if (typeForecast === "bi") {
       seasonCalc = dates.map((date) => {
         const month = date.getMonth();
         const season = `${monthNames[month]}-${monthNames[(month + 1) % 12]}`;
+
+        monthsC.push(monthNames[month]);
+        monthsC.push(monthNames[(month + 1) % 12]);
+
         return season;
       });
     }
     const calcTitles = [titles[0]];
     seasonCalc.forEach((title) => calcTitles.push(`Temporada ${title}`));
     setTitles(calcTitles);
+    setMonthsTitles(monthsC);
     setSeasons(seasonCalc);
   };
 
@@ -447,14 +459,14 @@ const Report = () => {
     let result = [];
 
     dates.forEach(([year, month]) => {
-        if (typeForecast === "tri") {
-            result.push(addMonths(year, month, -1));
-            result.push([year, month]);
-            result.push(addMonths(year, month, 1));
-        } else if (typeForecast === "bi") {
-            result.push([year, month]);
-            result.push(addMonths(year, month, 1));
-        }
+      if (typeForecast === "tri") {
+        result.push(addMonths(year, month, -1));
+        result.push([year, month]);
+        result.push(addMonths(year, month, 1));
+      } else if (typeForecast === "bi") {
+        result.push([year, month]);
+        result.push(addMonths(year, month, 1));
+      }
     });
 
     return result;
@@ -496,7 +508,7 @@ const Report = () => {
           );
         })
       );
-      setSecondData(results)
+      setSecondData(results);
     } catch (error) {
       console.log(error);
       notify(`Error al obtener los historicos`, "error");
@@ -542,134 +554,134 @@ const Report = () => {
       ) : (
         <>
           <Box ref={targetRef} className={styles.container}>
-            <Box className={styles.radio_container}>
-              <Typography
-                variant="body1"
-                color="textSecondary"
-                className={styles.report_title}
-                style={{ margin: 0, display: "flex", alignItems: "center" }}
-              >
-                Tipo de pronóstico:
-              </Typography>
-              <FormControl>
-                <RadioGroup
-                  row
-                  name="row-radio-buttons-group"
-                  value={typeForecast}
-                  onChange={handleSelectChange(setTypeForecast)}
-                >
-                  <FormControlLabel
-                    value={"bi"}
-                    control={<Radio />}
-                    label="Bimestral"
-                    labelPlacement="end"
-                  />
-                  <FormControlLabel
-                    value={"tri"}
-                    control={<Radio />}
-                    label="Trimestral"
-                    labelPlacement="end"
-                  />
-                </RadioGroup>
-              </FormControl>
-            </Box>
-            <Box className={styles.selectors_container}>
-              <Box>
+            <Box className={styles.config_container}>
+              <Box className={styles.radio_container}>
                 <Typography
                   variant="body1"
                   color="textSecondary"
                   className={styles.report_title}
                   style={{ margin: 0, display: "flex", alignItems: "center" }}
                 >
-                  Seleccione el pronóstico para generar el reporte:
+                  Tipo de pronóstico:
                 </Typography>
-                <FormControl
-                  className={styles.info_inputs}
-                  sx={{ m: 1, minWidth: 120, width: "80%" }}
-                  size="small"
-                >
-                  <InputLabel
-                    id="select_forecast1_hc"
-                    style={{ color: "#7b8b9d" }}
+                <FormControl>
+                  <RadioGroup
+                    row
+                    name="row-radio-buttons-group"
+                    value={typeForecast}
+                    onChange={handleSelectChange(setTypeForecast)}
                   >
-                    {"Seleccione el pronóstico"}
-                  </InputLabel>
-                  <Select
-                    labelId="select_forecast1_hc"
-                    input={
-                      <OutlinedInput
-                        style={{ backgroundColor: "#e6eaed" }}
-                        label={"Seleccione el pronóstico"}
-                        value={forecastSelected}
-                        onChange={handleSelectChange(setForecastSelected)}
-                      />
-                    }
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    {workspaces.map((d) => (
-                      <MenuItem key={d.value} value={d.value}>
-                        {d.display}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                    <FormControlLabel
+                      value={"bi"}
+                      control={<Radio />}
+                      label="Bimestral"
+                      labelPlacement="end"
+                    />
+                    <FormControlLabel
+                      value={"tri"}
+                      control={<Radio />}
+                      label="Trimestral"
+                      labelPlacement="end"
+                    />
+                  </RadioGroup>
                 </FormControl>
               </Box>
-              <Box className={styles.buttons_container}>
-                <Typography
-                  variant="body1"
-                  color="textSecondary"
-                  className={styles.report_title}
-                  style={{ margin: 0, display: "flex", alignItems: "center" }}
-                >
-                  Seleccionar archivo CSV de Localidades:
-                </Typography>
-                <Box className={styles.file_container}>
-                  <input
-                    type="file"
-                    id="file-input"
-                    style={{ display: "none" }}
-                    onChange={handleFileChange}
-                    accept=".csv"
-                  />
-                  <label htmlFor="file-input">
-                    <Button
-                      variant="contained"
-                      component="span"
-                      startIcon={<UploadFileIcon />}
-                      style={{
-                        width: "100%",
-                        backgroundColor: "#e37b13",
-                        color: "#ffff",
-                        height: "42px",
-                        borderRadius: "6px",
-                      }}
-                    >
-                      Cargar CSV
-                    </Button>
-                  </label>
-                  {selectedFile && (
-                    <Typography variant="body2">
-                      Archivo seleccionado: {selectedFile.name}
-                    </Typography>
-                  )}
-                </Box>
+              <Box className={styles.selectors_container}>
                 <Box>
-                  {selectedFile && (
-                    <IconButton
-                      aria-label="delete"
-                      size="large"
-                      onClick={cleanFilter}
+                  <Typography
+                    variant="body1"
+                    color="textSecondary"
+                    className={styles.report_title}
+                    style={{ margin: 0, display: "flex", alignItems: "center" }}
+                  >
+                    Seleccione el pronóstico para generar el reporte:
+                  </Typography>
+                  <FormControl
+                    className={styles.info_inputs}
+                    sx={{ m: 1, minWidth: 120, width: "80%" }}
+                    size="small"
+                  >
+                    <InputLabel
+                      id="select_forecast1_hc"
+                      style={{ color: "#7b8b9d" }}
                     >
-                      <DeleteIcon />
-                    </IconButton>
-                  )}
+                      {"Seleccione el pronóstico"}
+                    </InputLabel>
+                    <Select
+                      labelId="select_forecast1_hc"
+                      input={
+                        <OutlinedInput
+                          style={{ backgroundColor: "#e6eaed" }}
+                          label={"Seleccione el pronóstico"}
+                          value={forecastSelected}
+                          onChange={handleSelectChange(setForecastSelected)}
+                        />
+                      }
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem>
+                      {workspaces.map((d) => (
+                        <MenuItem key={d.value} value={d.value}>
+                          {d.display}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+                <Box className={styles.buttons_container}>
+                  <Typography
+                    variant="body1"
+                    color="textSecondary"
+                    className={styles.report_title}
+                    style={{ margin: 0, display: "flex", alignItems: "center" }}
+                  >
+                    Seleccionar archivo CSV de Localidades:
+                  </Typography>
+                  <Box className={styles.file_container}>
+                    <input
+                      type="file"
+                      id="file-input"
+                      style={{ display: "none" }}
+                      onChange={handleFileChange}
+                      accept=".csv"
+                    />
+                    <label htmlFor="file-input">
+                      <Button
+                        variant="contained"
+                        component="span"
+                        startIcon={<UploadFileIcon />}
+                        style={{
+                          width: "100%",
+                          backgroundColor: "#e37b13",
+                          color: "#ffff",
+                          height: "42px",
+                          borderRadius: "6px",
+                        }}
+                      >
+                        Cargar CSV
+                      </Button>
+                    </label>
+                    {selectedFile && (
+                      <Typography variant="body2">
+                        Archivo seleccionado: {selectedFile.name}
+                      </Typography>
+                    )}
+                  </Box>
+                  <Box>
+                    {selectedFile && (
+                      <IconButton
+                        aria-label="delete"
+                        size="large"
+                        onClick={cleanFilter}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    )}
+                  </Box>
                 </Box>
               </Box>
-            </Box>
 
-            <Box>
               <Button
                 variant="contained"
                 component="span"
@@ -679,7 +691,6 @@ const Report = () => {
                   color: "#ffff",
                   height: "42px",
                   borderRadius: "6px",
-                  marginBottom: "1%",
                 }}
                 onClick={generateData}
               >
@@ -829,8 +840,11 @@ const Report = () => {
               <Box className={styles.line_chart_container}>
                 {data &&
                   secondData &&
-                  Object.keys(data).map((p,index) => (
-                    <Box className={styles.temporal_container} key={`box_${index}`}>
+                  Object.keys(data).map((p, index) => (
+                    <Box
+                      className={styles.temporal_container}
+                      key={`box_${index}`}
+                    >
                       <Typography
                         variant="h6"
                         color="textSecondary"
@@ -839,17 +853,27 @@ const Report = () => {
                       >
                         {`Datos localidad: ${p}`}
                       </Typography>
-                      <ChartReport
-                        key={`chart_${index}`}
-                        data={Object.values(data[p]).reduce((acc, season) => {
-                          return acc.concat(Object.values(season));
-                        }, [])}
-                        second_data={secondData[p]}
-                        type="line"
-                        width="500"
-                        colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
-                        titles={generateTitles(data[p])}
-                      />
+                      <Box className={styles.charts_loca}>
+                        <ChartReport
+                          key={`chart_clima_${index}`}
+                          data={secondData[p]}
+                          type="clima"
+                          width="600"
+                          colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
+                          titles={monthsTitles}
+                        />
+                        <ChartReport
+                          key={`chart_proba_${index}`}
+                          data={Object.values(data[p]).reduce((acc, season) => {
+                            return acc.concat(Object.values(season));
+                          }, [])}
+                          type="proba"
+                          width="600"
+                          colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
+                          titles={generateTitles(data[p])}
+                          monthTitles={seasons}
+                        />
+                      </Box>
                     </Box>
                   ))}
               </Box>

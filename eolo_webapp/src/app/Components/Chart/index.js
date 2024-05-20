@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Chart from "react-apexcharts";
 
-const ChartReport = ({ data, type, colors, titles, second_data=[] }) => {
+const ChartReport = ({ data, type, colors, titles, monthTitles = [] }) => {
   const [chartData, setChartData] = useState({
     options: {
       chart: {
@@ -15,7 +15,6 @@ const ChartReport = ({ data, type, colors, titles, second_data=[] }) => {
         bar: {
           borderRadius: 4,
           borderRadiusApplication: "end",
-          distributed: true,
         },
       },
       colors: colors,
@@ -36,70 +35,14 @@ const ChartReport = ({ data, type, colors, titles, second_data=[] }) => {
       },
     ],
   });
-  const [chartLineData, setCharLinetData] = useState({
-    series: [
-      {
-        name: "Website Blog",
-        type: "column",
-        data: [440, 505, 414, 671, 227, 413, 201, 352, 752, 320, 257, 160],
-      },
-      {
-        name: "Social Media",
-        type: "line",
-        data: [23, 42, 35, 27, 43, 22, 17, 31, 22, 22, 12, 16],
-      },
-    ],
-    options: {
-      chart: {
-        height: 350,
-        type: "line",
-      },
-      plotOptions: {
-        bar: {
-          borderRadius: 4,
-          borderRadiusApplication: "end",
-          distributed: true,
-        },
-      },
-      colors: colors,
-      legend: {
-        show: false,
-      },
-      stroke: {
-        width: [0, 4],
-      },
-      xaxis: {
-        categories: titles,
-      },
-      yaxis: [
-        {
-          title: {
-            text: "Precipitación (%)",
-          },
-        }
-      ],
-    },
-  });
 
   useEffect(() => {
-    if (type == "line") {
-      setCharLinetData({
-        series: [
-          {
-            name: "Probabilidades",
-            type: "column",
-            data: data,
-          },
-          {
-            name: "Norma Historica",
-            type: "line",
-            data: second_data,
-          },
-        ],
+    if (type == "clima") {
+      setChartData({
         options: {
           chart: {
-            height: 350,
-            type: "line",
+            type: "bar",
+            id: "basic-bar",
           },
           plotOptions: {
             bar: {
@@ -109,24 +52,76 @@ const ChartReport = ({ data, type, colors, titles, second_data=[] }) => {
             },
           },
           colors: colors,
-          legend: {
-            show: false,
-          },
-          stroke: {
-            width: [0, 4],
-          },
           xaxis: {
             categories: titles,
           },
-          yaxis: [
-            {
-              title: {
-                text: "Precipitación (%)",
-              },
-            }
-          ],
+          yaxis: {
+            title: {
+              text: "Precipitación",
+            },
+          },
         },
+        series: [
+          {
+            name: "Precipitación",
+            data: data,
+          },
+        ],
+      });
+    } else if (type == "proba") {
+      const ab = {
+        name: titles[0],
+        data: []
+      }
+      const nor = {
+        name: titles[1],
+        data: []
+      }
+      const bel = {
+        name: titles[2],
+        data: []
+      }
+      data.forEach((d, index) => {
+        if (index % 3 === 0) {
+          ab.data.push(d)
+        } else if (index % 3 === 1) {
+          nor.data.push(d)
+        } else if (index % 3 === 2) {
+          bel.data.push(d)
+        }
       })
+      setChartData({
+        options: {
+          chart: {
+            type: "bar",
+            id: "basic-bar",
+          },
+          plotOptions: {
+            bar: {
+              borderRadius: 4,
+              borderRadiusApplication: "end",
+              
+            },
+          },
+          colors: colors,
+          stroke: {
+            colors: ["transparent"],
+            width: 5
+          },
+          xaxis: {
+            categories: monthTitles,
+          },
+          legend: {show: true},
+          yaxis: {
+            max: 100,
+            title: {
+              text: "Probabilidad (%)",
+            },
+          },
+        },
+        series: [ab, nor, bel]
+        
+      });
     } else {
       if (data && data.length > 0) {
         setChartData({
@@ -167,10 +162,11 @@ const ChartReport = ({ data, type, colors, titles, second_data=[] }) => {
   return (
     <div className="mixed-chart">
       <Chart
-        options={type == "line" ? chartLineData.options : chartData.options}
-        series={type == "line" ? chartLineData.series : chartData.series}
-        type={type}
-        width="500"
+        options={chartData.options}
+        series={chartData.series}
+        type={"bar"}
+        width="650"
+        height="420"
       />
     </div>
   );
