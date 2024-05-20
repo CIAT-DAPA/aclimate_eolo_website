@@ -39,7 +39,7 @@
   display: flex;
   align-items: center;
   gap: 4%;
-  margin-bottom: 2%;
+  width: 45%;
 }
 
 .chart_container {
@@ -60,7 +60,7 @@
 }
 
 .file_container {
-  width: 25%;
+  width: 55%;
 }
 
 .maps_container {
@@ -109,8 +109,9 @@
 
 .radio_container {
   display: flex;
-  gap: 1%;
+  gap: 4%;
   margin-bottom: 5px;
+  width: 25%;
 }
 
 .temporal_container {
@@ -120,7 +121,19 @@
 }
 
 .line_chart_container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 10px;
+}
+
+.config_container {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.charts_loca {
+  display: flex;
+  justify-content: center;
+  gap: 10%;
 }
