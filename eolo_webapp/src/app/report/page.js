@@ -2,7 +2,7 @@
 import Loading from "../Components/Loading";
 import dynamic from "next/dynamic";
 import styles from "./report.module.css";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef, createRef } from "react";
 import useAuth from "../Hooks/useAuth";
 import Configuration from "../config";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -26,8 +26,11 @@ import {
   Card,
   CardHeader,
   CardContent,
+  Tooltip,
 } from "@mui/material";
 import LoadingOverlay from "../Components/LoadingOverlay";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import ImageIcon from "@mui/icons-material/Image";
 import AuthContext from "@/app/Context/auth/authContext";
 import { toast } from "react-toastify";
 
@@ -54,6 +57,7 @@ const Report = () => {
   const [csv, setCsv] = useState(null);
   const [monthM, setMonthM] = useState("");
   const [yearM, setYearM] = useState("");
+  const cardRefs = useRef({});
   const [titles, setTitles] = useState([
     "Localidad",
     "Temporada 1",
@@ -102,9 +106,43 @@ const Report = () => {
     { display: "Dominante", value: Configuration.get_hgp_store() },
   ]);
 
+  const [monthsC, setMonthsC] = useState([
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ]);
+
   const cleanFilter = () => {
     setCsv(null);
     setSelectedFile(null);
+  };
+
+  const getCardRef = (key) => {
+    if (!cardRefs.current[key]) {
+      cardRefs.current[key] = createRef();
+    }
+    return cardRefs.current[key];
+  };
+
+  const downloadRaster = (layer) => {
+    const link = document.createElement("a");
+    const url = `${Configuration.get_geoserver_url()}${forecastSelected}/wms?service=WMS&version=1.1.0&time=${yearM}-${monthM}&request=GetMap&layers=${forecastSelected}%3A${layer}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
+    link.href = url;
+    link.download = `${layer}_${monthsC[monthM - 1]}.tif`;
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      document.body.removeChild(link);
+    }, 0);
   };
 
   const generateTitles = (seasons_data) => {
@@ -812,16 +850,15 @@ const Report = () => {
                               title={`${layers[index * 2 + subIndex].display}`}
                             />
                             <CardContent
+                              key={`${season}_${
+                                layers[index * 2 + subIndex].display
+                              }`}
                               className={styles.map_card_content}
                               style={{ padding: 0 }}
+                              ref={getCardRef(`${season}_${index}_${subIndex}`)}
                             >
                               <Map
                                 key={`${subIndex}_map`}
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  justifySelf: "center",
-                                }}
                                 zoom={7}
                                 center={[14.5007343, -86.6719949]}
                                 url={Configuration.get_geoserver_url()}
@@ -829,6 +866,62 @@ const Report = () => {
                                 store={layers[index * 2 + subIndex].value}
                                 year={yearM}
                                 month={monthM}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  justifySelf: "center",
+                                  display: "flex",
+                                  justifyContent: "flex-start",
+                                }}
+                                child={
+                                  <Box className={styles.map_buttons_container}>
+                                    <Tooltip title="Descargar raster">
+                                      <IconButton
+                                        color="primary"
+                                        aria-label="add to shopping cart"
+                                        className={styles.download_raster_l}
+                                        onClick={() =>
+                                          downloadRaster(
+                                            layers[index * 2 + subIndex].value
+                                          )
+                                        }
+                                      >
+                                        <FileDownloadOutlinedIcon />
+                                      </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Descargar png">
+                                      <IconButton
+                                        color="primary"
+                                        aria-label="add to shopping cart"
+                                        className={styles.download_raster_l}
+                                        onClick={async () => {
+                                          const { exportComponentAsPNG } =
+                                            await import(
+                                              "react-component-export-image"
+                                            );
+                                          const refKey = `${season}_${index}_${subIndex}`;
+                                          const ref = cardRefs.current[refKey];
+                                          if (ref && ref.current) {
+                                            console.log(ref.current);
+                                            exportComponentAsPNG(ref, {
+                                              fileName: `${
+                                                layers[index * 2 + subIndex]
+                                                  .value
+                                              }_${monthsC[monthM - 1]}.png`,
+                                            });
+                                          } else {
+                                            console.error(
+                                              "No se encontró el nodo DOM para la referencia:",
+                                              refKey
+                                            );
+                                          }
+                                        }}
+                                      >
+                                        <ImageIcon />
+                                      </IconButton>
+                                    </Tooltip>
+                                  </Box>
+                                }
                               />
                             </CardContent>
                           </Card>
@@ -859,7 +952,7 @@ const Report = () => {
                           data={secondData[p]}
                           type="clima"
                           width="600"
-                          colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
+                          colors={["#97cdd8"]}
                           titles={monthsTitles}
                         />
                         <ChartReport
@@ -899,7 +992,10 @@ const Report = () => {
           </Box>
           <Button
             startIcon={<PictureAsPdfIcon />}
-            onClick={() => toPDF()}
+            onClick={() => {
+              setCurrentLoading(true);
+              toPDF().then((p) => setCurrentLoading(false));
+            }}
             style={{
               width: "20%",
               backgroundColor: "#e37b13",
