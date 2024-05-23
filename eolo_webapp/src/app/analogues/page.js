@@ -419,7 +419,7 @@ export default function Home() {
                 <Card className={styles.card_map} ref={averageRef}>
                 <Typography
                       variant="h6"
-                      style={{ padding: "0 1%", color: "#0d2137" }}
+                      style={{ padding: "0 1%", color: "#0d2137", height: "5%" }}
                     >
                       Promedio de los años seleccionados:
                     </Typography>
@@ -427,7 +427,7 @@ export default function Home() {
                     className={styles.map}
                     style={{
                       width: "100%",
-                      height: "100%",
+                      height: "95%",
                       justifySelf: "center",
                       display: "flex",
                       justifyContent: "flex-start",
@@ -482,7 +482,7 @@ export default function Home() {
                 <Card className={styles.card_map} ref={anomaliesRef}>
                 <Typography
                       variant="h6"
-                      style={{ padding: "0 1%", color: "#0d2137" }}
+                      style={{ padding: "0 1%", color: "#0d2137", height: "5%" }}
                     >
                       Anomalía normalizada:
                     </Typography>
@@ -490,7 +490,7 @@ export default function Home() {
                     className={styles.map}
                     style={{
                       width: "100%",
-                      height: "100%",
+                      height: "95%",
                       justifySelf: "center",
                       display: "flex",
                       justifyContent: "flex-start",
