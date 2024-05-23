@@ -67,7 +67,7 @@ class Configuration {
         return TMIN_STORE;
     }
     get_api_url(){
-        return API_URL_PROD
+        return API_URL_DEV
     }
 
     get_below_store(){

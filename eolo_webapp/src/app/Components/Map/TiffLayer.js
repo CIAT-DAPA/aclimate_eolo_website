@@ -40,8 +40,82 @@ const TiffLayer = ({ anomalies, setCurrentLoading, setTiff }) => {
     }
   };
 
+  const getColor = (value) => {
+    if (anomalies.anomalie != false) {
+      if (value < -40) {
+        return "#a08250";
+      } else if (value < -20) {
+        return "#ffc64a";
+      } else if (value < 0) {
+        return "#fff896";
+      } else if (value < 20) {
+        return "#bcef9b";
+      } else if (value < 40) {
+        return "#89ea54";
+      } else if (value < 60) {
+        return "#87cc48";
+      } else if (value < 80) {
+        return "#70ae48";
+      } else if (value < 100) {
+        return "#5c9344";
+      } else if (value < 120) {
+        return "#626d4b";
+      }
+    } else {
+      if (value < 25.1) {
+        return "#abe981";
+      } else if (value < 50.1) {
+        return "#abe981";
+      } else if (value < 75.1) {
+        return "#78cf54";
+      } else if (value < 100.1) {
+        return "#6db86f";
+      } else if (value < 125.1) {
+        return "#579e84";
+      } else if (value < 150.1) {
+        return "#5baba2";
+      } else if (value < 200.1) {
+        return "#8fccd7";
+      } else if (value < 250.1) {
+        return "#d5eeff";
+      } else if (value < 275.1) {
+        return "#9dddff";
+      } else if (value < 300.1) {
+        return "#67d0fe";
+      } else if (value < 350.1) {
+        return "#44abfe";
+      } else if (value < 400.1) {
+        return "#478dfb";
+      } else if (value < 450.1) {
+        return "#4d7cda";
+      } else if (value < 500.1) {
+        return "#4e70b6";
+      } else if (value < 550.1) {
+        return "#4c65a4";
+      } else if (value < 600.1) {
+        return "#5b539a";
+      } else if (value < 650.1) {
+        return "#75569b";
+      } else if (value < 700.1) {
+        return "#9d59ae";
+      } else if (value < 750.1) {
+        return "#d762ce";
+      } else if (value < 850.1) {
+        return "#f266c6";
+      } else if (value < 950.1) {
+        return "#ff6afb";
+      } else if (value < 1050.1) {
+        return "#ffbaf9";
+      } else if (value < 1250.1) {
+        return "#ffe5fd";
+      } else if (value < 1500.1) {
+        return "#eceae8";
+      }
+    }
+  };
+
   const getAnomalies = async () => {
-    try{
+    try {
       setCurrentLoading(true);
       const container = context.map;
       prevAnomalies.current = anomalies;
@@ -56,9 +130,10 @@ const TiffLayer = ({ anomalies, setCurrentLoading, setTiff }) => {
           years: anomalies.years,
           user: user.user.user,
           passw: user.user.password,
+          anomalie: (typeof anomalies.anomalie !== 'undefined') ? anomalies.anomalie : true
         }),
       });
-  
+
       const arrayBuffer = await response.arrayBuffer();
       const blob = new Blob([arrayBuffer]);
       setTiff(URL.createObjectURL(blob));
@@ -67,26 +142,7 @@ const TiffLayer = ({ anomalies, setCurrentLoading, setTiff }) => {
           pixelValuesToColorFn: function (pixelValues) {
             const pixelValue = pixelValues[0];
             if (pixelValue === -9999) return null;
-            let color = null;
-            if (pixelValue < -40) {
-              color = "#a08250";
-            } else if (pixelValue < -20) {
-              color = "#ffc64a";
-            } else if (pixelValue < 0) {
-              color = "#fff896";
-            } else if (pixelValue < 20) {
-              color = "#bcef9b";
-            } else if (pixelValue < 40) {
-              color = "#89ea54";
-            } else if (pixelValue < 60) {
-              color = "#87cc48";
-            } else if (pixelValue < 80) {
-              color = "#70ae48";
-            } else if (pixelValue < 100) {
-              color = "#5c9344";
-            } else if (pixelValue < 120) {
-              color = "#626d4b";
-            }
+            const color = getColor(pixelValue);
             return color;
           },
           resolution: 256,
@@ -98,11 +154,10 @@ const TiffLayer = ({ anomalies, setCurrentLoading, setTiff }) => {
         container.addLayer(geoTiffLayerRef.current);
         setCurrentLoading(false);
       });
-    }catch(error){
+    } catch (error) {
       setCurrentLoading(false);
-      notify("Error al generar la anomalia", "error")
+      notify("Error al generar la anomalia", "error");
     }
-    
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

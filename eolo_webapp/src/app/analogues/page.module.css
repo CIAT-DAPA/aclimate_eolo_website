@@ -46,7 +46,7 @@
 .anomalies_map {
   width: 100%;
   display: grid;
-  grid-template-rows: 22% 78%;
+  grid-template-rows: 25% 70%;
   min-height: 900px;
   grid-column: 1 / 3;
 }
@@ -118,4 +118,14 @@
   display: flex;
   flex-direction: column;
   gap: 2%;
+}
+
+.anomalies_average_container{
+  display: flex;
+  justify-content: space-between;
+}
+
+
+.card_map{
+  width: 49%;
 }
