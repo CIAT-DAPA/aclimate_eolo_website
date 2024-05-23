@@ -8,7 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import styles from "./table.module.css";
 
-const CsvTable = ({ titles, subTitles, data, filter }) => {
+const CsvTable = ({ titles, subTitles, data, filter, analogues = true }) => {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -51,11 +51,12 @@ const CsvTable = ({ titles, subTitles, data, filter }) => {
                   {col}
                 </TableCell>
               ))}
-              {subTitles.map((col) => (
-                <TableCell key={col} className={styles.subcolumn}>
-                  {col}
-                </TableCell>
-              ))}
+              {analogues &&
+                subTitles.map((col) => (
+                  <TableCell key={col} className={styles.subcolumn}>
+                    {col}
+                  </TableCell>
+                ))}
             </TableRow>
           )}
         </TableHead>
@@ -104,24 +105,37 @@ const CsvTable = ({ titles, subTitles, data, filter }) => {
                     </TableCell>
                     {Object.keys(data[row]).map((season) => (
                       <>
-                        <TableCell key={row + season + "above" + index} align="center">
+                        <TableCell
+                          key={row + season + "above" + index}
+                          align="center"
+                        >
                           {data[row][season]["above"] == NaN ||
                           data[row][season]["above"] == "NaN"
                             ? "Sin datos"
                             : Math.round(data[row][season]["above"])}
                         </TableCell>
-                        <TableCell key={row + season + "normal" + index} align="center">
-                          {data[row][season]["normal"] == NaN ||
-                          data[row][season]["normal"] == "NaN"
-                            ? "Sin datos"
-                            : Math.round(data[row][season]["normal"])}
-                        </TableCell>
-                        <TableCell key={row + season + "below" + index} align="center">
-                          {data[row][season]["below"] == NaN ||
-                          data[row][season]["below"] == "NaN"
-                            ? "Sin datos"
-                            : Math.round(data[row][season]["below"])}
-                        </TableCell>
+                        {analogues && (
+                          <>
+                            <TableCell
+                              key={row + season + "normal" + index}
+                              align="center"
+                            >
+                              {data[row][season]["normal"] == NaN ||
+                              data[row][season]["normal"] == "NaN"
+                                ? "Sin datos"
+                                : Math.round(data[row][season]["normal"])}
+                            </TableCell>
+                            <TableCell
+                              key={row + season + "below" + index}
+                              align="center"
+                            >
+                              {data[row][season]["below"] == NaN ||
+                              data[row][season]["below"] == "NaN"
+                                ? "Sin datos"
+                                : Math.round(data[row][season]["below"])}
+                            </TableCell>
+                          </>
+                        )}
                       </>
                     ))}
                   </>

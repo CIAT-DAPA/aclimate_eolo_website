@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Chart from "react-apexcharts";
 
-const ChartReport = ({ data, type, colors, titles, monthTitles = [] }) => {
+const ChartReport = ({ data, type, colors, titles, monthTitles = [], anomalie=true }) => {
   const [chartData, setChartData] = useState({
     options: {
       chart: {
@@ -119,7 +119,7 @@ const ChartReport = ({ data, type, colors, titles, monthTitles = [] }) => {
             },
           },
         },
-        series: [ab, nor, bel]
+        series: anomalie ? [ab, nor, bel] :  [ab]
         
       });
     } else {

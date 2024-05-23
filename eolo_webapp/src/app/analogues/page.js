@@ -32,12 +32,15 @@ export default function Home() {
   const [selectedYearHc, setSelectedYearHc] = useState("");
   const [selectedMonthC, setSelectedMonthC] = useState("");
   const [anomalies, setAnomalies] = useState(null);
+  const [average, setAverage] = useState(null);
   const [currentLoading, setCurrentLoading] = useState(false);
   const [tiff, setTiff] = useState(null);
+  const [tiff2, setTiff2] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState("Honduras");
   const climatologyRef = useRef(null);
   const historicalRef = useRef(null);
   const anomaliesRef = useRef(null);
+  const averageRef = useRef(null);
   const exportComponentAsPNG = "";
 
   const [multiSelectData, setMultiSelectData] = useState([]);
@@ -86,6 +89,13 @@ export default function Home() {
       month: selectedMonthC,
       years: multiSelectData,
     });
+
+    setAverage({
+      url: `${Configuration.get_api_url()}subtract_rasters`,
+      month: selectedMonthC,
+      years: multiSelectData,
+      anomalie: false,
+    });
   };
 
   const downloadRaster = () => {
@@ -104,6 +114,20 @@ export default function Home() {
     const link = document.createElement("a");
     link.href = tiff;
     link.download = `Anomalía_${
+      monthsC[selectedMonthC - 1]
+    }_${multiSelectData.join("-")}.tif`;
+
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      document.body.removeChild(link);
+    }, 0);
+  };
+
+  const downloadAnomalyRaster2 = () => {
+    const link = document.createElement("a");
+    link.href = tiff2;
+    link.download = `Promedio_${
       monthsC[selectedMonthC - 1]
     }_${multiSelectData.join("-")}.tif`;
 
@@ -387,66 +411,137 @@ export default function Home() {
                     onClick={createAnomaly}
                     disabled={multiSelectData.length < 2}
                   >
-                    Calcular Anomalía
+                    Calcular
                   </Button>
                 </div>
               </div>
-              <Card ref={anomaliesRef}>
-                <Map
-                  className={styles.map}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    justifySelf: "center",
-                    display: "flex",
-                    justifyContent: "flex-start",
-                  }}
-                  zoom={7.5}
-                  center={[14.5007343, -86.6719949]}
-                  anomalies={anomalies}
-                  isAnomalies={true}
-                  setCurrentLoading={setCurrentLoading}
-                  workspace={Configuration.get_cenaos_worspace()}
-                  store={Configuration.get_anomalies_style()}
-                  minZoom={8}
-                  setTiff={setTiff}
-                  child={
-                    <Box className={styles.map_buttons_container}>
-                      <Tooltip title="Descargar raster">
-                        <IconButton
-                          color="primary"
-                          aria-label="add to shopping cart"
-                          className={styles.download_raster_l}
-                          disabled={!tiff}
-                          onClick={downloadAnomalyRaster}
-                        >
-                          <FileDownloadOutlinedIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Descargar png">
-                        <IconButton
-                          color="primary"
-                          aria-label="add to shopping cart"
-                          className={styles.download_raster_l}
-                          disabled={!tiff}
-                          onClick={async () => {
-                            const { exportComponentAsPNG } = await import(
-                              "react-component-export-image"
-                            );
-                            exportComponentAsPNG(anomaliesRef, {
-                              fileName: `Anomalía_${
-                                monthsC[selectedMonthC - 1]
-                              }_${multiSelectData.join("-")}.png`,
-                            });
-                          }}
-                        >
-                          <ImageIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                  }
-                />
-              </Card>
+              <Box className={styles.anomalies_average_container}>
+                <Card className={styles.card_map} ref={averageRef}>
+                <Typography
+                      variant="h6"
+                      style={{ padding: "0 1%", color: "#0d2137", height: "5%" }}
+                    >
+                      Promedio de los años seleccionados:
+                    </Typography>
+                  <Map
+                    className={styles.map}
+                    style={{
+                      width: "100%",
+                      height: "95%",
+                      justifySelf: "center",
+                      display: "flex",
+                      justifyContent: "flex-start",
+                    }}
+                    zoom={7}
+                    center={[14.5007343, -86.6719949]}
+                    anomalies={average}
+                    isAnomalies={true}
+                    setCurrentLoading={setCurrentLoading}
+                    workspace={Configuration.get_historical_worspace()}
+                    store={Configuration.get_prec_store()}
+                    minZoom={8}
+                    setTiff={setTiff2}
+                    child={
+                      <Box className={styles.map_buttons_container}>
+                        <Tooltip title="Descargar raster">
+                          <IconButton
+                            color="primary"
+                            aria-label="add to shopping cart"
+                            className={styles.download_raster_l}
+                            disabled={!tiff2}
+                            onClick={downloadAnomalyRaster2}
+                          >
+                            <FileDownloadOutlinedIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Descargar png">
+                          <IconButton
+                            color="primary"
+                            aria-label="add to shopping cart"
+                            className={styles.download_raster_l}
+                            disabled={!tiff2}
+                            onClick={async () => {
+                              const { exportComponentAsPNG } = await import(
+                                "react-component-export-image"
+                              );
+                              exportComponentAsPNG(averageRef, {
+                                fileName: `Promedio_${
+                                  monthsC[selectedMonthC - 1]
+                                }_${multiSelectData.join("-")}.png`,
+                              });
+                            }}
+                          >
+                            <ImageIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    }
+                  />
+                </Card>
+
+                <Card className={styles.card_map} ref={anomaliesRef}>
+                <Typography
+                      variant="h6"
+                      style={{ padding: "0 1%", color: "#0d2137", height: "5%" }}
+                    >
+                      Anomalía normalizada:
+                    </Typography>
+                  <Map
+                    className={styles.map}
+                    style={{
+                      width: "100%",
+                      height: "95%",
+                      justifySelf: "center",
+                      display: "flex",
+                      justifyContent: "flex-start",
+                    }}
+                    zoom={7}
+                    center={[14.5007343, -86.6719949]}
+                    anomalies={anomalies}
+                    isAnomalies={true}
+                    setCurrentLoading={setCurrentLoading}
+                    workspace={Configuration.get_cenaos_worspace()}
+                    store={Configuration.get_anomalies_style()}
+                    minZoom={8}
+                    setTiff={setTiff}
+                    child={
+                      <Box className={styles.map_buttons_container}>
+                        <Tooltip title="Descargar raster">
+                          <IconButton
+                            color="primary"
+                            aria-label="add to shopping cart"
+                            className={styles.download_raster_l}
+                            disabled={!tiff}
+                            onClick={downloadAnomalyRaster}
+                          >
+                            <FileDownloadOutlinedIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Descargar png">
+                          <IconButton
+                            color="primary"
+                            aria-label="add to shopping cart"
+                            className={styles.download_raster_l}
+                            disabled={!tiff}
+                            onClick={async () => {
+                              const { exportComponentAsPNG } = await import(
+                                "react-component-export-image"
+                              );
+                              exportComponentAsPNG(anomaliesRef, {
+                                fileName: `Anomalía_${
+                                  monthsC[selectedMonthC - 1]
+                                }_${multiSelectData.join("-")}.png`,
+                              });
+                            }}
+                          >
+                            <ImageIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    }
+                  />
+                </Card>
+              </Box>
             </div>
           </Box>
         </>
