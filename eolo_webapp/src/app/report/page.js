@@ -33,6 +33,7 @@ import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import ImageIcon from "@mui/icons-material/Image";
 import AuthContext from "@/app/Context/auth/authContext";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const Map = dynamic(() => import("@/app/Components/Map"), { ssr: false });
 
@@ -91,7 +92,18 @@ const Report = () => {
     },
   ]);
 
+  // Arrays of years
+  const [years, setYears] = useState([]);
+
+  // Arrays of months cut
+  const [months, setMonths] = useState([]);
+
+  //Selected year and month
+  const [selectMonth, setSelectMonth] = useState("");
+  const [selectYear, setSelectYear] = useState("");
+
   const [averageData, setAverageData] = useState([]);
+  const [uniqueMonth, setUniqueMonth] = useState({});
 
   const [average, setAverage] = useState([
     Configuration.get_above_store(),
@@ -125,6 +137,47 @@ const Report = () => {
     setCsv(null);
     setSelectedFile(null);
   };
+
+  async function getDatesFromGeoserver(workspace, layer) {
+    const workspace_name = workspaces.find((work) => work.value === workspace);
+    try {
+      const url = `${Configuration.get_geoserver_url()}${workspace}/wms?service=WMS&version=1.3.0&request=GetCapabilities`;
+      const response = await axios.get(url);
+
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(response.data, "text/xml");
+      const layers = xmlDoc.getElementsByTagName("Layer");
+      let dates;
+
+      if (layers.length > 1) {
+        for (let i = 1; i < layers.length; i++) {
+          const layerName =
+            layers[i].getElementsByTagName("Name")[0]?.textContent;
+          if (layerName === layer) {
+            const dimension =
+              layers[i].getElementsByTagName("Dimension")[0].textContent;
+            const timeInterval = dimension.split(",");
+            dates = timeInterval.map((date) => date.split("T")[0].slice(0, -3));
+            break;
+          }
+        }
+        return dates;
+      } else {
+        notify(
+          `El workspace ${workspace_name.display}, no tiene la capa seleccionada : ${layer}`,
+          "error"
+        );
+        return [];
+      }
+    } catch (error) {
+      console.log(error);
+      notify(
+        `Error al obtener los rasters disponibles del workspace: ${workspace_name.display}`,
+        "error"
+      );
+      return [];
+    }
+  }
 
   const getCardRef = (key) => {
     if (!cardRefs.current[key]) {
@@ -175,9 +228,10 @@ const Report = () => {
       ]);
       const results = {};
       const errors = new Set();
-      const layerOrder = layers
-        .slice(0, layers.length - 1)
-        .map((layer) => layer.value);
+      const layerOrder =
+        forecastSelected !== Configuration.get_cenaos_worspace()
+          ? layers.slice(0, layers.length - 1).map((layer) => layer.value)
+          : [layers[0].value];
       await Promise.all(
         csv_data.map(async (row) => {
           await Promise.all(
@@ -238,6 +292,7 @@ const Report = () => {
           (propertie) => Object.keys(results[propertie]).length > 0
         )
       ) {
+        console.log(results);
         setData(results);
       }
       setCurrentLoading(false);
@@ -314,14 +369,14 @@ const Report = () => {
 
   const calculateDates = () => {
     // Get the current date
-    let currentDate = new Date();
-    currentDate.setDate(1);
-
+    let currentDate = new Date(parseInt(selectYear), parseInt(selectMonth) - 1);
     // Array to store the additional dates
     let additionalDates = [];
 
     // Calculate additional dates based on the forecast type
-    if (typeForecast === "bi") {
+    if (forecastSelected === Configuration.get_cenaos_worspace()) {
+      additionalDates.push(currentDate);
+    } else if (typeForecast === "bi") {
       // Calculate the current date
       additionalDates.push(currentDate);
 
@@ -355,7 +410,11 @@ const Report = () => {
     try {
       const layers = await Promise.all(
         dates.map(async (date) => {
-          const promises = average.map(async (element) => {
+          const avg =
+            forecastSelected != Configuration.get_cenaos_worspace()
+              ? average
+              : [average[0]];
+          const promises = avg.map(async (element) => {
             const response = await fetch(url, {
               method: "POST",
               headers: {
@@ -409,7 +468,16 @@ const Report = () => {
       "Dic",
     ];
     const monthsC = [];
-    if (typeForecast === "tri") {
+    if (forecastSelected === Configuration.get_cenaos_worspace()) {
+      seasonCalc = dates.map((date) => {
+        const month = date.getMonth();
+        const season = `${monthNames[month]}`;
+
+        monthsC.push(monthNames[month]);
+
+        return season;
+      });
+    } else if (typeForecast === "tri") {
       seasonCalc = dates.map((date) => {
         const month = date.getMonth();
         const previousMonth = month === 0 ? 11 : month - 1;
@@ -497,7 +565,9 @@ const Report = () => {
     let result = [];
 
     dates.forEach(([year, month]) => {
-      if (typeForecast === "tri") {
+      if (forecastSelected === Configuration.get_cenaos_worspace()) {
+        result.push([year, month]);
+      } else if (typeForecast === "tri") {
         result.push(addMonths(year, month, -1));
         result.push([year, month]);
         result.push(addMonths(year, month, 1));
@@ -568,6 +638,100 @@ const Report = () => {
     await getPoints();
     setCurrentLoading(false);
   };
+
+  function handleDates(date) {
+    const [year, month] = date.split("-");
+    if (typeForecast === "tri") {
+      const adjustedMonth =
+        month === "01"
+          ? "12"
+          : (parseInt(month) - 1).toString().padStart(2, "0");
+      const adjustedYear =
+        month === "01" ? (parseInt(year) - 1).toString() : year;
+      return `${adjustedYear}-${adjustedMonth}`;
+    } else {
+      return date;
+    }
+  }
+
+  const getDates = async () => {
+    const selectedLayers =
+      forecastSelected != Configuration.get_cenaos_worspace()
+        ? layers.slice(0, -1)
+        : [layers[0]];
+    setCurrentLoading(true);
+
+    const dataObjects = await Promise.all(
+      selectedLayers.map(async (layer) => {
+        const dates = await getDatesFromGeoserver(
+          forecastSelected,
+          layer.value
+        );
+        if (dates.length > 0) {
+          return dates.reduce((object, date) => {
+            const [year, month] = handleDates(date, typeForecast).split("-");
+            if (!object[year]) {
+              object[year] = [parseInt(month)];
+            } else {
+              if (!object[year].includes(parseInt(month))) {
+                object[year].push(parseInt(month));
+              }
+            }
+            return object;
+          }, {});
+        } else {
+          return null;
+        }
+      })
+    );
+    const validDataObjects = dataObjects.filter(
+      (dataObject) => dataObject !== null
+    );
+
+    if (validDataObjects.length === 0) {
+      setYears([]);
+      setUniqueMonth({});
+      setCurrentLoading(false);
+      return;
+    }
+
+    // Encontrar años que están presentes en todos los objetos
+    const yearsInAllObjects = Object.keys(validDataObjects[0]).filter((year) =>
+      validDataObjects.every((dataObject) => year in dataObject)
+    );
+    // Encontrar meses comunes para los años presentes en todos los objetos
+    const result = {};
+    yearsInAllObjects.forEach((year) => {
+      const commonMonths = validDataObjects.reduce((common, dataObject) => {
+        const monthsArray = dataObject[year];
+        if (common === null) return monthsArray;
+        return common.filter((month) => monthsArray.includes(month));
+      }, null);
+
+      if (commonMonths && commonMonths.length > 0) {
+        result[year] = commonMonths;
+      }
+    });
+    setYears(Object.keys(result));
+    setUniqueMonth(result);
+    setCurrentLoading(false);
+  };
+
+  useEffect(() => {
+    if (forecastSelected && typeForecast) {
+      setSelectMonth("");
+      setSelectYear("");
+      getDates();
+    }
+  }, [forecastSelected, typeForecast]);
+
+  useEffect(() => {
+    if (selectYear) {
+      const months = uniqueMonth[selectYear];
+      const filterMonths = months.map((position) => monthsC[position - 1]);
+      setMonths(filterMonths);
+    }
+  }, [selectYear]);
 
   useEffect(() => {
     const newDate = new Date();
@@ -667,59 +831,140 @@ const Report = () => {
                     </Select>
                   </FormControl>
                 </Box>
-                <Box className={styles.buttons_container}>
+                <Box>
                   <Typography
                     variant="body1"
                     color="textSecondary"
                     className={styles.report_title}
                     style={{ margin: 0, display: "flex", alignItems: "center" }}
                   >
-                    Seleccionar archivo CSV de Localidades:
+                    Seleccione el año y mes del pronostico:
                   </Typography>
-                  <Box className={styles.file_container}>
-                    <input
-                      type="file"
-                      id="file-input"
-                      style={{ display: "none" }}
-                      onChange={handleFileChange}
-                      accept=".csv"
-                    />
-                    <label htmlFor="file-input">
-                      <Button
-                        variant="contained"
-                        component="span"
-                        startIcon={<UploadFileIcon />}
-                        style={{
-                          width: "100%",
-                          backgroundColor: "#e37b13",
-                          color: "#ffff",
-                          height: "42px",
-                          borderRadius: "6px",
-                        }}
-                      >
-                        Cargar CSV
-                      </Button>
-                    </label>
-                    {selectedFile && (
-                      <Typography variant="body2">
-                        Archivo seleccionado: {selectedFile.name}
-                      </Typography>
-                    )}
-                  </Box>
                   <Box>
-                    {selectedFile && (
-                      <IconButton
-                        aria-label="delete"
-                        size="large"
-                        onClick={cleanFilter}
+                    <FormControl
+                      className={styles.info_inputs_menu}
+                      sx={{ m: 1, minWidth: 180 }}
+                      size="small"
+                    >
+                      <InputLabel
+                        id="select_year_hc"
+                        style={{ color: "#7b8b9d" }}
                       >
-                        <DeleteIcon />
-                      </IconButton>
-                    )}
+                        {"Seleccione el año"}
+                      </InputLabel>
+                      <Select
+                        labelId="select_year_hc"
+                        disabled={years.length == 0}
+                        input={
+                          <OutlinedInput
+                            style={{ backgroundColor: "#e6eaed" }}
+                            label={"Seleccione el año"}
+                            value={selectYear}
+                            onChange={handleSelectChange(setSelectYear)}
+                          />
+                        }
+                      >
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
+                        {years.map((d) => (
+                          <MenuItem key={d} value={d}>
+                            {d}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <FormControl
+                      className={styles.info_inputs_menu}
+                      sx={{ m: 1, minWidth: 180 }}
+                      size="small"
+                    >
+                      <InputLabel
+                        id="select_month_hc"
+                        style={{ color: "#7b8b9d" }}
+                      >
+                        {"Seleccione el mes"}
+                      </InputLabel>
+                      <Select
+                        labelId="select_month_hc"
+                        disabled={months.length == 0}
+                        input={
+                          <OutlinedInput
+                            style={{ backgroundColor: "#e6eaed" }}
+                            label={"Seleccione el mes"}
+                            value={selectMonth}
+                            onChange={handleSelectChange(setSelectMonth)}
+                          />
+                        }
+                      >
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
+                        {months.map((d, i) => (
+                          <MenuItem key={d} value={monthsC.indexOf(d) + 1}>
+                            {d}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Box>
                 </Box>
               </Box>
 
+              <Box className={styles.buttons_container}>
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  className={styles.report_title}
+                  style={{ margin: 0, display: "flex", alignItems: "center" }}
+                >
+                  Seleccionar archivo CSV de Localidades:
+                </Typography>
+                <Box className={styles.file_container}>
+                  <input
+                    type="file"
+                    id="file-input"
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                    accept=".csv"
+                  />
+                  <label htmlFor="file-input">
+                    <Button
+                      variant="contained"
+                      component="span"
+                      startIcon={<UploadFileIcon />}
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#e37b13",
+                        color: "#ffff",
+                        height: "42px",
+                        borderRadius: "6px",
+                      }}
+                    >
+                      Cargar CSV
+                    </Button>
+                  </label>
+                  {selectedFile && (
+                    <Typography variant="body2">
+                      Archivo seleccionado: {selectedFile.name}
+                    </Typography>
+                  )}
+                </Box>
+                <Box>
+                  {selectedFile && (
+                    <IconButton
+                      aria-label="delete"
+                      size="large"
+                      onClick={cleanFilter}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
+                </Box>
+              </Box>
+            </Box>
+
+            <Box style={{ marginBottom: "1%" }}>
               <Button
                 variant="contained"
                 component="span"
@@ -756,23 +1001,58 @@ const Report = () => {
                   {``}
                 </Typography>
               </Box>
-              <Box className={styles.chart_container}>
-                {averageData &&
-                averageData.length > 0 &&
-                averageData[0].length > 0 ? (
-                  averageData.map((chart, index) => {
-                    const values = chart.map((val) => val.value);
-                    return (
-                      <Box key={index} className={styles.chart_info}>
+              <Box className={styles.chart_container_text}>
+                <Typography
+                  variant="body2"
+                  color="black"
+                  style={{marginBottom:"1%"}}
+                >{`El siguiente gráfico contiene el promedio global de la región para cada una de las temporadas del pronóstico seleccionado.`}</Typography>
+                <Box className={styles.chart_container}>
+                  {averageData &&
+                  averageData.length > 0 &&
+                  averageData[0].length > 0 ? (
+                    averageData.map((chart, index) => {
+                      const values = chart.map((val) => val.value);
+                      return (
+                        <Box key={index} className={styles.chart_info}>
+                          <Typography
+                            key={`${index}_title`}
+                            variant="h6"
+                            color="textSecondary"
+                            className={styles.report_title}
+                          >{`Temporada ${seasons[index]}`}</Typography>
+                          <ChartReport
+                            key={`${index}_chart`}
+                            data={values}
+                            type="bar"
+                            width="500"
+                            colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
+                            titles={
+                              forecastSelected !=
+                              Configuration.get_cenaos_worspace()
+                                ? [
+                                    "Encima de lo normal",
+                                    "Normal",
+                                    "Debajo de lo normal",
+                                  ]
+                                : ["Promedio total"]
+                            }
+                          />
+                        </Box>
+                      );
+                    })
+                  ) : (
+                    <>
+                      <Box className={styles.chart_info}>
                         <Typography
-                          key={`${index}_title`}
                           variant="h6"
                           color="textSecondary"
                           className={styles.report_title}
-                        >{`Temporada ${seasons[index]}`}</Typography>
+                        >
+                          Temporada 1
+                        </Typography>
                         <ChartReport
-                          key={`${index}_chart`}
-                          data={values}
+                          data={[0, 0, 0, 0]}
                           type="bar"
                           width="500"
                           colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
@@ -783,53 +1063,31 @@ const Report = () => {
                           ]}
                         />
                       </Box>
-                    );
-                  })
-                ) : (
-                  <>
-                    <Box className={styles.chart_info}>
-                      <Typography
-                        variant="h6"
-                        color="textSecondary"
-                        className={styles.report_title}
-                      >
-                        Temporada 1
-                      </Typography>
-                      <ChartReport
-                        data={[0, 0, 0, 0]}
-                        type="bar"
-                        width="500"
-                        colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
-                        titles={[
-                          "Encima de lo normal",
-                          "Normal",
-                          "Debajo de lo normal",
-                        ]}
-                      />
-                    </Box>
-                    <Box className={styles.chart_info}>
-                      <Typography
-                        variant="h6"
-                        color="textSecondary"
-                        className={styles.report_title}
-                      >
-                        Temporada 2
-                      </Typography>
-                      <ChartReport
-                        data={[0, 0, 0, 0]}
-                        type="bar"
-                        width="500"
-                        colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
-                        titles={[
-                          "Encima de lo normal",
-                          "Normal",
-                          "Debajo de lo normal",
-                        ]}
-                      />
-                    </Box>
-                  </>
-                )}
+                      <Box className={styles.chart_info}>
+                        <Typography
+                          variant="h6"
+                          color="textSecondary"
+                          className={styles.report_title}
+                        >
+                          Temporada 2
+                        </Typography>
+                        <ChartReport
+                          data={[0, 0, 0, 0]}
+                          type="bar"
+                          width="500"
+                          colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
+                          titles={[
+                            "Encima de lo normal",
+                            "Normal",
+                            "Debajo de lo normal",
+                          ]}
+                        />
+                      </Box>
+                    </>
+                  )}
+                </Box>
               </Box>
+
               {seasons &&
                 seasons.length > 0 &&
                 seasons.map((season) => (
@@ -841,96 +1099,192 @@ const Report = () => {
                       style={{ alignSelf: "center" }}
                       className={styles.report_title}
                     >{`Temporada ${season}`}</Typography>
-                    {[0, 1].map((index) => (
-                      <Box key={index} className={styles.first_maps_container}>
-                        {[0, 1].map((subIndex) => (
-                          <Card key={subIndex} className={styles.map_container}>
-                            <CardHeader
-                              className={styles.map_card_header}
-                              title={`${layers[index * 2 + subIndex].display}`}
-                            />
-                            <CardContent
-                              key={`${season}_${
-                                layers[index * 2 + subIndex].display
-                              }`}
-                              className={styles.map_card_content}
-                              style={{ padding: 0 }}
-                              ref={getCardRef(`${season}_${index}_${subIndex}`)}
+                    {forecastSelected != Configuration.get_cenaos_worspace() ? (
+                      [0, 1].map((index) => (
+                        <Box
+                          key={index}
+                          className={styles.first_maps_container}
+                        >
+                          {[0, 1].map((subIndex) => (
+                            <Card
+                              key={subIndex}
+                              className={styles.map_container}
                             >
-                              <Map
-                                key={`${subIndex}_map`}
-                                zoom={7}
-                                center={[14.5007343, -86.6719949]}
-                                url={Configuration.get_geoserver_url()}
-                                workspace={forecastSelected}
-                                store={layers[index * 2 + subIndex].value}
-                                year={yearM}
-                                month={monthM}
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  justifySelf: "center",
-                                  display: "flex",
-                                  justifyContent: "flex-start",
-                                }}
-                                child={
-                                  <Box className={styles.map_buttons_container}>
-                                    <Tooltip title="Descargar raster">
-                                      <IconButton
-                                        color="primary"
-                                        aria-label="add to shopping cart"
-                                        className={styles.download_raster_l}
-                                        onClick={() =>
-                                          downloadRaster(
-                                            layers[index * 2 + subIndex].value
-                                          )
-                                        }
-                                      >
-                                        <FileDownloadOutlinedIcon />
-                                      </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title="Descargar png">
-                                      <IconButton
-                                        color="primary"
-                                        aria-label="add to shopping cart"
-                                        className={styles.download_raster_l}
-                                        onClick={async () => {
-                                          const { exportComponentAsPNG } =
-                                            await import(
-                                              "react-component-export-image"
-                                            );
-                                          const refKey = `${season}_${index}_${subIndex}`;
-                                          const ref = cardRefs.current[refKey];
-                                          if (ref && ref.current) {
-                                            console.log(ref.current);
-                                            exportComponentAsPNG(ref, {
-                                              fileName: `${
-                                                layers[index * 2 + subIndex]
-                                                  .value
-                                              }_${monthsC[monthM - 1]}.png`,
-                                            });
-                                          } else {
-                                            console.error(
-                                              "No se encontró el nodo DOM para la referencia:",
-                                              refKey
-                                            );
-                                          }
-                                        }}
-                                      >
-                                        <ImageIcon />
-                                      </IconButton>
-                                    </Tooltip>
-                                  </Box>
-                                }
+                              <CardHeader
+                                className={styles.map_card_header}
+                                title={`En este mapa encontrara la probailidad de que la precipitación este: ${
+                                  layers[index * 2 + subIndex].display
+                                }`}
                               />
-                            </CardContent>
-                          </Card>
-                        ))}
+                              <CardContent
+                                key={`${season}_${
+                                  layers[index * 2 + subIndex].display
+                                }`}
+                                className={styles.map_card_content}
+                                style={{ padding: 0 }}
+                                ref={getCardRef(
+                                  `${season}_${index}_${subIndex}`
+                                )}
+                              >
+                                <Map
+                                  key={`${subIndex}_map`}
+                                  zoom={7}
+                                  center={[14.5007343, -86.6719949]}
+                                  url={Configuration.get_geoserver_url()}
+                                  workspace={forecastSelected}
+                                  store={layers[index * 2 + subIndex].value}
+                                  year={yearM}
+                                  month={monthM}
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    justifySelf: "center",
+                                    display: "flex",
+                                    justifyContent: "flex-start",
+                                  }}
+                                  child={
+                                    <Box
+                                      className={styles.map_buttons_container}
+                                    >
+                                      <Tooltip title="Descargar raster">
+                                        <IconButton
+                                          color="primary"
+                                          aria-label="add to shopping cart"
+                                          className={styles.download_raster_l}
+                                          onClick={() =>
+                                            downloadRaster(
+                                              layers[index * 2 + subIndex].value
+                                            )
+                                          }
+                                        >
+                                          <FileDownloadOutlinedIcon />
+                                        </IconButton>
+                                      </Tooltip>
+                                      <Tooltip title="Descargar png">
+                                        <IconButton
+                                          color="primary"
+                                          aria-label="add to shopping cart"
+                                          className={styles.download_raster_l}
+                                          onClick={async () => {
+                                            const { exportComponentAsPNG } =
+                                              await import(
+                                                "react-component-export-image"
+                                              );
+                                            const refKey = `${season}_${index}_${subIndex}`;
+                                            const ref =
+                                              cardRefs.current[refKey];
+                                            if (ref && ref.current) {
+                                              console.log(ref.current);
+                                              exportComponentAsPNG(ref, {
+                                                fileName: `${
+                                                  layers[index * 2 + subIndex]
+                                                    .value
+                                                }_${monthsC[monthM - 1]}.png`,
+                                              });
+                                            } else {
+                                              console.error(
+                                                "No se encontró el nodo DOM para la referencia:",
+                                                refKey
+                                              );
+                                            }
+                                          }}
+                                        >
+                                          <ImageIcon />
+                                        </IconButton>
+                                      </Tooltip>
+                                    </Box>
+                                  }
+                                />
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </Box>
+                      ))
+                    ) : (
+                      <Box className={styles.only_one_map}>
+                        <Card className={styles.map_container_ana}>
+                          <CardHeader
+                            className={styles.map_card_header}
+                            title={`Mapa de Anomalía`}
+                          />
+                          <CardContent
+                            className={styles.map_card_content}
+                            style={{ padding: 0 }}
+                            ref={getCardRef(`${season[0]}_anomalies`)}
+                          >
+                            <Map
+                              zoom={7}
+                              center={[14.5007343, -86.6719949]}
+                              url={Configuration.get_geoserver_url()}
+                              workspace={forecastSelected}
+                              store={layers[0].value}
+                              year={yearM}
+                              month={monthM}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                justifySelf: "center",
+                                display: "flex",
+                                justifyContent: "flex-start",
+                              }}
+                              child={
+                                <Box className={styles.map_buttons_container}>
+                                  <Tooltip title="Descargar raster">
+                                    <IconButton
+                                      color="primary"
+                                      aria-label="add to shopping cart"
+                                      className={styles.download_raster_l}
+                                      onClick={() =>
+                                        downloadRaster(layers[0].value)
+                                      }
+                                    >
+                                      <FileDownloadOutlinedIcon />
+                                    </IconButton>
+                                  </Tooltip>
+                                  <Tooltip title="Descargar png">
+                                    <IconButton
+                                      color="primary"
+                                      aria-label="add to shopping cart"
+                                      className={styles.download_raster_l}
+                                      onClick={async () => {
+                                        const { exportComponentAsPNG } =
+                                          await import(
+                                            "react-component-export-image"
+                                          );
+                                        const refKey = `${season[0]}_anomalies`;
+                                        const ref = cardRefs.current[refKey];
+                                        if (ref && ref.current) {
+                                          console.log(ref.current);
+                                          exportComponentAsPNG(ref, {
+                                            fileName: `${layers[0].value}_${
+                                              monthsC[monthM - 1]
+                                            }.png`,
+                                          });
+                                        } else {
+                                          console.error(
+                                            "No se encontró el nodo DOM para la referencia:",
+                                            refKey
+                                          );
+                                        }
+                                      }}
+                                    >
+                                      <ImageIcon />
+                                    </IconButton>
+                                  </Tooltip>
+                                </Box>
+                              }
+                            />
+                          </CardContent>
+                        </Card>
                       </Box>
-                    ))}
+                    )}
                   </Box>
                 ))}
               <Box className={styles.line_chart_container}>
+              <Typography
+                  variant="body2"
+                  color="black"
+                >{`Los siguientes gráficos contienen el promedio histórico climático de precipitación para cada mes del pronóstico y la probabilidad de cada capa para la región específica.`}</Typography>
                 {data &&
                   secondData &&
                   Object.keys(data).map((p, index) => (
@@ -963,8 +1317,17 @@ const Report = () => {
                           type="proba"
                           width="600"
                           colors={["#97cdd8", "#b3e4b3", "#e3bab2"]}
-                          titles={generateTitles(data[p])}
+                          titles={
+                            forecastSelected !=
+                            Configuration.get_cenaos_worspace()
+                              ? generateTitles(data[p])
+                              : ["Probabilidad local"]
+                          }
                           monthTitles={seasons}
+                          anomalie={
+                            forecastSelected !=
+                            Configuration.get_cenaos_worspace()
+                          }
                         />
                       </Box>
                     </Box>
@@ -985,7 +1348,23 @@ const Report = () => {
                   </Typography>
                 </Box>
                 <Box>
-                  <CsvTable titles={titles} data={data} subTitles={subTitles} />
+                <Typography
+                  variant="body2"
+                  color="black"
+                  style={{marginBottom:"1%"}}
+                >{`La siguiente tabla contiene un resumen de las probabilidades para cada una de las regiones seleccionadas, mostrando cada una de las capas.`}</Typography>
+                  <CsvTable
+                    titles={titles}
+                    data={data}
+                    subTitles={
+                      forecastSelected != Configuration.get_cenaos_worspace()
+                        ? subTitles
+                        : ["Probabilidad"]
+                    }
+                    analogues={
+                      forecastSelected != Configuration.get_cenaos_worspace()
+                    }
+                  />
                 </Box>
               </Box>
             </Box>

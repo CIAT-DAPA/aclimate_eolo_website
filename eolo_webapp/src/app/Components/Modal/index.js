@@ -241,22 +241,35 @@ const FileInputModal = ({ open, setCurrentLoading, handleClose, getDates, setSto
                 ))}
               </Select>
             </FormControl>
-            <FormControl sx={{ m: 1, minWidth: 60, width: "40%" }} size="small">
-              <Autocomplete
-                id="autocomplete"
-                value={selectStore}
-                onChange={handleSelectChange}
-                disabled={!selectFirstForecast}
-                freeSolo
-                autoSelect
-                options={stores}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Selecciona o escriba una store"
+
+            <FormControl
+              className={styles.info_inputs}
+              sx={{ m: 1, minWidth: 120, width: "35%" }}
+              size="small"
+            >
+              <InputLabel id="select_forecast1_hc">
+                {"Seleccione la capa"}
+              </InputLabel>
+              <Select
+                labelId="select_forecast1_hc"
+                input={
+                  <OutlinedInput
+                    label={"Seleccione la capa"}
+                    value={selectStore}
+                    disabled={!selectFirstForecast}
+                    onChange={handleSelectChangeW(setSelectStore)}
                   />
-                )}
-              />
+                }
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                {stores.map((d) => (
+                  <MenuItem key={d} value={d}>
+                    {d}
+                  </MenuItem>
+                ))}
+              </Select>
             </FormControl>
           </Box>
           <Typography variant="body1">{"Seleccione el raster"}</Typography>

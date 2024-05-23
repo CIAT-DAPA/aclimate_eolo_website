@@ -56,7 +56,8 @@
 }
 
 .buttons_container {
-  width: 50%;
+  width: 27%;
+  padding-left: 2%;
 }
 
 .file_container {
@@ -95,6 +96,11 @@
 
 .map_container {
   position: relative;
+}
+
+.map_container_ana {
+  position: relative;
+  width: 80%;
 }
 
 .map_card_content {
@@ -152,4 +158,12 @@
   box-shadow: 2px 4px 8px 0 rgba(0, 0, 0, 0.2);
   height: 40px;
   width: 40px;
+}
+
+
+.only_one_map{
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  gap: 2%;
 }
