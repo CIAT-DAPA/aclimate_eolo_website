@@ -1115,6 +1115,7 @@ const Report = () => {
                                 title={`En este mapa encontrara la probailidad de que la precipitación este: ${
                                   layers[index * 2 + subIndex].display
                                 }`}
+                                titleTypographyProps={{variant:'h6' }}
                               />
                               <CardContent
                                 key={`${season}_${
