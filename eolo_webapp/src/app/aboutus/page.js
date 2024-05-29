@@ -7,18 +7,20 @@ const AboutUs = () => {
       <Box>
         <Typography variant="h4">Sobre la herramienta</Typography>
         <Typography variant="body1" align="justify">
-          {`EOLO es una herramienta diseñada para generar anomalías climáticas mediante la comparación de años análogos y datos históricos climáticos. Proporciona la capacidad de comparar diferentes pronósticos y generar reportes detallados del pronóstico seleccionado. EOLO permite a los usuarios analizar las variaciones climáticas y tomar decisiones informadas basadas en datos precisos y actualizados.`}
+          {`EOLO es una herramienta diseñada para generar anomalías climáticas mediante la comparación de años análogos y datos históricos climáticos. Proporciona la capacidad de comparar diferentes pronósticos y generar reportes detallados del pronóstico seleccionado a escala estacional. EOLO permite a los usuarios analizar las variaciones de precipitación y temperatura y, tomar decisiones informadas basadas en datos actualizados.`}
         </Typography>
       </Box>
       <Box>
         <Typography variant="h4">AgriLAC</Typography>
         <Typography variant="body1" align="justify">
-          {`EOLO es el resultado del proyecto AgriLAC, una iniciativa que busca aumentar la resiliencia, sostenibilidad y competitividad de los sistemas agroalimentarios en América Latina y el Caribe. A través de AgriLAC, se ha desarrollado EOLO para brindar herramientas que mejoren la capacidad de respuesta a los cambios climáticos, facilitando el análisis y la comparación de pronósticos climáticos. Esto ayuda a los agricultores y a los responsables de políticas a planificar mejor sus actividades y a mitigar los riesgos asociados con el clima.`}
+          {`EOLO es el resultado del proyecto AgriLAC, una iniciativa que busca aumentar la resiliencia, sostenibilidad y competitividad de los sistemas agroalimentarios en América Latina y el Caribe. A través de AgriLAC, se ha desarrollado EOLO para brindar herramientas al servicio meteorológico de Honduras (COPECO-CENAOS), considerando que las metodologías de pronóstico difieren en cada Servicio Meteorológico Nacional (SMN). EOLO mejora la capacidad de respuesta a la variabilidad climática natural, facilitando el análisis y la comparación de pronósticos estacionales, lo que contribuye a la adaptación climática.
+
+Esto apoya el marco nacional de servicios climáticos, desde las instituciones generadoras de información hasta los distintos usuarios sectoriales. EOLO ayuda en la planificación y en el desarrollo de estrategias de adaptación y mitigación de los riesgos asociados a diversas amenazas climáticas, proporcionando un recurso vital para agricultores y responsables de políticas.`}
         </Typography>
         <a
           href="https://www.cgiar.org/initiative/agrilac-resiliente-espanol/"
           target="_blank"
-          style={{textDecoration: "none"}}
+          style={{ textDecoration: "none" }}
         >
           <Typography variant="body1" align="justify">
             {`Conoce mas de AgriLAC aqui.`}
