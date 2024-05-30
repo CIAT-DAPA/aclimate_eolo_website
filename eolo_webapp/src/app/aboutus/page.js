@@ -1,5 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import styles from "./aboutus.module.css";
+import { prefix } from "../Components/basePath";
 
 const AboutUs = () => {
   return (
@@ -46,6 +47,12 @@ Esto apoya el marco nacional de servicios climáticos, desde las instituciones g
             <img
               className={styles.logos}
               src={`https://oceanexpert.org/uploads/institutes/22723/instituteLogo.jpg`}
+            />
+          </a>
+          <a href="https://www.cgiar.org/initiative/agrilac-resiliente-espanol/" target="_blank">
+            <img
+              className={styles.logos}
+              src={`${prefix}/agrilac_logo.jpg`}
             />
           </a>
         </Box>
