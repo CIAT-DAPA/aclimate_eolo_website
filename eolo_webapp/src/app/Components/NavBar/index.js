@@ -49,6 +49,11 @@ const NavBar = () => {
                   Reporte
                 </Link>
               </li>
+              <li>
+                <Link className={styles.link} href={"/aboutus"}>
+                  Socios
+                </Link>
+              </li>
             </>
           ) : (
             <></>
