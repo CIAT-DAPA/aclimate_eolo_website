@@ -51,7 +51,7 @@ const NavBar = () => {
               </li>
               <li>
                 <Link className={styles.link} href={"/aboutus"}>
-                  Socios
+                  Acerca De
                 </Link>
               </li>
             </>

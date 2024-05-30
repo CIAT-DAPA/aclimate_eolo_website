@@ -8,7 +8,9 @@ const AboutUs = () => {
       <Box>
         <Typography variant="h4">Sobre la herramienta</Typography>
         <Typography variant="body1" align="justify">
-          {`EOLO es una herramienta diseñada para generar anomalías climáticas mediante la comparación de años análogos y datos históricos climáticos. Proporciona la capacidad de comparar diferentes pronósticos y generar reportes detallados del pronóstico seleccionado a escala estacional. EOLO permite a los usuarios analizar las variaciones de precipitación y temperatura y, tomar decisiones informadas basadas en datos actualizados.`}
+          {`EOLO es una herramienta diseñada para apoyar la construcción de boletines climáticos.
+Proporciona la capacidad de comparar diferentes pronósticos y generar reportes detallados del pronóstico
+seleccionado a escala estacional. `}
         </Typography>
       </Box>
       <Box>
@@ -31,29 +33,45 @@ Esto apoya el marco nacional de servicios climáticos, desde las instituciones g
       <Box style={{ marginTop: "2%" }}>
         <Typography variant="h4">Socios</Typography>
         <Box className={styles.logos_container}>
-          <a href="https://alliancebioversityciat.org/" target="_blank">
+          <a
+            href="https://alliancebioversityciat.org/"
+            className={styles.a_logos}
+            target="_blank"
+          >
             <img
               className={styles.logos}
               src={`https://www.aclimate.org/images/alliance.png`}
             />
           </a>
-          <a href="https://www.cimmyt.org/" target="_blank">
+          <a
+            href="https://www.cimmyt.org/"
+            className={styles.a_logos}
+            style={{ margin: "0 40px" }}
+            target="_blank"
+          >
             <img
               className={styles.logos}
               src={`https://www.aclimate.org/images/cimmytImg.png`}
             />
           </a>
-          <a href="http://cenaos.copeco.gob.hn/" target="_blank">
+          <a
+            href="http://cenaos.copeco.gob.hn/"
+            className={styles.a_logos}
+            style={{ margin: "0 40px" }}
+            target="_blank"
+          >
             <img
               className={styles.logos}
               src={`https://oceanexpert.org/uploads/institutes/22723/instituteLogo.jpg`}
             />
           </a>
-          <a href="https://www.cgiar.org/initiative/agrilac-resiliente-espanol/" target="_blank">
-            <img
-              className={styles.logos}
-              src={`${prefix}/agrilac_logo.jpg`}
-            />
+          <a
+            href="https://www.cgiar.org/initiative/agrilac-resiliente-espanol/"
+            className={styles.a_logos}
+            style={{ margin: "0 40px" }}
+            target="_blank"
+          >
+            <img className={styles.logos} src={`${prefix}/agrilac_logo.jpg`} />
           </a>
         </Box>
       </Box>
