@@ -292,7 +292,6 @@ const Report = () => {
           (propertie) => Object.keys(results[propertie]).length > 0
         )
       ) {
-        console.log(results);
         setData(results);
       }
       setCurrentLoading(false);
@@ -641,7 +640,7 @@ const Report = () => {
 
   function handleDates(date) {
     const [year, month] = date.split("-");
-    if (typeForecast === "tri") {
+    if (typeForecast === "tri" && forecastSelected != Configuration.get_cenaos_worspace()) {
       const adjustedMonth =
         month === "01"
           ? "12"
@@ -733,21 +732,6 @@ const Report = () => {
     }
   }, [selectYear]);
 
-  useEffect(() => {
-    const newDate = new Date();
-    if (typeForecast == "tri") {
-      if (newDate.getMonth() + 2 == 13) {
-        setMonthM(1);
-        setYearM(newDate.getFullYear() + 1);
-      } else {
-        setMonthM(newDate.getMonth() + 2);
-        setYearM(newDate.getFullYear());
-      }
-    } else {
-      setMonthM(newDate.getMonth());
-      setYearM(newDate.getFullYear());
-    }
-  }, [typeForecast]);
 
   return (
     <main className={styles.main}>
@@ -1134,8 +1118,8 @@ const Report = () => {
                                   url={Configuration.get_geoserver_url()}
                                   workspace={forecastSelected}
                                   store={layers[index * 2 + subIndex].value}
-                                  year={yearM}
-                                  month={monthM}
+                                  year={selectYear}
+                                  month={selectMonth}
                                   style={{
                                     width: "100%",
                                     height: "100%",
@@ -1175,12 +1159,11 @@ const Report = () => {
                                             const ref =
                                               cardRefs.current[refKey];
                                             if (ref && ref.current) {
-                                              console.log(ref.current);
                                               exportComponentAsPNG(ref, {
                                                 fileName: `${
                                                   layers[index * 2 + subIndex]
                                                     .value
-                                                }_${monthsC[monthM - 1]}.png`,
+                                                }_${monthsC[selectMonth - 1]}.png`,
                                               });
                                             } else {
                                               console.error(
@@ -1219,8 +1202,8 @@ const Report = () => {
                               url={Configuration.get_geoserver_url()}
                               workspace={forecastSelected}
                               store={layers[0].value}
-                              year={yearM}
-                              month={monthM}
+                              year={selectYear}
+                              month={selectMonth}
                               style={{
                                 width: "100%",
                                 height: "100%",
@@ -1255,10 +1238,9 @@ const Report = () => {
                                         const refKey = `${season[0]}_anomalies`;
                                         const ref = cardRefs.current[refKey];
                                         if (ref && ref.current) {
-                                          console.log(ref.current);
                                           exportComponentAsPNG(ref, {
                                             fileName: `${layers[0].value}_${
-                                              monthsC[monthM - 1]
+                                              monthsC[selectMonth - 1]
                                             }.png`,
                                           });
                                         } else {
