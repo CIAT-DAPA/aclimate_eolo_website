@@ -110,6 +110,18 @@ export default function Home() {
     }, 0);
   };
 
+  const downloadRasterHc = () => {
+    const link = document.createElement("a");
+    const url = `${Configuration.get_geoserver_url()}${Configuration.get_historical_worspace()}/wms?service=WMS&version=1.1.0&time=${selectedYearHc}-${selectedMonthC}&request=GetMap&layers=${Configuration.get_historical_worspace()}%3A${Configuration.get_prec_store()}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
+    link.href = url;
+    link.download = `HistoricoC_${selectedYearHc}_${monthsC[selectedMonthC - 1]}.tif`;
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      document.body.removeChild(link);
+    }, 0);
+  };
+
   const downloadAnomalyRaster = () => {
     const link = document.createElement("a");
     link.href = tiff;
@@ -357,13 +369,15 @@ export default function Home() {
                   </Select>
                 </FormControl>
               </div>
-              <Card>
+              <Card ref={historicalRef}>
                 <Map
                   className={styles.map}
                   style={{
                     width: "100%",
                     height: "100%",
                     justifySelf: "center",
+                    display: "flex",
+                    justifyContent: "flex-start",
                   }}
                   zoom={7}
                   center={[14.5007343, -86.6719949]}
@@ -372,6 +386,44 @@ export default function Home() {
                   store={Configuration.get_prec_store()}
                   year={selectedYearHc}
                   month={selectedMonthC}
+                  child={
+                    <Box className={styles.map_buttons_container}>
+                      <Tooltip title="Descargar raster">
+                        <IconButton
+                          color="primary"
+                          aria-label="add to shopping cart"
+                          className={styles.download_raster_l}
+                          disabled={!selectedYearHc}
+                          onClick={downloadRasterHc}
+                        >
+                          <FileDownloadOutlinedIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Descargar png">
+                        <IconButton
+                          color="primary"
+                          aria-label="add to shopping cart"
+                          className={styles.download_raster_l}
+                          disabled={!selectedYearHc}
+                          onClick={async () => {
+                            const { exportComponentAsPNG } = await import(
+                              "react-component-export-image"
+                            );
+
+                            exportComponentAsPNG(historicalRef, {
+                              fileName: `Histórico_${
+                                selectedYearHc
+                              }_${
+                                monthsC[selectedMonthC - 1]
+                              }.png`,
+                            });
+                          }}
+                        >
+                          <ImageIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  }
                 />
               </Card>
             </div>
