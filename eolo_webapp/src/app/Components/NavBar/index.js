@@ -54,6 +54,11 @@ const NavBar = () => {
                   Acerca De
                 </Link>
               </li>
+              <li>
+                <Link className={styles.link} href={"/manual"}>
+                  Manual
+                </Link>
+              </li>
             </>
           ) : (
             <></>

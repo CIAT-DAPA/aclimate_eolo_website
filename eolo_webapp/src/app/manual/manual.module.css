@@ -1,0 +1,48 @@
+.main {
+  padding: 2% 8%;
+  color: #0d2137;
+  margin-bottom: 2%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+
+.logos {
+  object-fit: contain;
+  width: 70%;
+  height: 600px;
+  align-self: center;
+  margin: 2% 0;
+}
+
+.logos2 {
+    object-fit: contain;
+    width: 75%;
+    height: 200px;
+    align-self: center;
+    margin: 2% 0;
+  }
+
+.a_logos {
+  width: 25%;
+}
+
+.logos_container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.text {
+  font-size: 20px;
+}
+
+.list {
+  margin: 1% 0 1% 4%;
+  font-size: 20px;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+}
