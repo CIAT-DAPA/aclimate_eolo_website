@@ -47,6 +47,7 @@ export default function Home() {
 
   const [years, setYears] = useState([]);
   const [multYears, setMultYears] = useState([]);
+  const [selectedVariable, setSelectedVariable] = useState("prec");
   const [lastMonth, setLastMonth] = useState(null);
   const [months, setMonths] = useState([
     "Enero",
@@ -100,7 +101,7 @@ export default function Home() {
 
   const downloadRaster = () => {
     const link = document.createElement("a");
-    const url = `${Configuration.get_geoserver_url()}${Configuration.get_climatology_worspace()}/wms?service=WMS&version=1.1.0&time=2000-${selectedMonthC}&request=GetMap&layers=${Configuration.get_climatology_worspace()}%3A${Configuration.get_prec_store()}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
+    const url = `${Configuration.get_geoserver_url()}${Configuration.get_climatology_worspace()}/wms?service=WMS&version=1.1.0&time=2000-${selectedMonthC}&request=GetMap&layers=${Configuration.get_climatology_worspace()}%3A${getSelectedStore()}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
     link.href = url;
     link.download = `PromedioClimatico_${monthsC[selectedMonthC - 1]}.tif`;
     document.body.appendChild(link);
@@ -112,7 +113,7 @@ export default function Home() {
 
   const downloadRasterHc = () => {
     const link = document.createElement("a");
-    const url = `${Configuration.get_geoserver_url()}${Configuration.get_historical_worspace()}/wms?service=WMS&version=1.1.0&time=${selectedYearHc}-${selectedMonthC}&request=GetMap&layers=${Configuration.get_historical_worspace()}%3A${Configuration.get_prec_store()}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
+    const url = `${Configuration.get_geoserver_url()}${Configuration.get_historical_worspace()}/wms?service=WMS&version=1.1.0&time=${selectedYearHc}-${selectedMonthC}&request=GetMap&layers=${Configuration.get_historical_worspace()}%3A${getSelectedStore()}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
     link.href = url;
     link.download = `HistoricoC_${selectedYearHc}_${monthsC[selectedMonthC - 1]}.tif`;
     document.body.appendChild(link);
@@ -172,10 +173,27 @@ export default function Home() {
     return dates;
   }
 
+  const getSelectedStore = () => {
+    switch (selectedVariable) {
+      case "prec":
+        return Configuration.get_prec_store();
+      case "tmax":
+        return Configuration.get_tmax_store();
+      case "tmin":
+        return Configuration.get_tmin_store();
+      default:
+        return Configuration.get_prec_store();
+    }
+  };
+
+  const handleVariableChange = (event) => {
+    setSelectedVariable(event.target.value);
+  };
+
   useEffect(() => {
     getDatesFromGeoserver(
       Configuration.get_historical_worspace(),
-      Configuration.get_prec_store()
+      getSelectedStore()
     ).then((dates) => {
       const uniqueYears = [...new Set(dates.map((date) => date.split("-")[0]))];
       const currentYear = new Date().getFullYear();
@@ -220,6 +238,19 @@ export default function Home() {
                 }
               >
                 <MenuItem value={"Honduras"}>{"Honduras"}</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+              <InputLabel id="select-variable">Variable</InputLabel>
+              <Select
+                labelId="select-variable"
+                value={selectedVariable}
+                onChange={handleVariableChange}
+                input={<OutlinedInput label="Variable" />}
+              >
+                <MenuItem value="prec">Precipitación</MenuItem>
+                <MenuItem value="tmax">Temperatura Máxima</MenuItem>
+                <MenuItem value="tmin">Temperatura Mínima</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -267,7 +298,7 @@ export default function Home() {
                 <h2>Promedio de histórico climático</h2>
                 <p>
                   {
-                    "La herramienta calcula el promedio histórico de la precipitación durante esos años. Esto proporciona una referencia adicional para evaluar los comportamientos históricos. En el siguiente mapa podrá ver los datos promedios históricos de precipitación de un mes seleccionado."
+                    "La herramienta calcula el promedio histórico de la variable seleccionada durante esos años. Esto proporciona una referencia adicional para evaluar los comportamientos históricos. En el siguiente mapa podrá ver los datos promedios históricos de la variable seleccionada de un mes seleccionado."
                   }
                 </p>
               </div>
@@ -286,7 +317,7 @@ export default function Home() {
                   center={[14.5007343, -86.6719949]}
                   url={Configuration.get_geoserver_url()}
                   workspace={Configuration.get_climatology_worspace()}
-                  store={Configuration.get_prec_store()}
+                  store={getSelectedStore()}
                   year={2000}
                   month={selectedMonthC}
                   child={
@@ -334,7 +365,7 @@ export default function Home() {
                 <h2>Consultar históricos climáticos</h2>
                 <p>
                   {
-                    "En esta sección usted podrá analizar los datos históricos climáticos observados sobre precipitación. En el siguiente mapa podrá ver los datos de precipitación de un mes y año que haya seleccionado."
+                    "En esta sección usted podrá analizar los datos históricos climáticos observados sobre la variable seleccionada. En el siguiente mapa podrá ver los datos de la variable seleccionada de un mes y año que haya seleccionado."
                   }
                 </p>
                 <Typography
@@ -383,7 +414,7 @@ export default function Home() {
                   center={[14.5007343, -86.6719949]}
                   url={Configuration.get_geoserver_url()}
                   workspace={Configuration.get_historical_worspace()}
-                  store={Configuration.get_prec_store()}
+                  store={getSelectedStore()}
                   year={selectedYearHc}
                   month={selectedMonthC}
                   child={
