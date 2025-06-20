@@ -165,7 +165,7 @@ export default function Home() {
 
   const getBarColors = () => {
     return months.map((month, index) =>
-      index + 1 === selectedMonthC ? "#00dbe9" : "#007bff"
+      index + 1 === selectedMonthC ? "#007bff" : "#b5cee8"
     );
   };
 
@@ -347,17 +347,6 @@ export default function Home() {
               {`El módulo de análogos es una herramienta dentro de nuestra plataforma que te permite mejorar la precisión de tus pronósticos climáticos al identificar y analizar patrones climáticos pasados que son análogos o similares al presente.
               `}
             </p>
-          </div>
-          <Box
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: "3%",
-              width: "100%",
-              marginBottom: "2rem",
-            }}
-          >
-            {/* Columna 1: Select de mes (ya lo tienes) */}
             <Box style={{ width: "50%" }}>
               <Typography
                 variant="body1"
@@ -366,7 +355,7 @@ export default function Home() {
                 Seleccione el mes que desea comparar:
               </Typography>
               <FormControl
-                sx={{ m: 1, minWidth: 60, width: "100%" }}
+                sx={{ m: 1, minWidth: 60, width: "80%" }}
                 size="small"
               >
                 <InputLabel id="select_month">{"Seleccione un mes"}</InputLabel>
@@ -388,20 +377,26 @@ export default function Home() {
                 </Select>
               </FormControl>
             </Box>
+          </div>
 
-            {/* Columna 2: Select de departamento + gráfico */}
-            <Box style={{ width: "50%" }}>
-              <RainfallChart
-                months={monthsC}
-                departments={departments}
-                rainfallData={departmentsData}
-                selectedDepartment={selectedDepartment}
-                setSelectedDepartment={setSelectedDepartment}
-                colors={colors}
-                currentLoadingChart={currentLoadingChart}
-              />
-            </Box>
+          <div className={styles.title_analogues_container}>
+            <h2>Promedio de la lluvia acumulada en cada mes por departamento</h2>
+            <p className={styles.title_analogues_text}>
+              {`La herramienta hace el calculo del promedio o norma climática de la lluvia acumulada en cada mes, por cada departamento de Honduras entre 1990 y 2020. Esta información nos permite visualizar el ciclo anual de las lluvias y comparar con pronósticos estacionales. Debido a que es un promedio mensual por departamento, se sugiere considerar otras herramientas disponibles para la estimación del promedio a escalas territoriales más pequeñas, como son los municipios.
+              `}
+            </p>
+          <Box style={{ width: "100%" }}>
+            <RainfallChart
+              months={monthsC}
+              departments={departments}
+              rainfallData={departmentsData}
+              selectedDepartment={selectedDepartment}
+              setSelectedDepartment={setSelectedDepartment}
+              colors={colors}
+              currentLoadingChart={currentLoadingChart}
+            />
           </Box>
+          </div>
 
           <Box className={styles.map_container}>
             <div className={styles.historical_map}>

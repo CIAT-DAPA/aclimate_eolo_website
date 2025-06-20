@@ -50,7 +50,7 @@ const RainfallChart = ({
       },
     },
     title: {
-      text: `Lluvia en ${selectedDepartment} (1990–2020)`,
+      text: `Lluvia promedio en ${selectedDepartment} (1990–2020)`,
       align: "center",
       style: {
         fontSize: "18px",
@@ -83,7 +83,7 @@ const RainfallChart = ({
 
   return (
     <Box>
-      <FormControl sx={{ mb: 2, width: "100%" }} size="small">
+      <FormControl sx={{ mb: 2, width: "40%" }} size="small">
         <InputLabel id="select-dep">Departamento</InputLabel>
         <Select
           labelId="select-dep"
