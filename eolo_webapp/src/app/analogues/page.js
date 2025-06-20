@@ -23,11 +23,14 @@ import dynamic from "next/dynamic";
 import useAuth from "../Hooks/useAuth";
 import Loading from "../Components/Loading";
 import LoadingOverlay from "../Components/LoadingOverlay";
-import RainfallChart from "../Components/RainfallChart";
 import ImageIcon from "@mui/icons-material/Image";
 import AuthContext from "@/app/Context/auth/authContext";
 
 const Map = dynamic(() => import("@/app/Components/Map"), { ssr: false });
+
+const RainfallChart = dynamic(() => import("../Components/RainfallChart"), {
+  ssr: false,
+});
 
 export default function Home() {
   const { loading, auth } = useAuth();
