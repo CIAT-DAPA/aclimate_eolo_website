@@ -598,7 +598,7 @@ const Report = () => {
               }
               const lon_plus = parseFloat(row.lon) + 0.2;
               const lat_plus = parseFloat(row.lat) + 0.2;
-              const point_url = `${Configuration.get_geoserver_url()}${Configuration.get_climatology_worspace()}/wms?service=WMS&version=1.1.1&request=GetFeatureInfo&layers=${Configuration.get_climatology_worspace()}:${Configuration.get_prec_store()}&query_layers=${Configuration.get_climatology_worspace()}:${Configuration.get_prec_store()}&feature_count=10&info_format=application/json&format_options=callback:handleJson&SrsName=EPSG:4326&width=101&height=101&x=50&y=50&time=${2000}-${
+              const point_url = `${Configuration.get_geoserver_url()}${Configuration.get_climatology_worspace(true)}/wms?service=WMS&version=1.1.1&request=GetFeatureInfo&layers=${Configuration.get_climatology_worspace(true)}:${Configuration.get_prec_store()}&query_layers=${Configuration.get_climatology_worspace()}:${Configuration.get_prec_store()}&feature_count=10&info_format=application/json&format_options=callback:handleJson&SrsName=EPSG:4326&width=101&height=101&x=50&y=50&time=${2000}-${
                 date[1]
               }&bbox=${row.lon},${row.lat},${lon_plus},${lat_plus}`;
               const response = await fetch(point_url);

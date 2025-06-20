@@ -9,9 +9,12 @@ const ACLIMATE_WORSPACE = "fc_aclimate_hn";
 const CLIMATOLOGY_DEP_WORKSPACE = "climate_historical_climatology";
 
 const CLIMATOLOGY_WORSPACE = "climatology_hn";
+const NEW_CLIMATOLOGY_WORSPACE = "climate_historical_climatology";
 const HISTORICALC_WORSPACE = "historical_climate_hn";
+const NEW_HISTORICALC_WORSPACE = "climate_historical_monthly";
 
-const PREC_STORE = "PREC";
+const PREC_STORE = "climate_historical_climatology_hn_prec";
+const PREC_MONTHLY_STORE = "climate_historical_monthly_hn_prec";
 const TMAX_STORE = "TMAX";
 const TMIN_STORE = "TMIN";
 
@@ -41,7 +44,7 @@ const IGNORE_STORES = [
 
 const SHAPEFILE_LAYER = "Limite_Departamental_de_Honduras";
 
-const LAYER_FORMAT_CLIMATOLOGY = "climate_climatology_hn_{dep}_prec";
+const LAYER_FORMAT_CLIMATOLOGY = "climate_historical_climatology_hn_{dep}_prec";
 
 class Configuration {
   get_geoserver_url() {
@@ -60,11 +63,23 @@ class Configuration {
   get_aclimate_worspace() {
     return ACLIMATE_WORSPACE;
   }
-  get_climatology_worspace() {
-    return CLIMATOLOGY_WORSPACE;
+  get_climatology_worspace(newWorkspace = false) {
+    if (newWorkspace) {
+      return NEW_CLIMATOLOGY_WORSPACE;
+    } else {
+      return CLIMATOLOGY_WORSPACE;
+    }
   }
-  get_historical_worspace() {
-    return HISTORICALC_WORSPACE;
+  get_historical_worspace(newWorkspace = false) {
+    if (newWorkspace) {
+      return NEW_HISTORICALC_WORSPACE;
+    } else {
+      return HISTORICALC_WORSPACE;
+    }
+  }
+
+  get_prec_monthly_store(){
+    return PREC_MONTHLY_STORE
   }
 
   get_prec_store() {
@@ -121,8 +136,8 @@ class Configuration {
     return CLIMATOLOGY_DEP_WORKSPACE;
   }
 
-  get_layer_format(){
-    return LAYER_FORMAT_CLIMATOLOGY
+  get_layer_format() {
+    return LAYER_FORMAT_CLIMATOLOGY;
   }
 }
 

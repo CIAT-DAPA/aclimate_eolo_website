@@ -57,6 +57,8 @@ export default function Home() {
 
   const [selectedDepartment, setSelectedDepartment] = useState("");
 
+  const [newWorkspace, setNewWorkspace] = useState(true);
+
   const [colors, setColors] = useState([]);
 
   const [months, setMonths] = useState([
@@ -111,7 +113,7 @@ export default function Home() {
 
   const downloadRaster = () => {
     const link = document.createElement("a");
-    const url = `${Configuration.get_geoserver_url()}${Configuration.get_climatology_worspace()}/wms?service=WMS&version=1.1.0&time=2000-${selectedMonthC}&request=GetMap&layers=${Configuration.get_climatology_worspace()}%3A${getSelectedStore()}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
+    const url = `${Configuration.get_geoserver_url()}${Configuration.get_climatology_worspace(newWorkspace)}/wms?service=WMS&version=1.1.0&time=2000-${selectedMonthC}&request=GetMap&layers=${Configuration.get_climatology_worspace(newWorkspace)}%3A${getSelectedStore()}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
     link.href = url;
     link.download = `PromedioClimatico_${monthsC[selectedMonthC - 1]}.tif`;
     document.body.appendChild(link);
@@ -123,7 +125,7 @@ export default function Home() {
 
   const downloadRasterHc = () => {
     const link = document.createElement("a");
-    const url = `${Configuration.get_geoserver_url()}${Configuration.get_historical_worspace()}/wms?service=WMS&version=1.1.0&time=${selectedYearHc}-${selectedMonthC}&request=GetMap&layers=${Configuration.get_historical_worspace()}%3A${getSelectedStore()}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
+    const url = `${Configuration.get_geoserver_url()}${Configuration.get_historical_worspace(newWorkspace)}/wms?service=WMS&version=1.1.0&time=${selectedYearHc}-${selectedMonthC}&request=GetMap&layers=${Configuration.get_historical_worspace(newWorkspace)}%3A${getSelectedStore(true)}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
     link.href = url;
     link.download = `HistoricoC_${selectedYearHc}_${
       monthsC[selectedMonthC - 1]
@@ -235,10 +237,15 @@ export default function Home() {
     }
   };
 
-  const getSelectedStore = () => {
+  const getSelectedStore = (monthly=false) => {
     switch (selectedVariable) {
       case "prec":
-        return Configuration.get_prec_store();
+        if(monthly){
+          return Configuration.get_prec_monthly_store();
+        }else{
+          return Configuration.get_prec_store();
+        }
+        
       case "tmax":
         return Configuration.get_tmax_store();
       case "tmin":
@@ -254,8 +261,8 @@ export default function Home() {
 
   useEffect(() => {
     getDatesFromGeoserver(
-      Configuration.get_historical_worspace(),
-      getSelectedStore()
+      Configuration.get_historical_worspace(newWorkspace),
+      getSelectedStore(true)
     ).then((dates) => {
       const uniqueYears = [...new Set(dates.map((date) => date.split("-")[0]))];
       const currentYear = new Date().getFullYear();
@@ -302,6 +309,14 @@ export default function Home() {
   useEffect(() => {
     setColors([...getBarColors()]);
   }, [selectedMonthC]);
+
+  useEffect(() => {
+    if(selectedVariable == "prec"){
+      setNewWorkspace(true)
+    }else{
+      setNewWorkspace(false)
+    }
+  }, [selectedVariable]);
 
   return (
     <Container className={styles.main}>
@@ -422,7 +437,7 @@ export default function Home() {
                   zoom={7}
                   center={[14.5007343, -86.6719949]}
                   url={Configuration.get_geoserver_url()}
-                  workspace={Configuration.get_climatology_worspace()}
+                  workspace={Configuration.get_climatology_worspace(newWorkspace)}
                   store={getSelectedStore()}
                   year={2000}
                   month={selectedMonthC}
@@ -519,8 +534,8 @@ export default function Home() {
                   zoom={7}
                   center={[14.5007343, -86.6719949]}
                   url={Configuration.get_geoserver_url()}
-                  workspace={Configuration.get_historical_worspace()}
-                  store={getSelectedStore()}
+                  workspace={Configuration.get_historical_worspace(newWorkspace)}
+                  store={getSelectedStore(true)}
                   year={selectedYearHc}
                   month={selectedMonthC}
                   child={
@@ -624,8 +639,8 @@ export default function Home() {
                     anomalies={average}
                     isAnomalies={true}
                     setCurrentLoading={setCurrentLoading}
-                    workspace={Configuration.get_historical_worspace()}
-                    store={Configuration.get_prec_store()}
+                    workspace={Configuration.get_historical_worspace(newWorkspace)}
+                    store={Configuration.get_prec_monthly_store()}
                     minZoom={8}
                     setTiff={setTiff2}
                     child={
