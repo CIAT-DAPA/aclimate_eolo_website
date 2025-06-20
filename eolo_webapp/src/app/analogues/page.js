@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import styles from "./page.module.css";
 import {
   FormControl,
@@ -23,7 +23,9 @@ import dynamic from "next/dynamic";
 import useAuth from "../Hooks/useAuth";
 import Loading from "../Components/Loading";
 import LoadingOverlay from "../Components/LoadingOverlay";
+import RainfallChart from "../Components/RainfallChart";
 import ImageIcon from "@mui/icons-material/Image";
+import AuthContext from "@/app/Context/auth/authContext";
 
 const Map = dynamic(() => import("@/app/Components/Map"), { ssr: false });
 
@@ -34,6 +36,7 @@ export default function Home() {
   const [anomalies, setAnomalies] = useState(null);
   const [average, setAverage] = useState(null);
   const [currentLoading, setCurrentLoading] = useState(false);
+  const [currentLoadingChart, setCurrentLoadingChart] = useState(false);
   const [tiff, setTiff] = useState(null);
   const [tiff2, setTiff2] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState("Honduras");
@@ -42,13 +45,22 @@ export default function Home() {
   const anomaliesRef = useRef(null);
   const averageRef = useRef(null);
   const exportComponentAsPNG = "";
-
+  const { user } = useContext(AuthContext);
   const [multiSelectData, setMultiSelectData] = useState([]);
 
   const [years, setYears] = useState([]);
   const [multYears, setMultYears] = useState([]);
   const [selectedVariable, setSelectedVariable] = useState("prec");
   const [lastMonth, setLastMonth] = useState(null);
+  const [departments, setDepartments] = useState([]);
+  const [departmentsData, setDepartmentsData] = useState([]);
+
+  const [selectedDepartment, setSelectedDepartment] = useState("");
+
+  const [newWorkspace, setNewWorkspace] = useState(true);
+
+  const [colors, setColors] = useState([]);
+
   const [months, setMonths] = useState([
     "Enero",
     "Febrero",
@@ -101,7 +113,7 @@ export default function Home() {
 
   const downloadRaster = () => {
     const link = document.createElement("a");
-    const url = `${Configuration.get_geoserver_url()}${Configuration.get_climatology_worspace()}/wms?service=WMS&version=1.1.0&time=2000-${selectedMonthC}&request=GetMap&layers=${Configuration.get_climatology_worspace()}%3A${getSelectedStore()}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
+    const url = `${Configuration.get_geoserver_url()}${Configuration.get_climatology_worspace(newWorkspace)}/wms?service=WMS&version=1.1.0&time=2000-${selectedMonthC}&request=GetMap&layers=${Configuration.get_climatology_worspace(newWorkspace)}%3A${getSelectedStore()}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
     link.href = url;
     link.download = `PromedioClimatico_${monthsC[selectedMonthC - 1]}.tif`;
     document.body.appendChild(link);
@@ -113,9 +125,11 @@ export default function Home() {
 
   const downloadRasterHc = () => {
     const link = document.createElement("a");
-    const url = `${Configuration.get_geoserver_url()}${Configuration.get_historical_worspace()}/wms?service=WMS&version=1.1.0&time=${selectedYearHc}-${selectedMonthC}&request=GetMap&layers=${Configuration.get_historical_worspace()}%3A${getSelectedStore()}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
+    const url = `${Configuration.get_geoserver_url()}${Configuration.get_historical_worspace(newWorkspace)}/wms?service=WMS&version=1.1.0&time=${selectedYearHc}-${selectedMonthC}&request=GetMap&layers=${Configuration.get_historical_worspace(newWorkspace)}%3A${getSelectedStore(true)}&bbox=-93.0%2C5.999999739229679%2C-56.9999994635582%2C23.5&width=768&height=373&srs=EPSG%3A4326&styles=&format=image%2Fgeotiff`;
     link.href = url;
-    link.download = `HistoricoC_${selectedYearHc}_${monthsC[selectedMonthC - 1]}.tif`;
+    link.download = `HistoricoC_${selectedYearHc}_${
+      monthsC[selectedMonthC - 1]
+    }.tif`;
     document.body.appendChild(link);
     link.click();
     setTimeout(() => {
@@ -151,6 +165,12 @@ export default function Home() {
     }, 0);
   };
 
+  const getBarColors = () => {
+    return months.map((month, index) =>
+      index + 1 === selectedMonthC ? "#007bff" : "#b5cee8"
+    );
+  };
+
   async function getDatesFromGeoserver(workspace, layer) {
     const url = `${Configuration.get_geoserver_url()}${workspace}/wms?service=WMS&version=1.3.0&request=GetCapabilities`;
     const response = await axios.get(url);
@@ -173,10 +193,59 @@ export default function Home() {
     return dates;
   }
 
-  const getSelectedStore = () => {
+  const fetchDepartmentMonthlyAverages = async () => {
+    try {
+      const endpoint = `${Configuration.get_api_url()}department_monthly_averages`;
+      const workspace = Configuration.get_cenaos_worspace();
+
+      const payload = {
+        workspace,
+        user: user.user.user,
+        passw: user.user.password,
+      };
+
+      const response = await axios.post(endpoint, payload);
+      const rawDepartments = response.data;
+
+      const rainfallData = {};
+      const departments = [];
+
+      for (const [originalName, monthlyValues] of Object.entries(
+        rawDepartments
+      )) {
+        const depKey = originalName;
+
+        departments.push(depKey);
+
+        const values = monthlyValues.map((item) =>
+          item && item.average != null && !isNaN(item.average)
+            ? parseFloat(item.average.toFixed(2))
+            : null
+        );
+
+        rainfallData[depKey] = values;
+      }
+
+      return {
+        year: response.data.year,
+        departments,
+        rainfallData,
+      };
+    } catch (error) {
+      console.error("Error fetching department monthly averages:", error);
+      throw error;
+    }
+  };
+
+  const getSelectedStore = (monthly=false) => {
     switch (selectedVariable) {
       case "prec":
-        return Configuration.get_prec_store();
+        if(monthly){
+          return Configuration.get_prec_monthly_store();
+        }else{
+          return Configuration.get_prec_store();
+        }
+        
       case "tmax":
         return Configuration.get_tmax_store();
       case "tmin":
@@ -192,8 +261,8 @@ export default function Home() {
 
   useEffect(() => {
     getDatesFromGeoserver(
-      Configuration.get_historical_worspace(),
-      getSelectedStore()
+      Configuration.get_historical_worspace(newWorkspace),
+      getSelectedStore(true)
     ).then((dates) => {
       const uniqueYears = [...new Set(dates.map((date) => date.split("-")[0]))];
       const currentYear = new Date().getFullYear();
@@ -203,6 +272,27 @@ export default function Home() {
       setLastMonth(parseInt(dates[dates.length - 1].split("-")[1]));
     });
   }, []);
+
+  useEffect(() => {
+    if (user.user.user) {
+      const getDepartmentsData = async () => {
+        try {
+          setCurrentLoadingChart(true);
+          const { rainfallData, departments } =
+            await fetchDepartmentMonthlyAverages();
+          setDepartmentsData(rainfallData);
+          setDepartments(departments);
+          setSelectedDepartment(departments[0]);
+          setCurrentLoadingChart(false);
+        } catch (err) {
+          setCurrentLoadingChart(false);
+          console.log(err);
+        }
+      };
+
+      getDepartmentsData();
+    }
+  }, [user]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -215,6 +305,18 @@ export default function Home() {
       }
     }
   }, [selectedYearHc]);
+
+  useEffect(() => {
+    setColors([...getBarColors()]);
+  }, [selectedMonthC]);
+
+  useEffect(() => {
+    if(selectedVariable == "prec"){
+      setNewWorkspace(true)
+    }else{
+      setNewWorkspace(false)
+    }
+  }, [selectedVariable]);
 
   return (
     <Container className={styles.main}>
@@ -260,7 +362,7 @@ export default function Home() {
               {`El módulo de análogos es una herramienta dentro de nuestra plataforma que te permite mejorar la precisión de tus pronósticos climáticos al identificar y analizar patrones climáticos pasados que son análogos o similares al presente.
               `}
             </p>
-            <Box className={styles.accion_container}>
+            <Box style={{ width: "50%" }}>
               <Typography
                 variant="body1"
                 style={{ padding: "0 1%", color: "#0d2137" }}
@@ -268,7 +370,7 @@ export default function Home() {
                 Seleccione el mes que desea comparar:
               </Typography>
               <FormControl
-                sx={{ m: 1, minWidth: 60, width: "30%" }}
+                sx={{ m: 1, minWidth: 60, width: "80%" }}
                 size="small"
               >
                 <InputLabel id="select_month">{"Seleccione un mes"}</InputLabel>
@@ -290,6 +392,25 @@ export default function Home() {
                 </Select>
               </FormControl>
             </Box>
+          </div>
+
+          <div className={styles.title_analogues_container}>
+            <h2>Promedio de la lluvia acumulada en cada mes por departamento</h2>
+            <p className={styles.title_analogues_text}>
+              {`La herramienta hace el calculo del promedio o norma climática de la lluvia acumulada en cada mes, por cada departamento de Honduras entre 1990 y 2020. Esta información nos permite visualizar el ciclo anual de las lluvias y comparar con pronósticos estacionales. Debido a que es un promedio mensual por departamento, se sugiere considerar otras herramientas disponibles para la estimación del promedio a escalas territoriales más pequeñas, como son los municipios.
+              `}
+            </p>
+          <Box style={{ width: "100%" }}>
+            <RainfallChart
+              months={monthsC}
+              departments={departments}
+              rainfallData={departmentsData}
+              selectedDepartment={selectedDepartment}
+              setSelectedDepartment={setSelectedDepartment}
+              colors={colors}
+              currentLoadingChart={currentLoadingChart}
+            />
+          </Box>
           </div>
 
           <Box className={styles.map_container}>
@@ -316,7 +437,7 @@ export default function Home() {
                   zoom={7}
                   center={[14.5007343, -86.6719949]}
                   url={Configuration.get_geoserver_url()}
-                  workspace={Configuration.get_climatology_worspace()}
+                  workspace={Configuration.get_climatology_worspace(newWorkspace)}
                   store={getSelectedStore()}
                   year={2000}
                   month={selectedMonthC}
@@ -413,8 +534,8 @@ export default function Home() {
                   zoom={7}
                   center={[14.5007343, -86.6719949]}
                   url={Configuration.get_geoserver_url()}
-                  workspace={Configuration.get_historical_worspace()}
-                  store={getSelectedStore()}
+                  workspace={Configuration.get_historical_worspace(newWorkspace)}
+                  store={getSelectedStore(true)}
                   year={selectedYearHc}
                   month={selectedMonthC}
                   child={
@@ -442,9 +563,7 @@ export default function Home() {
                             );
 
                             exportComponentAsPNG(historicalRef, {
-                              fileName: `Histórico_${
-                                selectedYearHc
-                              }_${
+                              fileName: `Histórico_${selectedYearHc}_${
                                 monthsC[selectedMonthC - 1]
                               }.png`,
                             });
@@ -500,12 +619,12 @@ export default function Home() {
               </div>
               <Box className={styles.anomalies_average_container}>
                 <Card className={styles.card_map} ref={averageRef}>
-                <Typography
-                      variant="h6"
-                      style={{ padding: "0 1%", color: "#0d2137", height: "5%" }}
-                    >
-                      Promedio de los años seleccionados:
-                    </Typography>
+                  <Typography
+                    variant="h6"
+                    style={{ padding: "0 1%", color: "#0d2137", height: "5%" }}
+                  >
+                    Promedio de los años seleccionados:
+                  </Typography>
                   <Map
                     className={styles.map}
                     style={{
@@ -520,8 +639,8 @@ export default function Home() {
                     anomalies={average}
                     isAnomalies={true}
                     setCurrentLoading={setCurrentLoading}
-                    workspace={Configuration.get_historical_worspace()}
-                    store={Configuration.get_prec_store()}
+                    workspace={Configuration.get_historical_worspace(newWorkspace)}
+                    store={Configuration.get_prec_monthly_store()}
                     minZoom={8}
                     setTiff={setTiff2}
                     child={
@@ -563,12 +682,12 @@ export default function Home() {
                 </Card>
 
                 <Card className={styles.card_map} ref={anomaliesRef}>
-                <Typography
-                      variant="h6"
-                      style={{ padding: "0 1%", color: "#0d2137", height: "5%" }}
-                    >
-                      Anomalía normalizada:
-                    </Typography>
+                  <Typography
+                    variant="h6"
+                    style={{ padding: "0 1%", color: "#0d2137", height: "5%" }}
+                  >
+                    Anomalía normalizada:
+                  </Typography>
                   <Map
                     className={styles.map}
                     style={{

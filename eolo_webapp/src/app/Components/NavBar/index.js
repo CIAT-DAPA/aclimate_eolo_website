@@ -50,6 +50,11 @@ const NavBar = () => {
                 </Link>
               </li>
               <li>
+                <Link className={styles.link} href={"/external"}>
+                  Enlaces Climáticos
+                </Link>
+              </li>
+              <li>
                 <Link className={styles.link} href={"/aboutus"}>
                   Acerca De
                 </Link>
