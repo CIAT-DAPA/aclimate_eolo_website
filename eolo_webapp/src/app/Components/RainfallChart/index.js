@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Chart from "react-apexcharts";
 import {
   Box,
@@ -8,7 +8,6 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
-  Typography,
 } from "@mui/material";
 import Loading from "../Loading";
 
@@ -21,7 +20,6 @@ const RainfallChart = ({
   colors,
   currentLoadingChart,
 }) => {
-  const chartRef = useRef(null);
   const handleSelectChange = (event) => {
     setSelectedDepartment(event.target.value);
   };
