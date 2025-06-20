@@ -15,6 +15,8 @@ const useAuth = () => {
     if (
       (pathname === "/analysis" ||
         pathname === "/analogues" ||
+        pathname === "/external" ||
+        pathname === "/aboutus" ||
         pathname === "/report") &&
       !user.isAuth && !user.loading
     ) {
