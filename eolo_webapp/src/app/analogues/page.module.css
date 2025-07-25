@@ -6,12 +6,14 @@
 }
 
 .main {
-  padding: 2% 6% !important;
+  padding: 2% 4% !important;
   color: #0d2137;
   margin: 0 0 2% 0;
   width: 100%;
   max-width: 100% !important;
   height: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .map_container {
@@ -19,6 +21,8 @@
   grid-template-columns: 49% 49%;
   justify-content: center;
   gap: 0 2%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .historical_map {
@@ -41,6 +45,7 @@
   text-wrap: pretty;
   padding: 0 2%;
   margin-top: 1%;
+  text-align: justify;
 }
 
 .anomalies_map {
@@ -56,6 +61,9 @@
   width: 100%;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  box-sizing: border-box;
 }
 
 .princ_main {
@@ -74,6 +82,7 @@
 .title_analogues_text {
   padding: 1%;
   text-wrap: pretty;
+  text-align: justify;
 }
 
 .accion_container {
@@ -110,6 +119,9 @@
 .country_container {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .map_buttons_container {
@@ -123,9 +135,418 @@
 .anomalies_average_container{
   display: flex;
   justify-content: space-between;
+  gap: 2%;
+  width: 100%;
+  box-sizing: border-box;
 }
-
 
 .card_map{
   width: 49%;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.card_map > div:last-child {
+  flex: 1;
+  min-height: 300px;
+}
+
+/* Apply same styles to all Card components in maps */
+.main .MuiCard-root {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.main .MuiCard-root > div:last-child {
+  flex: 1;
+  min-height: 300px;
+}
+
+.card_title {
+  padding: 8px 16px !important;
+  margin: 0 !important;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  min-height: auto !important;
+  height: auto !important;
+}
+
+.card_map h6 {
+  padding: 8px 16px !important;
+  margin: 0 !important;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+  font-weight: 600 !important;
+  font-size: 1rem;
+}
+
+/* ========================================
+   RESPONSIVE STYLES
+   ======================================== */
+
+/* Large screens (1200px and above) */
+@media (min-width: 1200px) {
+  .main {
+    padding: 2% 8% !important;
+  }
+  
+  .historical_map {
+    min-height: 850px;
+  }
+  
+  .anomalies_map {
+    min-height: 950px;
+  }
+}
+
+/* Tablet landscape (992px - 1199px) */
+@media (max-width: 1199px) and (min-width: 992px) {
+  .main {
+    padding: 2% 4% !important;
+  }
+  
+  .historical_map {
+    min-height: 720px;
+  }
+  
+  .anomalies_map {
+    min-height: 820px;
+  }
+  
+  .info_container > h2 {
+    font-size: 1.4rem;
+  }
+  
+  .title_analogues_container > h1 {
+    font-size: 2rem;
+  }
+}
+
+/* Tablet portrait (768px - 991px) */
+@media (max-width: 991px) and (min-width: 768px) {
+  .main {
+    padding: 2% 3% !important;
+  }
+  
+  .map_container {
+    grid-template-columns: 1fr;
+    gap: 2rem 0;
+  }
+  
+  .historical_map {
+    grid-template-rows: auto 1fr;
+    min-height: 600px;
+  }
+  
+  .anomalies_map {
+    grid-template-rows: auto 1fr;
+    min-height: 900px;
+    grid-column: 1;
+  }
+  
+  .anomalies_but_cont {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0 3%;
+  }
+  
+  .anomalies_average_container {
+    flex-direction: column;
+    gap: 2rem;
+    min-height: 700px;
+  }
+  
+  .card_map {
+    width: 100%;
+    min-height: 400px;
+  }
+  
+  .card_title,
+  .card_map h6 {
+    text-align: center !important;
+    font-size: 1rem !important;
+  }
+  
+  .country_container {
+    justify-content: center;
+    margin-bottom: 1rem;
+    padding: 0 3%;
+  }
+  
+  .info_container > h2 {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+  
+  .title_analogues_container > h1 {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+  
+  .title_analogues_container > h2 {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+  
+  .title_analogues_text {
+    text-align: justify;
+    padding: 2%;
+  }
+  
+  .info_container > p {
+    padding: 0 3%;
+    text-align: justify;
+  }
+}
+
+/* Mobile landscape (576px - 767px) */
+@media (max-width: 767px) and (min-width: 576px) {
+  .main {
+    padding: 3% 3% !important;
+    overflow-x: hidden;
+  }
+  
+  .map_container {
+    grid-template-columns: 1fr;
+    gap: 2rem 0;
+    width: 100%;
+  }
+  
+  .historical_map {
+    grid-template-rows: auto 1fr;
+    min-height: 500px;
+  }
+  
+  .anomalies_map {
+    grid-template-rows: auto 1fr;
+    min-height: 800px;
+    grid-column: 1;
+  }
+  
+  .anomalies_but_cont {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0 5%;
+  }
+  
+  .anomalies_average_container {
+    flex-direction: column;
+    gap: 2rem;
+    min-height: 600px;
+    width: 100%;
+    padding: 0 2%;
+  }
+  
+  .card_map {
+    width: 100%;
+    min-height: 350px;
+    max-width: 100%;
+  }
+  
+  .card_title,
+  .card_map h6 {
+    text-align: center !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .country_container {
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    padding: 0 5%;
+  }
+  
+  .map_buttons_container {
+    margin-left: 1%;
+    margin-top: 1%;
+    flex-direction: row;
+    gap: 1%;
+  }
+  
+  .download_raster_l {
+    height: 35px;
+    width: 35px;
+  }
+  
+  .info_container > h2 {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+  
+  .title_analogues_container > h1 {
+    font-size: 1.6rem;
+    text-align: center;
+  }
+  
+  .title_analogues_container > h2 {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+  
+  .title_analogues_text {
+    text-align: justify;
+    padding: 2%;
+  }
+  
+  .info_container > p {
+    padding: 0 5%;
+    text-align: justify;
+  }
+  
+  .info_container {
+    margin-bottom: 2%;
+    padding: 0 2%;
+  }
+}
+
+/* Mobile portrait (up to 575px) */
+@media (max-width: 575px) {
+  .main {
+    padding: 4% 3% !important;
+    overflow-x: hidden;
+  }
+  
+  .map_container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem 0;
+    width: 100%;
+  }
+  
+  .historical_map {
+    grid-template-rows: auto 1fr;
+    min-height: 400px;
+  }
+  
+  .anomalies_map {
+    grid-template-rows: auto 1fr;
+    min-height: 700px;
+    grid-column: 1;
+  }
+  
+  .anomalies_but_cont {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0 5%;
+  }
+  
+  .anomalies_average_container {
+    flex-direction: column;
+    gap: 1.5rem;
+    min-height: 500px;
+    width: 100%;
+    padding: 0 2%;
+  }
+  
+  .card_map {
+    width: 100%;
+    min-height: 300px;
+    max-width: 100%;
+  }
+  
+  .card_title,
+  .card_map h6 {
+    text-align: center !important;
+    font-size: 0.8rem !important;
+    padding: 6px 12px !important;
+  }
+  
+  .country_container {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+    padding: 0 5%;
+  }
+  
+  .map_buttons_container {
+    margin-left: 1%;
+    margin-top: 1%;
+    flex-direction: row;
+    gap: 1%;
+    justify-content: center;
+  }
+  
+  .download_raster_l {
+    height: 32px;
+    width: 32px;
+  }
+  
+  .info_container > h2 {
+    font-size: 1.1rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .title_analogues_container > h1 {
+    font-size: 1.4rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .title_analogues_container > h2 {
+    font-size: 1.1rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .title_analogues_text {
+    text-align: justify;
+    padding: 3%;
+    font-size: 0.9rem;
+  }
+  
+  .info_container > p {
+    padding: 0 5%;
+    text-align: justify;
+    font-size: 0.9rem;
+  }
+  
+  .info_container {
+    margin-bottom: 2%;
+    padding: 0 2%;
+  }
+  
+  .title_analogues_container {
+    margin-bottom: 2%;
+    padding: 0 2%;
+  }
+}
+
+/* Ensure all containers respect boundaries */
+.main,
+.main > *,
+.map_container,
+.map_container > *,
+.anomalies_average_container,
+.anomalies_average_container > *,
+.historical_map,
+.historical_map > *,
+.anomalies_map,
+.anomalies_map > * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure Maps and Leaflet containers don't overflow */
+.map,
+.leaflet-container {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure charts don't overflow */
+.main canvas,
+.main svg {
+  max-width: 100% !important;
+  height: auto !important;
 }

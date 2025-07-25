@@ -81,7 +81,7 @@ const RainfallChart = ({
 
   return (
     <Box>
-      <FormControl sx={{ mb: 2, width: "40%" }} size="small">
+      <FormControl sx={{ mb: 2, width: { xs: "90%", sm: "60%", md: "40%" } }} size="small">
         <InputLabel id="select-dep">Departamento</InputLabel>
         <Select
           labelId="select-dep"

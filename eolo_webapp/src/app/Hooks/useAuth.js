@@ -14,9 +14,6 @@ const useAuth = () => {
     setAuth(user?.isAuth);
     if (
       (pathname === "/analysis" ||
-        pathname === "/analogues" ||
-        pathname === "/external" ||
-        pathname === "/aboutus" ||
         pathname === "/report") &&
       !user.isAuth && !user.loading
     ) {

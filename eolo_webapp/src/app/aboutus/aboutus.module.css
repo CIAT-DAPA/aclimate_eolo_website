@@ -21,4 +21,26 @@
 .logos_container {
   display: flex;
   justify-content: space-around;
+  align-items: center;
+}
+
+@media (max-width: 700px) {
+  .logos_container {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 18px !important;
+  }
+  .a_logos {
+    width: 100% !important;
+    margin: 0 0 18px 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+  .logos {
+    width: 90% !important;
+    height: 90px !important;
+    max-width: 320px !important;
+    margin: 0 auto !important;
+    display: block !important;
+  }
 }

@@ -1,3 +1,13 @@
+/* Solo para la leyenda de anomalía en móvil */
+@media (max-width: 768px) {
+  .anomaly-legend {
+    max-width: 70px !important;
+  }
+  .anomaly-legend img {
+    max-width: 60px !important;
+  }
+}
+
 .info {
     padding: 6px 8px;
     font: 14px/16px Arial, Helvetica, sans-serif;
@@ -5,12 +15,24 @@
     background: rgba(255, 255, 255, 0.8);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     border-radius: 5px;
+    max-width: 110px;
+    min-width: 110px;
+    width: 110px;
+    box-sizing: border-box;
+    text-align: left;
 }
 
 .info h4 {
     margin: 0 0 5px;
     color: #777;
-  }
+}
+
+.info h6 {
+    margin: 0 0 3px;
+    color: #555;
+    font-size: 12px;
+    font-weight: 600;
+}
 
 .legend {
     text-align: justify;
@@ -25,3 +47,56 @@
     margin-right: 8px;
     opacity: 0.7;
 }
+
+.legend img {
+    max-width: 100%;
+    min-width: 80px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Responsive styles for mobile devices */
+@media (max-width: 768px) {
+    .info {
+        padding: 4px 5px;
+        font: 10px/12px Arial, Helvetica, sans-serif;
+        max-width: 100px;
+        border-radius: 3px;
+    }
+    .info h6 {
+        font-size: 9px;
+        margin: 0 0 2px;
+        line-height: 1.1;
+    }
+    .legend {
+        line-height: 12px;
+    }
+    .legend img {
+        max-width: 90px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .info {
+        padding: 3px 4px;
+        font: 9px/11px Arial, Helvetica, sans-serif;
+        max-width: 90px;
+        border-radius: 3px;
+    }
+    .info h6 {
+        font-size: 8px;
+        margin: 0 0 1px;
+        line-height: 1.1;
+    }
+    .legend img {
+        max-width: 80px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+}
+
