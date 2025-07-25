@@ -37,29 +37,23 @@ const HomePage = () => {
         }}
       >
         <Grid item xs={12} md={6} className={styles.f_seccion_left}>
-          <Box>
-            <Typography variant="h4" gutterBottom>
-              {"Conoce Eolo"}
+          <Box className={styles.welcome_box_bg}>
+            <Typography variant="h4" gutterBottom className={styles.welcome_title}>
+              Conoce Eolo
             </Typography>
-            <Typography variant="p">
-              {`¡Bienvenido a nuestra plataforma de revisión de pronósticos climáticos estacionales!
-
-                Mejora tus pronósticos con análisis basados en años análogos, compara diferentes pronósticos y crea reportes climáticos detallados en minutos. 
-                ¿Listo para llevar tus pronósticos al siguiente nivel? Únete a nosotros hoy mismo.
-                `}
+            <Typography variant="body1" className={styles.welcome_text}>
+              ¡Bienvenido a nuestra plataforma de revisión de pronósticos climáticos estacionales!<br/><br/>
+              Mejora tus pronósticos con análisis basados en años análogos, compara diferentes pronósticos y crea reportes climáticos detallados en minutos.<br/>
+              ¿Listo para llevar tus pronósticos al siguiente nivel? Únete a nosotros hoy mismo.
             </Typography>
+              <Button
+                variant="contained"
+                className={styles.welcome_button}
+                onClick={() => router.push("/analogues")}
+              >
+                Empezar
+              </Button>
           </Box>
-          {user && user.isAuth && (
-            <Button
-              variant="contained"
-              color="primary"
-              className={styles.fseccion_button}
-              onClick={(e) => router.push("/analogues")}
-              style={{ backgroundColor: "#e37b13", alignSelf: "self-start" }}
-            >
-              Empezar
-            </Button>
-          )}
         </Grid>
       </Grid>
 

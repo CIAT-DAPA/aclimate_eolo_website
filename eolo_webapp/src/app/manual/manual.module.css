@@ -10,11 +10,22 @@
 
 .logos {
   object-fit: contain;
-  width: 70%;
-  height: 600px;
+  width: 60%;
+  height: 320px;
   align-self: center;
   margin: 2% 0;
+  display: block;
 }
+
+.logos2 {
+  object-fit: contain;
+  width: 65%;
+  height: 140px;
+  align-self: center;
+  margin: 2% 0;
+  display: block;
+}
+
 
 .logos2 {
     object-fit: contain;
@@ -33,16 +44,19 @@
   justify-content: space-around;
 }
 
-.text {
-  font-size: 20px;
-}
-
-.list {
-  margin: 1% 0 1% 4%;
-  font-size: 20px;
-}
-
-.container{
-    display: flex;
-    flex-direction: column;
-}
+  .logos {
+    width: 98% !important;
+    height: auto !important;
+    max-width: 340px !important;
+    min-width: 180px !important;
+    margin: 10px auto !important;
+    display: block !important;
+  }
+  .logos2 {
+    width: 98% !important;
+    height: auto !important;
+    max-width: 340px !important;
+    min-width: 180px !important;
+    margin: 10px auto !important;
+    display: block !important;
+  }

@@ -39,8 +39,7 @@ function MapLegend({ workspace, layer }) {
         {layer && (
           <div className={[styles.info, styles.legend].join(" ")}>
             <h6>{legend}</h6>
-
-            <img src={photo} alt="map legend"></img>
+            <img src={photo} alt="map legend" />
           </div>
         )}
       </div>

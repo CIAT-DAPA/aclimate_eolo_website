@@ -1,3 +1,17 @@
 .select_container{
-    width: 80%;
+    width: 100%;
+}
+
+/* Responsive adjustments for MultiSelect */
+@media (max-width: 768px) {
+    .select_container{
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .select_container{
+        width: 100%;
+        min-width: auto;
+    }
 }
